@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mur</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f4f1ea;
+  --fg: #171512;
+  --muted: #7a746a;
+  --field: #ffffff;
+  --line: #d9d3c7;
+  --accent: #e2482b;
+  --serif: "Instrument Serif", Georgia, serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #121110; --fg: #f1ece3; --muted: #8d867a; --field: #1c1a18; --line: #2c2925; }
+}
+:root[data-theme="dark"] { --bg: #121110; --fg: #f1ece3; --muted: #8d867a; --field: #1c1a18; --line: #2c2925; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--bg); color: var(--fg); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+button, input, textarea { font: inherit; color: inherit; }
+
+/* Téléphone */
+.phone { max-width: 520px; margin: 0 auto; padding: 32px 16px 48px; }
+.phone h1 { font-family: var(--serif); font-weight: 400; font-size: 44px; line-height: 1; margin: 0 0 6px; }
+.phone .lead { color: var(--muted); margin: 0 0 32px; font-size: 15px; }
+.field { display: block; width: 100%; background: var(--field); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; font-size: 17px; outline: none; }
+.field:focus { border-color: var(--fg); }
+textarea.field { min-height: 110px; resize: vertical; margin-top: 10px; }
+.row { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; gap: 12px; }
+.count { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.send { background: var(--fg); color: var(--bg); border: 0; border-radius: 6px; padding: 12px 22px; font-size: 16px; cursor: pointer; }
+.send[disabled] { opacity: .4; cursor: default; }
+.status { min-height: 20px; margin-top: 10px; font-size: 14px; color: var(--muted); }
+.status.err { color: var(--accent); }
+.recent { margin-top: 44px; }
+.recent h2 { font-size: 13px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin: 0 0 14px; }
+.msg { margin: 0 0 18px; }
+.msg .t { font-family: var(--serif); font-size: 24px; line-height: 1.15; margin: 0; overflow-wrap: anywhere; }
+.msg .m { color: var(--muted); font-size: 13px; margin-top: 4px; }
+.empty { color: var(--muted); font-size: 15px; }
+
+/* Borne */
+body.borne { overflow: hidden; cursor: none; }
+.wall { height: 100vh; height: 100dvh; display: grid; grid-template-columns: 1fr 380px; grid-template-rows: auto 1fr auto; padding: 40px 48px; gap: 0 56px; }
+.wall .clock { grid-column: 1 / -1; display: flex; justify-content: space-between; color: var(--muted); font-size: 18px; font-variant-numeric: tabular-nums; }
+.wall .latest { grid-column: 1; grid-row: 2; align-self: center; min-width: 0; }
+.wall .latest .t { font-family: var(--serif); font-size: clamp(48px, 7.2vw, 128px); line-height: .98; margin: 0; letter-spacing: -.01em; overflow-wrap: anywhere; }
+.wall .latest .m { color: var(--muted); font-size: 24px; margin-top: 28px; }
+.wall .latest .m b { color: var(--fg); font-weight: 500; }
+.wall .older { grid-column: 2; grid-row: 2 / 4; align-self: start; padding-top: 12px; overflow: hidden; }
+.wall .older .msg { margin-bottom: 26px; }
+.wall .older .t { font-size: 26px; }
+.wall .older .m { font-size: 15px; margin-top: 5px; }
+.wall .older .msg:nth-child(n+5) { opacity: .55; }
+.wall .older .msg:nth-child(n+8) { opacity: .3; }
+.wall .invite { grid-column: 1; grid-row: 3; display: flex; align-items: center; gap: 22px; }
+.wall .invite .qr { width: 120px; height: 120px; background: #fff; padding: 8px; border-radius: 4px; }
+.wall .invite .qr img, .wall .invite .qr canvas { width: 100%; height: 100%; display: block; }
+.wall .invite p { margin: 0; font-size: 20px; line-height: 1.3; max-width: 340px; }
+.wall .invite p span { display: block; color: var(--muted); font-size: 16px; margin-top: 6px; }
+.wall .empty { font-family: var(--serif); font-size: 64px; line-height: 1.05; color: var(--muted); }
+@media (max-width: 900px) {
+  .wall { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto auto; padding: 24px; }
+  .wall .older { grid-column: 1; grid-row: auto; max-height: 30vh; }
+  .wall .latest .t { font-size: clamp(36px, 9vw, 80px); }
+  .wall .invite { grid-row: auto; }
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function () {
+  var TOPIC = "mur-bureau-85683771c9";
+  var BASE = "https://ntfy.sh/" + TOPIC;
+  var KEY = "mur.msgs";
+  var NAME_KEY = "mur.name";
+  var MAX_TEXT = 200, MAX_NAME = 24;
+  var isBorne = /(^|[?&])borne/.test(location.search);
+  var app = document.getElementById("app");
+  var msgs = load();
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; }
+  }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(msgs.slice(-500))); } catch (e) {}
+  }
+  function parse(ev) {
+    if (!ev || ev.event !== "message") return null;
+    var body = { n: "", t: ev.message || "" };
+    try { var j = JSON.parse(ev.message); if (j && typeof j.t === "string") body = j; } catch (e) {}
+    var t = String(body.t || "").trim().slice(0, MAX_TEXT);
+    if (!t) return null;
+    return { id: ev.id, time: ev.time * 1000, n: String(body.n || "").trim().slice(0, MAX_NAME), t: t };
+  }
+  function add(m) {
+    if (!m) return false;
+    for (var i = 0; i < msgs.length; i++) if (msgs[i].id === m.id) return false;
+    msgs.push(m);
+    msgs.sort(function (a, b) { return a.time - b.time; });
+    save();
+    return true;
+  }
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; });
+  }
+  function ago(ts) {
+    var d = (Date.now() - ts) / 1000;
+    if (d < 60) return "à l'instant";
+    if (d < 3600) return "il y a " + Math.floor(d / 60) + " min";
+    if (d < 86400) return "il y a " + Math.floor(d / 3600) + " h";
+    var day = new Date(ts), now = new Date();
+    if (now.getDate() - day.getDate() === 1) return "hier";
+    return day.toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
+  }
+  function meta(m) {
+    return (m.n ? "<b>" + esc(m.n) + "</b>, " : "") + ago(m.time);
+  }
+  function fetchHistory(cb) {
+    fetch(BASE + "/json?poll=1&since=all").then(function (r) { return r.text(); }).then(function (txt) {
+      var changed = false;
+      txt.split("\n").forEach(function (line) {
+        if (!line) return;
+        try { if (add(parse(JSON.parse(line)))) changed = true; } catch (e) {}
+      });
+      if (cb) cb(changed);
+    }).catch(function () { if (cb) cb(false); });
+  }
+  function subscribe(onNew) {
+    if (!window.EventSource) return;
+    var es;
+    function open() {
+      es = new EventSource(BASE + "/sse");
+      es.onmessage = function (e) {
+        try { if (add(parse(JSON.parse(e.data)))) onNew(); } catch (err) {}
+      };
+      es.onerror = function () { es.close(); setTimeout(open, 5000); };
+    }
+    open();
+  }
+  function post(n, t) {
+    return fetch(BASE, { method: "POST", body: JSON.stringify({ n: n, t: t }) }).then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    });
+  }
+
+  /* ---------- Borne ---------- */
+  function renderWall() {
+    var list = msgs.slice().reverse();
+    var latest = list[0], older = list.slice(1, 10);
+    var html = '<div class="wall">'
+      + '<div class="clock"><span>Bureau</span><span id="clock"></span></div>'
+      + '<div class="latest">' + (latest
+        ? '<p class="t">' + esc(latest.t) + '</p><div class="m">' + meta(latest) + '</div>'
+        : '<p class="empty">Rien encore.<br>Scanne le code et écris le premier mot.</p>') + '</div>'
+      + '<div class="older">' + older.map(function (m) {
+        return '<div class="msg"><p class="t">' + esc(m.t) + '</p><div class="m">' + meta(m) + '</div></div>';
+      }).join("") + '</div>'
+      + '<div class="invite"><div class="qr" id="qr"></div><p>Un mot pour le bureau ?<span>Scanne, écris, ça s\'affiche ici.</span></p></div>'
+      + '</div>';
+    app.innerHTML = html;
+    tick();
+    var url = location.origin + location.pathname;
+    if (window.QRCode) new QRCode(document.getElementById("qr"), { text: url, width: 104, height: 104, correctLevel: QRCode.CorrectLevel.M });
+  }
+  function tick() {
+    var el = document.getElementById("clock");
+    if (el) el.textContent = new Date().toLocaleString("fr-FR", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
+  }
+  function bootWall() {
+    document.body.className = "borne";
+    document.documentElement.setAttribute("data-theme", "dark");
+    renderWall();
+    setInterval(tick, 15000);
+    setInterval(renderWall, 60000);
+    fetchHistory(function (changed) { if (changed) renderWall(); });
+    subscribe(renderWall);
+    setInterval(function () { fetchHistory(function (c) { if (c) renderWall(); }); }, 120000);
+    if (navigator.wakeLock && navigator.wakeLock.request) {
+      var lock = function () { navigator.wakeLock.request("screen").catch(function () {}); };
+      lock();
+      document.addEventListener("visibilitychange", function () { if (!document.hidden) lock(); });
+    }
+  }
+
+  /* ---------- Téléphone ---------- */
+  function renderRecent() {
+    var el = document.getElementById("recent");
+    if (!el) return;
+    var list = msgs.slice().reverse().slice(0, 30);
+    el.innerHTML = list.length ? list.map(function (m) {
+      return '<div class="msg"><p class="t">' + esc(m.t) + '</p><div class="m">' + meta(m) + '</div></div>';
+    }).join("") : '<p class="empty">Rien encore. À toi.</p>';
+  }
+  function bootPhone() {
+    var name = "";
+    try { name = localStorage.getItem(NAME_KEY) || ""; } catch (e) {}
+    app.innerHTML = '<div class="phone">'
+      + '<h1>Mur du bureau</h1><p class="lead">Ce que tu écris s\'affiche sur la borne.</p>'
+      + '<input class="field" id="name" placeholder="Ton prénom" maxlength="' + MAX_NAME + '" value="' + esc(name) + '" autocomplete="given-name">'
+      + '<textarea class="field" id="text" placeholder="Un mot, une idée, un merci" maxlength="' + MAX_TEXT + '"></textarea>'
+      + '<div class="row"><span class="count" id="count">0 / ' + MAX_TEXT + '</span><button class="send" id="send" disabled>Envoyer</button></div>'
+      + '<div class="status" id="status"></div>'
+      + '<div class="recent"><h2>Sur la borne</h2><div id="recent"></div></div>'
+      + '</div>';
+    var text = document.getElementById("text"), send = document.getElementById("send"),
+        count = document.getElementById("count"), status = document.getElementById("status"),
+        nameEl = document.getElementById("name");
+    text.addEventListener("input", function () {
+      count.textContent = text.value.length + " / " + MAX_TEXT;
+      send.disabled = !text.value.trim();
+    });
+    send.addEventListener("click", function () {
+      var n = nameEl.value.trim().slice(0, MAX_NAME), t = text.value.trim().slice(0, MAX_TEXT);
+      if (!t) return;
+      try { localStorage.setItem(NAME_KEY, n); } catch (e) {}
+      send.disabled = true; status.className = "status"; status.textContent = "Envoi…";
+      post(n, t).then(function (ev) {
+        add({ id: ev.id, time: ev.time * 1000, n: n, t: t });
+        text.value = ""; count.textContent = "0 / " + MAX_TEXT;
+        status.textContent = "C'est sur la borne.";
+        renderRecent();
+        setTimeout(function () { status.textContent = ""; }, 3000);
+      }).catch(function () {
+        status.className = "status err"; status.textContent = "Ça n'est pas parti. Réessaie.";
+        send.disabled = false;
+      });
+    });
+    renderRecent();
+    fetchHistory(function () { renderRecent(); });
+    subscribe(renderRecent);
+  }
+
+  if (isBorne) bootWall(); else bootPhone();
+})();
+</script>
+</body>
+</html>
