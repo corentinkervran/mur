@@ -185,6 +185,41 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
 .photo img { display: block; height: calc(220 * var(--u)); width: auto; max-width: 100%; object-fit: contain; border-radius: calc(2 * var(--u)); }
 .photo .punaise { top: calc(-14 * var(--u)); }
 .photos.serre { visibility: hidden; }
+.mur { display: contents; }
+.invite .ecrire { align-self: flex-start; display: inline-flex; align-items: center; min-height: calc(96 * var(--u)); padding: 0 calc(44 * var(--u)); margin: calc(6 * var(--u)) 0; background: var(--red); color: var(--fg); border: 0; border-radius: 999px;
+  font: 700 calc(40 * var(--u))/1 var(--sans); box-shadow: 0 calc(8 * var(--u)) 0 var(--red-dark); -webkit-tap-highlight-color: transparent; transition: transform .1s, box-shadow .1s; }
+.invite .ecrire:active { transform: translateY(calc(6 * var(--u))); box-shadow: 0 calc(2 * var(--u)) 0 var(--red-dark); }
+.invite .ecrire:focus-visible { outline: calc(4 * var(--u)) solid var(--fg); outline-offset: calc(6 * var(--u)); }
+.modale { position: fixed; inset: 0; width: 100vw; height: 100vh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: transparent; color: var(--fg); font-family: var(--sans); }
+.modale[open] { display: flex; justify-content: center; align-items: flex-start; }
+.modale::backdrop { background: rgba(31, 26, 18, .55); }
+.modale input, .modale textarea { -webkit-user-select: text; user-select: text; }
+.modale form { position: relative; box-sizing: border-box; width: min(calc(880 * var(--u)), calc(100vw - calc(64 * var(--u)))); margin-top: calc(96 * var(--u)); padding: calc(48 * var(--u)) calc(56 * var(--u)) calc(44 * var(--u)); background: var(--bg); border-radius: calc(12 * var(--u));
+  box-shadow: 0 calc(30 * var(--u)) calc(60 * var(--u)) rgba(31, 26, 18, .35); display: flex; flex-direction: column; gap: calc(18 * var(--u)); transform: rotate(-.6deg); }
+.modale .punaise { top: calc(-14 * var(--u)); }
+.modale h2 { margin: 0; font: 700 calc(56 * var(--u))/1.05 var(--sans); }
+.modale .ligne { display: flex; align-items: flex-end; gap: calc(32 * var(--u)); }
+.modale .ligne > div { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: calc(10 * var(--u)); }
+.modale .lab, .modale .papiers legend { font: 600 calc(26 * var(--u))/1.2 var(--sans); color: var(--ink); }
+.modale .papiers legend { margin-bottom: calc(12 * var(--u)); }
+.modale input.field { box-sizing: border-box; width: 100%; padding: calc(20 * var(--u)) calc(24 * var(--u)); background: var(--white); border: calc(3 * var(--u)) solid var(--fg); border-radius: calc(12 * var(--u)); font: 500 calc(34 * var(--u))/1.2 var(--sans); color: var(--fg); outline: none; }
+.modale input.field:focus { box-shadow: 0 0 0 calc(5 * var(--u)) var(--sky); }
+.modale .papiers .choix { gap: calc(24 * var(--u)); }
+.modale .papier { gap: calc(10 * var(--u)); }
+.modale .papier .carre { width: calc(72 * var(--u)); height: calc(72 * var(--u)); border-radius: calc(8 * var(--u)); }
+.modale .papier .nom { font-size: calc(24 * var(--u)); }
+.modale .papier input:checked + .carre, .modale .papier input:focus-visible + .carre { outline-width: calc(4 * var(--u)); outline-offset: calc(4 * var(--u)); }
+.modale .note { margin-top: 0; }
+.modale .note::before, .modale .note::after { border-radius: calc(8 * var(--u)); }
+.modale .note textarea { box-sizing: border-box; height: calc(300 * var(--u)); padding: calc(28 * var(--u)) calc(28 * var(--u)) calc(60 * var(--u)); border-radius: calc(8 * var(--u)); font: 500 calc(36 * var(--u))/1.15 var(--sans); color: var(--fg); }
+.modale .note textarea:focus { box-shadow: 0 calc(14 * var(--u)) calc(28 * var(--u)) rgba(90, 60, 0, .18), 0 0 0 calc(4 * var(--u)) var(--fg); }
+.modale .note .count { right: calc(24 * var(--u)); bottom: calc(16 * var(--u)); font-size: calc(30 * var(--u)); }
+.modale .status { min-height: calc(36 * var(--u)); font-size: calc(32 * var(--u)); text-align: left; }
+.modale .actions { display: flex; justify-content: flex-end; align-items: center; gap: calc(24 * var(--u)); }
+.modale .send, .modale .annuler { min-height: calc(96 * var(--u)); margin: 0; padding: 0 calc(48 * var(--u)); border-radius: 999px; font: 700 calc(36 * var(--u))/1 var(--sans); -webkit-tap-highlight-color: transparent; }
+.modale .send { box-shadow: 0 calc(8 * var(--u)) 0 var(--red-dark); }
+.modale .send[disabled] { box-shadow: 0 calc(8 * var(--u)) 0 var(--red-dark); }
+.modale .annuler { background: transparent; color: var(--fg); border: calc(3 * var(--u)) solid var(--fg); font-weight: 600; }
 .wall.avec-photos .pile { justify-content: flex-end; }
 .postit .t { font: 500 calc(30 * var(--u))/1.15 var(--sans); text-wrap: balance; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; overflow-wrap: anywhere; }
 .postit .m { font: 700 calc(28 * var(--u))/1.1 var(--hand); color: var(--ink); }
@@ -215,16 +250,31 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
 
 @media (orientation: portrait) {
   .wall { padding: calc(48 * var(--u)) calc(56 * var(--u)); column-gap: calc(40 * var(--u)); row-gap: calc(24 * var(--u));
-    grid-template-columns: calc(407 * var(--u)) minmax(0, 1fr);
-    grid-template-rows: calc(64 * var(--u)) minmax(calc(300 * var(--u)), 1fr) calc(136 * var(--u)) calc(247 * var(--u)) calc(544 * var(--u)) minmax(0, var(--pied, calc(240 * var(--u))));
-    grid-template-areas: "entete entete" "dernier dernier" "qr invite" "qr pile" "vote vote" "pied pied"; }
-  .pile .postit:nth-child(3) { display: none; }
-  .photos { grid-area: pied; justify-self: center; align-self: center; padding-top: 0; }
-  .photo img { height: calc(196 * var(--u)); }
+    grid-template-columns: calc(280 * var(--u)) minmax(0, 1fr);
+    grid-template-rows: calc(64 * var(--u)) minmax(0, 1fr) calc(280 * var(--u)) calc(502 * var(--u)) minmax(0, var(--pied, 0px));
+    grid-template-areas: "entete entete" "mur mur" "qr invite" "vote vote" "pied pied"; }
+  .mur { grid-area: mur; display: grid; min-height: 0; row-gap: calc(24 * var(--u));
+    grid-template-columns: calc(400 * var(--u)) calc(28 * var(--u)) calc(172 * var(--u)) calc(32 * var(--u)) calc(56 * var(--u)) calc(20 * var(--u)) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 52fr) minmax(0, 24fr) minmax(0, 24fr); }
+  .mur .dernier { grid-column: 1 / 4; grid-row: 1; }
+  .mur .pile, .mur .photos { display: contents; }
+  .mur .postit { max-width: none; width: 100%; margin-top: 0; align-self: center; }
+  .mur .postit .t { -webkit-line-clamp: 3; }
+  .mur .postit:nth-child(1) { grid-column: 5 / 8; grid-row: 1; align-self: end; justify-self: end; width: calc(280 * var(--u)); }
+  .mur .postit:nth-child(2) { grid-column: 3 / 6; grid-row: 2; }
+  .mur .postit:nth-child(3) { grid-column: 7 / 8; grid-row: 2; }
+  .mur .postit:nth-child(4) { grid-column: 3 / 6; grid-row: 3; }
+  .mur .postit:nth-child(5) { grid-column: 7 / 8; grid-row: 3; }
+  .mur .photo:nth-child(1) { grid-column: 1 / 2; grid-row: 2 / 4; align-self: center; justify-self: start; }
+  .mur .photo:nth-child(2) { grid-column: 5 / 8; grid-row: 1; align-self: start; justify-self: center; }
+  .mur .photo:nth-child(1) img { width: calc(380 * var(--u)); height: auto; }
+  .mur .photo:nth-child(2) img { width: calc(240 * var(--u)); height: calc(240 * var(--u)); }
+  .qr-box { width: calc(280 * var(--u)); height: calc(280 * var(--u)); }
+  .invite { gap: calc(8 * var(--u)); }
+  .invite .t2 { font-size: calc(36 * var(--u)); }
   .postit .t { font-size: calc(26 * var(--u)); } .postit .m { font-size: calc(26 * var(--u)); }
-  .invite { gap: calc(4 * var(--u)); }
   .vote h2 { font-size: calc(72 * var(--u)); }
-  .vote .duel { height: calc(320 * var(--u)); }
+  .vote .duel { height: calc(280 * var(--u)); }
   .vote .pad .repos, .wall .feuille span { font-size: calc(96 * var(--u)); }
   .vote .pad .res { padding: calc(28 * var(--u)) calc(36 * var(--u)); }
   .vote .res .nom { font-size: calc(40 * var(--u)); } .vote .res .chiffre { font-size: calc(128 * var(--u)); } .vote .res .voix { font-size: calc(36 * var(--u)); }
@@ -243,6 +293,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     grid-template-columns: minmax(0, 1fr) calc(407 * var(--u)) calc(377 * var(--u));
     grid-template-rows: calc(64 * var(--u)) calc(319 * var(--u)) minmax(0, 1fr) calc(240 * var(--u)) minmax(0, var(--pied, calc(57 * var(--u))));
     grid-template-areas: "entete qr invite" "dernier qr invite" "dernier vote vote" "pile vote vote" "pile pied pied"; }
+  .pile .postit:nth-child(n+4) { display: none; }
   .wall.avec-photos .pile .postit:nth-child(n+2) { display: none; }
 }
 @media (orientation: landscape) and (max-aspect-ratio: 3/2) {
@@ -251,7 +302,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
   .pad .repos, .wall .feuille span { font-size: calc(64 * var(--u)); }
   .vote h2 { font-size: calc(56 * var(--u)); }
   .vote .etat { font-size: calc(40 * var(--u)); }
-  .pile .postit:nth-child(3) { display: none; }
+  .pile .postit:nth-child(n+3) { display: none; }
   .wall.avec-photos .pile .postit { display: none; }
   .entete .date { font-size: calc(24 * var(--u)); } #alerte { font-size: calc(20 * var(--u)); }   /* colonne de calc(628 * var(--u)) en 4:3 : la date tient sur une ligne */
 }
@@ -272,7 +323,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
 <script>
 (function () {
   /* ================= Constantes et paramètres ================= */
-  var VERSION = "2026-09-25.2";          // à incrémenter à chaque mise en ligne, relu par la borne
+  var VERSION = "2026-09-25.3";          // à incrémenter à chaque mise en ligne, relu par la borne
   var NTFY = "https://ntfy.sh/";
   var Q = "os";
   var params = new URLSearchParams(location.search);
@@ -288,7 +339,8 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
   var MAX_TEXT = 200, MAX_NAME = 24;
   var LOCK_MS = 20000, DOUBLE_APPUI_MS = 1000, REFUS_ESPACE_MS = 600, REFUS_AFFICHE_MS = 2000;
   var SNAP_MIN_MS = 600000, SNAP_BAS_MS = 1800000, SNAP_GROUPE_MS = 60000, MAINTIEN_S = 21600;
-  var QUOTA_SEUIL = 40, BULLETINS_MAX_JOUR = 150, BORNES_MAX = 8, MANCHES_MAX = 52;
+  var QUOTA_SEUIL = 40, BULLETINS_MAX_JOUR = 1500, BORNES_MAX = 8, MANCHES_MAX = 52;
+  var VOTES_TEL_MAX = 4320, PREMIER_BULLETIN_MAX = 30, TEL_PUB_MS = 60000;   // un téléphone : un vote toutes les 20 s, son cumul du jour publié au plus une fois par minute
   var IGNORE_BORNES = [], IGNORE_VOTANTS = [], IGNORE_MOTS = ["07yZUVgGnL7O", "Imx72HnuJzBb", "R55XUHOC0usO"];   // remplies à la main (section 14) ; les 3 mots de test du 24/09
   var idUrl = /^[a-z0-9]{6}$/.test(params.get("id") || "") ? params.get("id") : null;
   var simule = isTest ? params.get("simule") : null;      // "reseau", "429" ou "42908"
@@ -647,7 +699,11 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     if (!b || typeof b !== "object" || b.q !== Q || b.z !== 1 || (b.k !== "b" && b.k !== "s")) { rejet("schéma"); return null; }
     function entier(x, max) { return Number.isInteger(x) && x >= 0 && x <= max; }
     if (b.k === "b") {
-      if ((b.c !== "a" && b.c !== "i") || !/^[a-z0-9]{8}$/.test(b.v) || IGNORE_VOTANTS.indexOf(b.v) >= 0) { rejet("bulletin"); return null; }
+      if (!/^[a-z0-9]{8}$/.test(b.v) || IGNORE_VOTANTS.indexOf(b.v) >= 0) { rejet("bulletin"); return null; }
+      if (Array.isArray(b.n)) {           // cumul du téléphone pour le jour b.j
+        if (b.n.length !== 2 || !entier(b.n[0], VOTES_TEL_MAX) || !entier(b.n[1], VOTES_TEL_MAX) || b.n[0] + b.n[1] < 1 || !/^\d{4}-\d{2}-\d{2}$/.test(b.j)) { rejet("bulletin"); return null; }
+      } else if (b.c === "a" || b.c === "i") { b.n = b.c === "a" ? [1, 0] : [0, 1]; b.j = null; }   // ancien format : un vote
+      else { rejet("bulletin"); return null; }
       return b;
     }
     if (!/^\d{4}-W\d{2}$/.test(b.r) || !/^[a-z0-9]{6}$/.test(b.f) || !b.d || typeof b.d !== "object" || Array.isArray(b.d)) { rejet("instantané"); return null; }
@@ -659,9 +715,9 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     b.p = b.p && typeof b.p === "object" && !Array.isArray(b.p) ? b.p : {};
     for (var j in b.p) {
       var w = b.p[j];
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(j) || mancheDuJour(j) !== b.r || !Array.isArray(w) || w.length !== 2 || !entier(w[0], 150) || !entier(w[1], 150) || w[0] + w[1] > 150) { rejet("ligne p"); return null; }
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(j) || mancheDuJour(j) !== b.r || !Array.isArray(w) || w.length !== 2 || !entier(w[0], BULLETINS_MAX_JOUR) || !entier(w[1], BULLETINS_MAX_JOUR) || w[0] + w[1] > BULLETINS_MAX_JOUR) { rejet("ligne p"); return null; }
     }
-    if (b.h && !(/^\d{4}-W\d{2}$/.test(b.h.r) && entier(b.h.a, 1e7) && entier(b.h.i, 1e7) && b.h.a + b.h.i <= 30240 * BORNES_MAX + 150 * 7)) b.h = null;
+    if (b.h && !(/^\d{4}-W\d{2}$/.test(b.h.r) && entier(b.h.a, 1e7) && entier(b.h.i, 1e7) && b.h.a + b.h.i <= 30240 * BORNES_MAX + BULLETINS_MAX_JOUR * 7)) b.h = null;
     return b;
   }
   function rejet(raison) { rejets.n++; rejets.derniers = rejets.derniers.concat(raison).slice(-5); }
@@ -675,13 +731,19 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     if (mEv > V.r) changerManche(mEv, ev.time * 1000);                // le time d'un message est celui du serveur
     if (b.k === "b") {
       if (mEv !== V.r) return null;
-      var j = jour(ev.time * 1000), cle = j + "|" + b.v;
-      if (V.dv[cle]) return null;
+      var jSrv = jour(ev.time * 1000), j = b.j || jSrv;
+      if (j !== jSrv && j !== jour(ev.time * 1000 - 600000)) { rejet("jour du bulletin"); return null; }   // un cumul de la veille, 10 min au plus après 5 h
+      if (mancheDuJour(j) !== V.r) return null;
+      var cle = j + "|" + b.v, prec = Array.isArray(V.dv[cle]) ? V.dv[cle] : [0, 0, 0];   // dv : [android, ios, time] déjà comptés pour ce téléphone ce jour
+      var na = Math.max(prec[0], b.n[0]), ni = Math.max(prec[1], b.n[1]), da = na - prec[0], di = ni - prec[1];
+      if (!da && !di) return null;                                    // écho ou cumul déjà vu
+      var permis = prec[2] ? Math.ceil((ev.time - prec[2]) / 20) + 1 : PREMIER_BULLETIN_MAX;
+      if (da + di > permis) { rejet("hausse impossible " + b.v); return null; }
       var pj = V.pl[j] || [0, 0];
-      if (pj[0] + pj[1] >= BULLETINS_MAX_JOUR) { rejet("plafond du jour"); return null; }   // bulletins reçus ici : un faux p ne bloque rien
-      V.dv[cle] = 1; pj[b.c === "a" ? 0 : 1]++; V.pl[j] = pj;
+      if (pj[0] + pj[1] + da + di > BULLETINS_MAX_JOUR) { rejet("plafond du jour"); return null; }   // bulletins reçus ici : un faux p ne bloque rien
+      V.dv[cle] = [na, ni, ev.time]; pj[0] += da; pj[1] += di; V.pl[j] = pj;
       ecrireV();
-      return { type: "tel", c: b.c, v: b.v, jour: j, id: ev.id, direct: ev.time * 1000 >= maintenant() - 30000 };
+      return { type: "tel", c: da >= di ? "a" : "i", n: da + di, v: b.v, jour: j, id: ev.id, direct: ev.time * 1000 >= maintenant() - 30000 };
     }
     if (b.r !== V.r || mEv !== V.r) return null;
     if (IGNORE_BORNES.indexOf(b.f) >= 0) return null;                  // source ignorée : ni lignes relayées, ni p, ni h
@@ -939,7 +1001,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
       heureVue = null, rechargeVoulue = false, prochaineRecharge = 0, memoireBase = 0, wakeLock = null,
       plusN = 0, plusTimer = null, fileTuiles = 0, dernierDepart = 0, dernierMotA = 0,
       titrePlanifie = false, reouvTimer = null, fileMots = [], fileMotsTimer = null, pileGen = 0;
-  var ROT_PILE = [3, -2, 2.5], DY_PILE = [0, 16, 6];
+  var ROT_PILE = [3, -2, 2.5, -3, 1.5], DY_PILE = [0, 16, 6, 0, 10];
   var PHOTOS = [   // photos punaisées sur la borne (dossier photos/)
     { src: "photos/photo-1.webp", w: 1200, h: 800, rot: -3 },
     { src: "photos/photo-2.webp", w: 900, h: 900, rot: 2.5 }
@@ -948,7 +1010,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     if (!$.photos) return;
     $.photos.classList.remove("serre");
     var portrait = matchMedia("(orientation: portrait)").matches;
-    if (portrait && $.wall.getBoundingClientRect().bottom - $.vote.getBoundingClientRect().bottom < 150 * U) $.photos.classList.add("serre");
+    // en portrait, les photos vivent dans le mur : rien à cacher
   }
 
   function lireU() { U = $etalon.getBoundingClientRect().width / 1000 || 1; }
@@ -959,14 +1021,14 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     if (vp) vp.setAttribute("content", "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover");
     app.innerHTML = '<div class="wall">'
       + '<header class="entete"><span class="tag">Mur du bureau</span><span class="date"><span id="clock"></span><span id="alerte" hidden></span></span></header>'
-      + '<section class="dernier"><div class="carte c-j"></div></section>'
+      + '<div class="mur"><section class="dernier"><div class="carte c-j"></div></section>'
       + '<section class="pile" aria-hidden="true">'
-      + [0, 1, 2].map(function () { return '<div class="postit vide"><p class="t"></p><p class="m"></p></div>'; }).join("") + "</section>"
+      + [0, 1, 2, 3, 4].map(function () { return '<div class="postit vide"><p class="t"></p><p class="m"></p></div>'; }).join("") + "</section>"
       + (PHOTOS.length ? '<div class="photos" aria-hidden="true">' + PHOTOS.map(function (ph) {
           return '<figure class="photo" style="--rot:' + ph.rot + 'deg"><span class="punaise"></span><img src="' + ph.src + '" width="' + ph.w + '" height="' + ph.h + '" alt="" decoding="async" draggable="false"></figure>';
-        }).join("") + "</div>" : "")
+        }).join("") + "</div>" : "") + "</div>"
       + '<div class="qr-box"><div class="qr-papier"></div><span class="punaise"></span><canvas id="qr" aria-label="QR code vers la page du mur"></canvas></div>'
-      + '<div class="invite"><p class="t1">Un mot pour le bureau ?</p><p class="t2">Scanne, écris, ça se colle ici.</p><p class="t3" id="inviteVote">Tu peux aussi voter depuis ton téléphone.</p></div>'
+      + '<div class="invite"><p class="t1">Un mot pour le bureau ?</p><button type="button" class="ecrire" id="ecrire">Écrire un mot</button><p class="t2">Ou scanne le code avec ton téléphone.</p><p class="t3" id="inviteVote">Tu peux aussi voter depuis ton téléphone.</p></div>'
       + '<section class="vote" aria-labelledby="voteTitre"><h2 id="voteTitre">Android ou iOS ?</h2>' + htmlDuel(false)
       + '<p class="etat" id="etat">Touche ton camp pour voir le score.</p><p class="total" id="total"></p></section>'
       + '<p class="sr-only" role="status" id="annonce"></p></div>';
@@ -975,6 +1037,8 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     $.wall = q(".wall"); $.clock = q("#clock"); $.alerte = q("#alerte"); $.tag = q(".entete .tag");
     $.dernier = q(".dernier"); $.pile = q(".pile"); $.slots = app.querySelectorAll(".postit"); $.photos = q(".photos");
     if ($.photos) $.wall.classList.add("avec-photos");
+    $.ecrire = q("#ecrire");
+    construireModale();
     $.qrBox = q(".qr-box"); $.qrPapier = q(".qr-papier"); $.qr = q("#qr");
     $.invite = q("#inviteVote"); $.vote = q(".vote"); $.h2 = q("#voteTitre"); $.duel = q(".duel");
     $.etat = q("#etat"); $.total = q("#total");
@@ -1034,8 +1098,79 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     if (carte._id && carte._m) remplirMeta(carte.querySelector(".m"), carte._m);
     Array.prototype.forEach.call($.slots, function (s) { if (s._m) remplirMeta(s.querySelector(".m"), s._m); });
   }
+  /* --- Modale : écrire un mot sur la borne --- */
+  var modaleActivite = 0, modalePapier = "j", modaleEnvoi = false;
+  function construireModale() {
+    var papiers = [["j", "Jaune"], ["r", "Rose"], ["p", "Pêche"]].map(function (p) {
+      return '<label class="papier"><input type="radio" name="mPapier" value="' + p[0] + '" class="sr-only"' + (p[0] === "j" ? " checked" : "") + '><span class="carre c-' + p[0] + '"></span><span class="nom">' + p[1] + "</span></label>";
+    }).join("");
+    var d = document.createElement("dialog");
+    d.className = "modale"; d.setAttribute("aria-labelledby", "mTitre");
+    d.innerHTML = '<form novalidate><span class="punaise"></span><h2 id="mTitre">Colle ton mot</h2>'
+      + '<div class="ligne"><div><label class="lab" for="mNom">Ton prénom</label><input class="field" id="mNom" placeholder="Prénom" maxlength="' + MAX_NAME + '" autocomplete="off" autocapitalize="words"></div>'
+      + '<fieldset class="papiers"><legend>Ton papier</legend><div class="choix">' + papiers + "</div></fieldset></div>"
+      + '<label class="lab" for="mTexte">Ton mot</label>'
+      + '<div class="note note-j" id="mNote"><textarea id="mTexte" placeholder="Un mot, une idée, un merci" maxlength="' + MAX_TEXT + '"></textarea><span class="count" id="mCount">0 / ' + MAX_TEXT + "</span></div>"
+      + '<p class="status" id="mStatus" role="status"></p>'
+      + '<div class="actions"><button type="button" class="annuler" id="mAnnuler">Annuler</button><button type="submit" class="send" id="mEnvoyer" disabled>Coller sur le mur</button></div></form>';
+    document.body.appendChild(d);
+    frDom(d);
+    var q = function (x) { return d.querySelector(x); };
+    $.modale = d; $.mForm = q("form"); $.mNom = q("#mNom"); $.mTexte = q("#mTexte"); $.mCount = q("#mCount"); $.mStatus = q("#mStatus");
+    $.mEnvoyer = q("#mEnvoyer"); $.mNote = q("#mNote");
+    var actif = function () { modaleActivite = Date.now(); dernierAppui = Date.now(); };
+    d.addEventListener("input", actif); d.addEventListener("pointerdown", actif);
+    $.mTexte.addEventListener("input", function () {
+      $.mCount.textContent = $.mTexte.value.length + " / " + MAX_TEXT;
+      $.mEnvoyer.disabled = modaleEnvoi || !$.mTexte.value.trim();
+    });
+    d.querySelectorAll('input[name="mPapier"]').forEach(function (i) {
+      i.addEventListener("change", function () { if (i.checked) { modalePapier = i.value; $.mNote.className = "note note-" + i.value; } });
+    });
+    q("#mAnnuler").addEventListener("click", fermerModale);
+    d.addEventListener("cancel", function (e) { e.preventDefault(); fermerModale(); });
+    $.mForm.addEventListener("submit", envoyerMotBorne);
+    $.ecrire.addEventListener("click", ouvrirModale);
+  }
+  function ouvrirModale() {
+    if (!$.modale || $.modale.open) return;
+    $.mNom.value = ""; $.mTexte.value = ""; $.mCount.textContent = "0 / " + MAX_TEXT; $.mStatus.textContent = ""; $.mStatus.className = "status";
+    $.mEnvoyer.disabled = true; modaleEnvoi = false;
+    modalePapier = "j"; $.mNote.className = "note note-j";
+    $.modale.querySelectorAll('input[name="mPapier"]').forEach(function (i) { i.checked = i.value === "j"; });
+    modaleActivite = Date.now(); dernierAppui = Date.now();
+    $.modale.showModal();
+    $.mTexte.focus();
+  }
+  function fermerModale() {
+    if (!$.modale || !$.modale.open) return;
+    $.modale.close();
+    $.mTexte.value = ""; $.mNom.value = "";
+    if (document.activeElement) document.activeElement.blur();
+  }
+  function veilleModale() {               // un passant parti sans fermer : la modale se ferme seule après une minute
+    if ($.modale && $.modale.open && !modaleEnvoi && Date.now() - modaleActivite > 60000) fermerModale();
+  }
+  function envoyerMotBorne(e) {
+    e.preventDefault();
+    var n = $.mNom.value.trim().slice(0, MAX_NAME), t = $.mTexte.value.trim().slice(0, MAX_TEXT);
+    if (!t || modaleEnvoi) return;
+    modaleEnvoi = true; $.mEnvoyer.disabled = true;
+    $.mStatus.className = "status"; $.mStatus.textContent = fr("Ça part…");
+    publier(T_MOTS, JSON.stringify({ n: n, t: t, c: modalePapier })).then(function (res) {
+      modaleEnvoi = false; modaleActivite = Date.now();
+      if (res.ok) {
+        $.mStatus.textContent = fr("Collé sur le mur !");
+        setTimeout(function () { fermerModale(); onLigne(res.msg); }, 700);   // le flux le renverra : même id, ignoré
+        return;
+      }
+      $.mStatus.className = "status err";
+      $.mStatus.textContent = fr(res.status === 429 && res.code === 42908 ? "Le mur est plein pour aujourd'hui. Il rouvre cette nuit à " + heureReouverture() + " h." : "Ça n'est pas parti. Réessaie.");
+      $.mEnvoyer.disabled = !$.mTexte.value.trim();
+    });
+  }
   function capacitePile() {
-    if (matchMedia("(orientation: portrait)").matches) return 2;
+    if (matchMedia("(orientation: portrait)").matches) return 5;
     var etroit = matchMedia("(max-aspect-ratio: 3/2)").matches;
     if ($.photos) return etroit ? 0 : 1;
     return etroit ? 2 : 3;
@@ -1369,6 +1504,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
   }
   function tache250() {
     var now = performance.now();
+    veilleModale();
     if (etat === "resultat") {
       if (now >= finVerrou) { reouvrir(); return; }
       var n = Math.ceil((finVerrou - now) / 1000);
@@ -1398,7 +1534,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
   /* --- Votes reçus du réseau --- */
   function borneChangement(ch) {
     var t = totaux();
-    if (ch.type === "tel" && ch.direct) { plusUn(ch.c); }
+    if (ch.type === "tel" && ch.direct) { plusUn(ch.c, ch.n || 1); }
     if (etat === "ouvert") {
       majTotal(true);
       if (ch.type === "tel" && ch.direct) tuile(ch.c, function () {
@@ -1442,8 +1578,8 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
         .onfinish = function () { el.remove(); fileTuiles--; arrivee(); };
     }, attente);
   }
-  function plusUn(c) {
-    plusN++;
+  function plusUn(c, n) {
+    plusN += n || 1;
     var txt = plusN === 1 ? "+1 " + nomCamp(c) + ", depuis un téléphone" : "+" + plusN + " voix depuis des téléphones";
     fonduTexte($.invite, fr(txt), true);
     clearTimeout(plusTimer);
@@ -1457,7 +1593,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
   }
 
   /* --- Maintenance --- */
-  function calme() { return etat !== "resultat" && Date.now() - dernierAppui >= 60000 && !publicationEnCours; }
+  function calme() { return etat !== "resultat" && Date.now() - dernierAppui >= 60000 && !publicationEnCours && !($.modale && $.modale.open); }
   function essayerRecharge(quotidien) {
     prochaineRecharge = Date.now() + 300000;
     fetch(location.href, { cache: "no-store" }).then(function (r) {
@@ -1537,6 +1673,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     construireBorne();
     lireU();
     calerPied(); calerPhotos();
+    if (modeLecture) $.ecrire.hidden = true;
     avantCourant = totaux();
     rendreMur();
     rendreVote();
@@ -1556,6 +1693,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     document.addEventListener("pointerdown", function () { dernierAppui = Date.now(); }, true);
     document.addEventListener("keydown", function (e) {
       dernierAppui = Date.now();
+      if ($.modale && $.modale.open) { modaleActivite = Date.now(); return; }
       if (lire("remote", false) !== true) { ecrire("remote", true); if (etat === "lecture") majEtatLigne(); }
       if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); surClic("a"); }
       else if (e.key === "ArrowRight" || e.key === "PageDown") { e.preventDefault(); surClic("i"); }
@@ -1588,16 +1726,11 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
 
   /* ================= Téléphone ================= */
   var T = {};
-  var etatTel = "OUVERT", monV = null, envoi = null, douteux = false, fermeJour = null, voteMoi = null,
-      ouvertJusqua = 0, aVoteVisite = false, avantTel = { A: 0, I: 0 }, occupeTimer = null, miens = [], papier = "j", motEnCours = false;
-  var RESULTATS_TEL = { FAIT: 1, DEJA: 1, FERME: 1 };
-  var TEXTES_TEL = {
-    OUVERT: "", ENVOI: "Ça part…",
-    FERME: "Le vote en ligne rouvre demain. Vote sur la borne, dans le couloir.",
-    ERREUR: "Pas de réseau, ton vote n'est pas parti.",
-    ECHEC: "Ton vote n'est pas parti. Réessaie.",
-    OCCUPE: "Trop de monde en même temps. Réessaie dans une minute."
-  };
+  var etatTel = "OUVERT", monV = null, fermeJour = null, moi = null, finTel = 0, telTimer = null, dernierCamp = null,
+      pubTel = { enCours: false, derniere: 0, pause: 0, minuteur: null },
+      ouvertJusqua = 0, avantTel = { A: 0, I: 0 }, miens = [], papier = "j", motEnCours = false;
+  var RESULTATS_TEL = { RESULTAT: 1, FERME: 1 };
+  var TEXTES_TEL = { OUVERT: "", FERME: "Le vote en ligne rouvre demain. Vote sur la borne, dans le couloir." };
   function construireTel() {
     var h = location.hash === "#v";
     var papiers = [["j", "Jaune"], ["r", "Rose"], ["p", "Pêche"]].map(function (p) {
@@ -1614,7 +1747,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
       + '<button type="submit" class="send" id="send" disabled>Coller sur le mur</button></form>'
       + '<p class="status" id="status" role="status"></p>';
     var vote = '<section class="vote-tel" id="v" aria-labelledby="vt"><h2 id="vt" tabindex="-1">Android ou iOS ?</h2>'
-      + '<p class="aide" id="aide">Un vote par téléphone et par jour. Le score s\'affiche après ton vote.</p>' + htmlDuel(true)
+      + '<p class="aide" id="aide">Un vote toutes les 20 s. Le score s\'affiche après ton vote.</p>' + htmlDuel(true)
       + '<p class="etat" id="etatTel" role="status"><span id="etatTxt"></span><span class="sr-only" id="etatScore"></span></p>'
       + '<p class="source" id="source" hidden></p>'
       + '<p class="direct"><span id="directTxt" tabindex="-1">En direct</span> <button type="button" id="actualiser" hidden>Actualiser</button></p></section>';
@@ -1665,7 +1798,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     lireVersionEnLigne(function (v) { if (v !== VERSION) versionTel = v; });
   }
   function rechargerTelSiCalme() {
-    if (!versionTel || document.hidden || motEnCours || etatTel === "ENVOI") return;
+    if (!versionTel || document.hidden || motEnCours || pubTel.enCours || etatTel === "RESULTAT") return;
     var a = document.activeElement;
     if (T.text.value.trim() || (a && (a.tagName === "INPUT" || a.tagName === "TEXTAREA"))) return;
     location.reload();
@@ -1711,32 +1844,32 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
   }
 
   function aujourdhui() { return jour(maintenant()); }
-  function doutePour() { return douteux && envoi && envoi.j === aujourdhui() ? envoi.c : null; }
+  function moiDuJour() {                  // cumul local des votes de ce téléphone aujourd'hui ; pa, pi : cumul déjà publié
+    var j = aujourdhui();
+    if (!moi || moi.j !== j) { moi = { j: j, a: 0, i: 0, pa: 0, pi: 0 }; ecrire("vote.tel", moi); }
+    return moi;
+  }
+  function enAttenteTel() {               // votes de ce téléphone pas encore comptés par le réducteur
+    var m = moiDuJour(), app = V && monV && Array.isArray(V.dv[m.j + "|" + monV]) ? V.dv[m.j + "|" + monV] : [0, 0];
+    return { A: Math.max(0, m.a - app[0]), I: Math.max(0, m.i - app[1]) };
+  }
+  function totauxTel() { var t = totaux(), e = enAttenteTel(); return { A: t.A + e.A, I: t.I + e.I }; }
   function texteEtatTel() {
-    if (etatTel === "FAIT" || etatTel === "DEJA") return "Tu as voté " + nomCamp(voteMoi ? voteMoi.c : "a") + " aujourd'hui. Tu pourras revoter demain, ou sur la borne du couloir.";
-    if (etatTel === "DOUTE") return "Pas de réponse. Touche " + nomCamp(envoi ? envoi.c : "a") + " pour réessayer, ton vote ne comptera qu'une fois.";
+    if (etatTel === "RESULTAT") return "Prochain vote dans " + Math.max(1, Math.ceil((finTel - Date.now()) / 1000)) + " s";
     return TEXTES_TEL[etatTel] || "";
   }
   function rendreVoteTel(garderFill) {
     if (!T.duel) return;
-    var d = T.duel._r, t = totaux(), enRes = !!RESULTATS_TEL[etatTel];
+    var d = T.duel._r, t = totauxTel(), enRes = !!RESULTATS_TEL[etatTel];
     transitions(d.repos, ""); transitions(d.res, ""); transitions(d.traits, "");
-    if (!garderFill) { transitions([d.fillA, d.fillI], ""); [d.fillA, d.fillI].forEach(function (f) { f.classList.remove("appui"); f.style.transform = ""; }); }
+    if (!garderFill) { transitions([d.fillA, d.fillI], ""); [d.fillA, d.fillI].forEach(function (f) { f.classList.remove("appui", "eteint"); f.style.transform = ""; }); }
     T.duel.classList.toggle("res", enRes);
     rendreDuel(T.duel, t, enRes, 0, "linear", 0);
     poserTranches(T.duel, enRes ? 0 : 3);
-    var tc = (etatTel === "FAIT" || etatTel === "DEJA") && voteMoi ? voteMoi.c : null;
+    var tc = etatTel === "RESULTAT" ? dernierCamp : null;
     d.tpA.hidden = tc !== "a"; d.tpI.hidden = tc !== "i";
     T.vt.textContent = fr(enRes ? (titre(t, avantTel) || QUESTION) : QUESTION);
-    // pavés
-    var dc = doutePour();
-    [d.padA, d.padI].forEach(function (b) {
-      var c = b.getAttribute("data-c"), f = c === "a" ? d.fillA : d.fillI;
-      b.disabled = enRes; b.removeAttribute("aria-disabled"); f.classList.remove("eteint");
-      if (enRes) return;
-      if (etatTel === "ENVOI" || etatTel === "OCCUPE") b.setAttribute("aria-disabled", "true");
-      else if (dc && c !== dc) { b.setAttribute("aria-disabled", "true"); f.classList.add("eteint"); }
-    });
+    [d.padA, d.padI].forEach(function (b) { b.disabled = enRes; b.removeAttribute("aria-disabled"); });
     T.aide.hidden = enRes;
     T.etatTxt.textContent = fr(texteEtatTel());
     T.etatScore.textContent = enRes ? fr(" " + resume(t)) : "";
@@ -1763,53 +1896,73 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     majDirect();
   }
   function allerEtatTel(e, garderFill) { etatTel = e; rendreVoteTel(garderFill); }
-  function voterTel(c) {
-    if (!navigator.onLine) { allerEtatTel("ERREUR"); return; }
+  function voterTel(c) {                  // un vote toutes les 20 s, compté tout de suite ici, publié en cumul
+    if (etatTel !== "OUVERT") return;
     if (!monV) { monV = hasard(8); ecrire("voter", monV); }
-    envoi = { j: aujourdhui(), c: c }; ecrire("vote.envoi", envoi);
-    allerEtatTel("ENVOI");
-    var d = T.duel._r, f = c === "a" ? d.fillA : d.fillI, r = c === "a" ? -1.5 : 1.5;
-    if (!reduit.matches) { f.style.transition = "transform 120ms " + EASE_OUT; f.style.transform = "translateY(-8px) rotate(" + (r - 3) + "deg)"; }
-    publier(T_VOTE, JSON.stringify({ t: "", k: "b", q: Q, c: c, v: monV, z: 1 })).then(function (res) {
+    avantTel = totauxTel();
+    var m = moiDuJour(); if (c === "a") m.a++; else m.i++; ecrire("vote.tel", m);
+    dernierCamp = c; finTel = Date.now() + LOCK_MS;
+    ouvertJusqua = Date.now() + 300000; gererFluxTel();
+    faitTel(c, true);
+    clearInterval(telTimer); telTimer = setInterval(tickTel, 250);
+    planifierPubTel();
+  }
+  function tickTel() {
+    if (etatTel !== "RESULTAT") { clearInterval(telTimer); return; }
+    if (Date.now() >= finTel) {
+      clearInterval(telTimer);
+      var avaitFocus = T.duel.contains(document.activeElement) || document.activeElement === T.vt;
+      allerEtatTel(fermeJour === aujourdhui() ? "FERME" : "OUVERT");
+      if (avaitFocus && etatTel === "OUVERT") T.duel._r.padA.focus();
+      return;
+    }
+    var txt = fr(texteEtatTel()); if (T.etatTxt.textContent !== txt) T.etatTxt.textContent = txt;
+  }
+  function planifierPubTel() {            // le cumul du jour part au plus une fois par minute (quota de 250 messages par jour)
+    clearTimeout(pubTel.minuteur);
+    var m = moiDuJour();
+    if (!monV || pubTel.enCours || (m.a === m.pa && m.i === m.pi) || fermeJour === aujourdhui()) return;
+    var dans = Math.max(pubTel.derniere + TEL_PUB_MS, pubTel.pause) - Date.now();
+    pubTel.minuteur = setTimeout(publierTel, Math.max(0, dans));
+  }
+  function corpsTel(m) { return JSON.stringify({ t: "", k: "b", q: Q, z: 1, v: monV, j: m.j, n: [m.a, m.i] }); }
+  function publierTel() {
+    var m = moiDuJour();
+    if (!monV || pubTel.enCours || (m.a === m.pa && m.i === m.pi)) return;
+    pubTel.enCours = true; pubTel.derniere = Date.now();
+    var n = [m.a, m.i], j = m.j;
+    publier(T_VOTE, corpsTel(m)).then(function (res) {
+      pubTel.enCours = false;
       if (res.ok) {
-        effacer("vote.envoi"); douteux = false;
-        if (etatTel === "FAIT") return;                 // déjà confirmé par le flux, animation jouée
-        var msg = res.msg;
-        if (!V) V = nouvelEtat(null, manche(msg.time * 1000));
-        avantTel = totaux();
-        appliquer(msg);
-        faitTel(c, msg.id, jour(msg.time * 1000), true);
-        return;
-      }
-      if (res.status > 0) { if (!douteux) effacer("vote.envoi"); }
-      if (etatTel !== "ENVOI") return;
-      if (res.status === 0) { douteux = true; allerEtatTel("DOUTE", true); }
-      else if (res.status === 429 && res.code === 42908) { fermeJour = aujourdhui(); avantTel = totaux(); allerEtatTel("FERME", true); }
-      else if (res.status === 429 && (res.code === 42901 || res.code === 42903 || res.code === 42905)) {
-        allerEtatTel("OCCUPE", true);
-        clearTimeout(occupeTimer);
-        occupeTimer = setTimeout(function () { if (etatTel === "OCCUPE") allerEtatTel(doutePour() ? "DOUTE" : "OUVERT"); }, 60000);
-      } else allerEtatTel("ECHEC", true);
-      retourFill(f);
+        if (moi && moi.j === j) { moi.pa = Math.max(moi.pa, n[0]); moi.pi = Math.max(moi.pi, n[1]); ecrire("vote.tel", moi); }
+        if (!V) V = nouvelEtat(null, manche(res.msg.time * 1000));
+        appliquer(res.msg);                                   // le flux le renverra : même id, ignoré
+        if (RESULTATS_TEL[etatTel]) majScoreTel(0);
+      } else if (res.status === 429 && res.code === 42908) {
+        fermeJour = aujourdhui(); if (etatTel === "OUVERT") allerEtatTel("FERME");
+      } else if (res.status >= 400) pubTel.pause = Date.now() + 600000;   // rejet : dix minutes sans publier
+      planifierPubTel();                                      // pas de réponse : nouvel essai à la minute suivante
     });
+  }
+  function balise() {                     // page quittée avec des votes pas encore partis
+    var m = moi;
+    if (!m || !monV || pubTel.enCours || (m.a === m.pa && m.i === m.pi) || m.j !== aujourdhui() || (isTest && simule) || !navigator.sendBeacon) return;
+    if (navigator.sendBeacon(NTFY + T_VOTE, corpsTel(m))) { m.pa = m.a; m.pi = m.i; ecrire("vote.tel", m); pubTel.derniere = Date.now(); }
   }
   function retourFill(f) {
     f.classList.remove("appui");
     if (reduit.matches) { f.style.transition = ""; f.style.transform = ""; return; }
     f.style.transition = "transform 400ms " + EASE_DROP + ", opacity 400ms linear"; f.style.transform = "";
   }
-  function faitTel(c, id, j, anime) {
+  function faitTel(c, anime) {
     var avaitFocus = T.duel.contains(document.activeElement);
-    voteMoi = { j: j, c: c, id: id }; ecrire("vote.moi", voteMoi);
-    aVoteVisite = true; ouvertJusqua = Date.now() + 120000;
     var d = T.duel._r, f = c === "a" ? d.fillA : d.fillI, r = reduit.matches;
-    etatTel = "FAIT";
-    if (anime && navigator.vibrate) { try { navigator.vibrate(30); } catch (e) {} }   // vote parti (11.3), mouvement réduit compris
+    etatTel = "RESULTAT";
+    if (anime && navigator.vibrate) { try { navigator.vibrate(30); } catch (e) {} }
     if (!anime || r) {
       rendreVoteTel();
       if (anime && r) T.duel.animate([{ opacity: .4 }, { opacity: 1 }], { duration: 150 });
     } else {
-      // 11.3 : vote parti
       arracher(T.duel, c);
       f.style.transition = "none"; f.style.transform = ""; f.classList.remove("appui"); void f.offsetWidth;
       poserTranches(T.duel, 0);
@@ -1818,13 +1971,12 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
       transitions(d.traits, "opacity 200ms linear 120ms");
       transitions(d.res, "opacity 200ms linear 300ms");
       T.duel.classList.add("res");
-      var t = totaux();
+      var t = totauxTel();
       rendreDuel(T.duel, t, true, 600, EASE_OUT, 120, 400, 300);
       var tp = c === "a" ? d.tpA : d.tpI, r0 = c === "a" ? "rotate(-14deg)" : "rotate(12deg)", r1 = c === "a" ? "rotate(-9deg)" : "rotate(7deg)";
       d.tpA.hidden = c !== "a"; d.tpI.hidden = c !== "i";
       tp.animate([{ transform: "scale(1.6) " + r0, opacity: 0 }, { transform: "scale(1) " + r1, opacity: .92 }], { duration: 140, delay: 500, easing: EASE_IN, fill: "backwards" });
       [d.padA, d.padI].forEach(function (b) { b.disabled = true; b.removeAttribute("aria-disabled"); });
-      d.fillA.classList.remove("eteint"); d.fillI.classList.remove("eteint");
       T.aide.hidden = true;
       T.vt.textContent = fr(titre(t, avantTel) || QUESTION);
       T.etatTxt.textContent = fr(texteEtatTel());
@@ -1833,29 +1985,26 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     }
     if (avaitFocus) T.vt.focus();
   }
-  function telChangement(ch) {
-    if (ch.type === "tel" && ch.v === monV && ch.jour === aujourdhui() && etatTel !== "FAIT" && etatTel !== "DEJA") {
-      effacer("vote.envoi"); douteux = false;
-      avantTel = ch.avant;
-      faitTel(ch.c, ch.id, ch.jour, etatTel === "ENVOI");
-      return;
-    }
-    if (!RESULTATS_TEL[etatTel]) return;
-    avantTel = ch.enDirect ? ch.avant : totaux();   // un message rejoué n'est pas un changement vu par la personne
-    var t = totaux();
-    rendreDuel(T.duel, t, true, reduit.matches ? 0 : 400, EASE_OUT, 0);
+  function majScoreTel(ms) {
+    var t = totauxTel();
+    rendreDuel(T.duel, t, true, ms, EASE_OUT, 0);
     T.vt.textContent = fr(titre(t, avantTel) || QUESTION);
     T.etatScore.textContent = fr(" " + resume(t));
     majSource();
   }
+  function telChangement(ch) {
+    if (!RESULTATS_TEL[etatTel]) return;
+    if (ch.type === "tel" && ch.v === monV) { majScoreTel(0); return; }   // son propre cumul : le score affiché ne change pas
+    avantTel = ch.enDirect ? ch.avant : totauxTel();   // un message rejoué n'est pas un changement vu par la personne
+    majScoreTel(reduit.matches ? 0 : 400);
+  }
   function lendemainTel() {
-    var j = aujourdhui(), perime = douteux && envoi && envoi.j !== j && etatTel !== "ENVOI";
-    if (perime) { douteux = false; envoi = null; effacer("vote.envoi"); }   // camp douteux de la veille : la règle ne vaut plus
-    if (perime && etatTel !== "DOUTE") rendreVoteTel();
-    if (((etatTel === "FAIT" || etatTel === "DEJA") && voteMoi && voteMoi.j !== j) || (etatTel === "FERME" && fermeJour !== j) || (etatTel === "DOUTE" && !doutePour())) {
-      aVoteVisite = false; ouvertJusqua = Date.now() + 300000;
-      allerEtatTel(doutePour() ? "DOUTE" : "OUVERT");
-      compte().then(function (n) { if (etatTel === "OUVERT" && n !== null && n < QUOTA_SEUIL) { fermeJour = aujourdhui(); avantTel = totaux(); allerEtatTel("FERME"); } });
+    var j = aujourdhui();
+    moiDuJour();
+    if (etatTel === "FERME" && fermeJour !== j) {
+      ouvertJusqua = Date.now() + 300000;
+      allerEtatTel("OUVERT");
+      compte().then(function (n) { if (etatTel === "OUVERT" && n !== null && n < QUOTA_SEUIL) { fermeJour = aujourdhui(); avantTel = totauxTel(); allerEtatTel("FERME"); } });
       gererFluxTel();
     }
   }
@@ -1883,12 +2032,11 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
 
     // vote
     monV = lire("voter", null); if (typeof monV !== "string" || !/^[a-z0-9]{8}$/.test(monV)) monV = null;
-    envoi = lire("vote.envoi", null); if (!envoi || typeof envoi !== "object") envoi = null;
-    voteMoi = lire("vote.moi", null); if (!voteMoi || typeof voteMoi !== "object") voteMoi = null;
-    var j = aujourdhui();
-    if (voteMoi && voteMoi.j === j) etatTel = "DEJA";
-    else if (envoi && envoi.j === j) { douteux = true; etatTel = "DOUTE"; }
-    else etatTel = "OUVERT";
+    moi = lire("vote.tel", null);
+    if (!moi || typeof moi !== "object" || [moi.a, moi.i, moi.pa, moi.pi].some(function (x) { return !Number.isInteger(x) || x < 0; })) moi = null;
+    moiDuJour();
+    effacer("vote.envoi"); effacer("vote.moi");   // ancien vote à un bulletin par jour
+    etatTel = "OUVERT";
     rendreVoteTel();
     var d = T.duel._r;
     [d.padA, d.padI].forEach(function (b) {
@@ -1912,7 +2060,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
       });
     });
     T.actualiser.addEventListener("click", function () { ouvertJusqua = Date.now() + 120000; gererFluxTel(); });
-    var interaction = function () { if (!aVoteVisite) ouvertJusqua = Date.now() + 300000; gererFluxTel(); };
+    var interaction = function () { ouvertJusqua = Date.now() + 300000; gererFluxTel(); };
     document.addEventListener("pointerdown", interaction, true);
     document.addEventListener("keydown", interaction, true);
     document.addEventListener("visibilitychange", function () { if (!document.hidden) lendemainTel(); gererFluxTel(); });
@@ -1923,9 +2071,12 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     flux = Flux(onLigne, function () { majDirect(); }, since);
     ouvertJusqua = Date.now() + 300000;
     gererFluxTel();
-    if (etatTel !== "DEJA") compte().then(function (n) {
-      if (etatTel === "OUVERT" && n !== null && n < QUOTA_SEUIL) { fermeJour = aujourdhui(); avantTel = totaux(); allerEtatTel("FERME"); }
+    compte().then(function (n) {
+      if (etatTel === "OUVERT" && n !== null && n < QUOTA_SEUIL) { fermeJour = aujourdhui(); avantTel = totauxTel(); allerEtatTel("FERME"); }
     });
+    planifierPubTel();                    // cumul resté en attente d'une visite précédente
+    document.addEventListener("visibilitychange", function () { if (document.hidden) balise(); });
+    addEventListener("pagehide", balise);
     setInterval(function () { gererFluxTel(); lendemainTel(); majSource(); rechargerTelSiCalme(); }, 5000);
     setInterval(majAgesTel, 30000);
     setInterval(versionTelDispo, 120000);
@@ -1955,7 +2106,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
         l.push("rejets " + rejets.n + (rejets.derniers.length ? " : " + rejets.derniers.join(" / ") : ""));
         var hd = hauteursDuel(); if (hd) l.push("duel au sol : " + hd);
       } else {
-        l.push("vote " + etatTel + (douteux ? " (douteux)" : "") + " ; flux " + etatFlux);
+        l.push("vote " + etatTel + " ; cumul " + (moi ? moi.a + "/" + moi.i + " publié " + moi.pa + "/" + moi.pi : "aucun") + " ; flux " + etatFlux);
         l.push("horloge sûre : " + (horlogeSure ? "oui" : "non") + " ; décalage " + decalage + " ms");
         l.push("totaux A " + t.A + " I " + t.I + " ; rejets " + rejets.n + (rejets.derniers.length ? " : " + rejets.derniers.join(" / ") : ""));
       }
@@ -2004,7 +2155,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
       appliquer(bul(T0, "a", "k3f9x2qa", { z: 2 })); appliquer(bul(T0, "x", "k3f9x2qa")); appliquer(bul(T0, "a", "ABC")); appliquer(bul(T0, "a", "k3f9x2qa", { q: "autre" }));
       ok(tot(), [0, 0]); ok(rejets.n, 4, "rejets");
     });
-    cas(7, function (ok) { for (var i = 0; i < 151; i++) appliquer(bul(T0, "a", ("v" + (1000000 + i)).slice(0, 8))); ok(tot(), [150, 0]); });
+    cas(7, function (ok) { for (var i = 0; i <= BULLETINS_MAX_JOUR; i++) appliquer(bul(T0, "a", ("v" + (1000000 + i)).slice(0, 8))); ok(tot(), [BULLETINS_MAX_JOUR, 0]); });
     cas(8, function (ok) {
       appliquer(snap(T0, { bbbbbb: [5, 3] })); ok(tot(), [5, 3]);
       appliquer(snap(T0, { bbbbbb: [5, 3] })); ok(tot(), [5, 3], "rejoué");
@@ -2071,8 +2222,9 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
       appliquer(snap(T0, d)); ok(rejets.derniers[rejets.derniers.length - 1], "borne en trop"); ok(tot(), [7, 0]);
     });
     cas(25, function (ok) {
-      appliquer(snap(T0, {}, { f: "cccccc", p: { "2026-09-25": [150, 0] } })); appliquer(snap(T0 + 1, {}, { f: "cccccc", p: { "2026-09-25": [0, 150] } }));
-      ok(pEffectif()["2026-09-25"], [150, 0]); ok(rejets.n, 1, "rejets");
+      var M = BULLETINS_MAX_JOUR;
+      appliquer(snap(T0, {}, { f: "cccccc", p: { "2026-09-25": [M, 0] } })); appliquer(snap(T0 + 1, {}, { f: "cccccc", p: { "2026-09-25": [0, M] } }));
+      ok(pEffectif()["2026-09-25"], [M, 0]); ok(rejets.n, 1, "rejets");
     });
     cas(26, function (ok) {
       var h = { r: "2026-W38", a: 40, i: 30 };
@@ -2101,10 +2253,20 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
       ok(tot(), [0, 0]); ok(/^p futur/.test(rejets.derniers[rejets.derniers.length - 1]), true, "raison");
     });
     cas(32, function (ok) {              // p d'une source ignorée retiré, plafond sur les bulletins reçus ici
-      appliquer(snap(T0, {}, { f: "zzzzzz", p: { "2026-09-25": [0, 150] } })); ok(tot(), [0, 150]);
-      appliquer(bul(T0 + 30, "a", "vraiv001")); ok(tot(), [1, 149], "bulletin compté malgré le faux p");
+      var M = BULLETINS_MAX_JOUR;
+      appliquer(snap(T0, {}, { f: "zzzzzz", p: { "2026-09-25": [0, M] } })); ok(tot(), [0, M]);
+      appliquer(bul(T0 + 30, "a", "vraiv001")); ok(tot(), [1, M - 1], "bulletin compté malgré le faux p");
       IGNORE_BORNES = ["zzzzzz"]; ok(tot(), [1, 0], "source ignorée");
-      appliquer(snap(T0 + 60, {}, { f: "zzzzzz", p: { "2026-09-25": [0, 150] } })); ok(tot(), [1, 0], "nouveau message ignoré");
+      appliquer(snap(T0 + 60, {}, { f: "zzzzzz", p: { "2026-09-25": [0, M] } })); ok(tot(), [1, 0], "nouveau message ignoré");
+    });
+    cas(39, function (ok) {              // cumul d'un téléphone : fusion par maximum, écho ignoré, hausse impossible refusée
+      appliquer(bul(T0, "a", "cumul001", { c: undefined, j: "2026-09-25", n: [1, 0] })); ok(tot(), [1, 0], "premier cumul");
+      appliquer(bul(T0 + 60, "a", "cumul001", { c: undefined, j: "2026-09-25", n: [3, 1] })); ok(tot(), [3, 1], "cumul suivant");
+      appliquer(bul(T0 + 61, "a", "cumul001", { c: undefined, j: "2026-09-25", n: [3, 1] })); ok(tot(), [3, 1], "même cumul");
+      appliquer(bul(T0 + 62, "a", "cumul001", { c: undefined, j: "2026-09-25", n: [2, 0] })); ok(tot(), [3, 1], "cumul plus bas");
+      appliquer(bul(T0 + 80, "a", "cumul001", { c: undefined, j: "2026-09-25", n: [20, 1] })); ok(tot(), [3, 1], "hausse impossible");
+      appliquer(bul(T0 + 90, "i", "ancien01")); appliquer(bul(T0 + 95, "i", "ancien01")); ok(tot(), [3, 2], "ancien format : un vote");
+      appliquer(bul(T0 + 100, "a", "cumul002", { c: undefined, j: "2026-09-20", n: [1, 0] })); ok(tot(), [3, 2], "jour faux");
     });
     cas(33, function (ok) {              // un bulletin reçu après un instantané s'ajoute à son p
       appliquer(snap(T0, {}, { p: { "2026-09-25": [3, 1] } })); appliquer(bul(T0 + 10, "a", "k3f9x2qa")); ok(tot(), [4, 1]);
