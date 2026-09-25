@@ -186,6 +186,12 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
 .photo .punaise { top: calc(-14 * var(--u)); }
 .photos.serre { visibility: hidden; }
 .mur { display: contents; }
+.bas-vote { display: flex; align-items: center; justify-content: space-between; gap: calc(24 * var(--u)); min-width: 0; }
+.voir { flex: none; min-height: calc(64 * var(--u)); padding: 0 calc(28 * var(--u)); background: var(--white); color: var(--fg); border: calc(3 * var(--u)) solid var(--fg); border-radius: 999px; font: 600 calc(26 * var(--u))/1 var(--sans); -webkit-tap-highlight-color: transparent; }
+.voir[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+.voir:focus-visible { outline: calc(4 * var(--u)) solid var(--fg); outline-offset: calc(4 * var(--u)); }
+.voir-tel { align-self: center; min-height: 44px; padding: 0 18px; background: transparent; color: var(--fg); border: 2px solid var(--fg); border-radius: 999px; font: 600 15px/1 var(--sans); cursor: pointer; }
+.voir-tel[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
 .invite .ecrire { align-self: flex-start; display: inline-flex; align-items: center; min-height: calc(96 * var(--u)); padding: 0 calc(44 * var(--u)); margin: calc(6 * var(--u)) 0; background: var(--red); color: var(--fg); border: 0; border-radius: 999px;
   font: 700 calc(40 * var(--u))/1 var(--sans); box-shadow: 0 calc(8 * var(--u)) 0 var(--red-dark); -webkit-tap-highlight-color: transparent; transition: transform .1s, box-shadow .1s; }
 .invite .ecrire:active { transform: translateY(calc(6 * var(--u))); box-shadow: 0 calc(2 * var(--u)) 0 var(--red-dark); }
@@ -251,7 +257,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
 @media (orientation: portrait) {
   .wall { padding: calc(48 * var(--u)) calc(56 * var(--u)); column-gap: calc(40 * var(--u)); row-gap: calc(24 * var(--u));
     grid-template-columns: calc(280 * var(--u)) minmax(0, 1fr);
-    grid-template-rows: calc(64 * var(--u)) minmax(0, 1fr) calc(280 * var(--u)) calc(502 * var(--u)) minmax(0, var(--pied, 0px));
+    grid-template-rows: calc(64 * var(--u)) minmax(0, 1fr) calc(280 * var(--u)) calc(530 * var(--u)) minmax(0, var(--pied, 0px));
     grid-template-areas: "entete entete" "mur mur" "qr invite" "vote vote" "pied pied"; }
   .mur { grid-area: mur; display: grid; min-height: 0; row-gap: calc(24 * var(--u));
     grid-template-columns: calc(400 * var(--u)) calc(28 * var(--u)) calc(172 * var(--u)) calc(32 * var(--u)) calc(56 * var(--u)) calc(20 * var(--u)) minmax(0, 1fr);
@@ -295,6 +301,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     grid-template-areas: "entete qr invite" "dernier qr invite" "dernier vote vote" "pile vote vote" "pile pied pied"; }
   .pile .postit:nth-child(n+4) { display: none; }
   .wall.avec-photos .pile .postit:nth-child(n+2) { display: none; }
+  .vote h2 { margin-bottom: calc(12 * var(--u)); } .vote .duel { margin-bottom: calc(16 * var(--u)); } .vote .etat { margin-bottom: calc(8 * var(--u)); }
 }
 @media (orientation: landscape) and (max-aspect-ratio: 3/2) {
   .wall { grid-template-columns: minmax(0, 1fr) calc(320 * var(--u)) calc(300 * var(--u)); }
@@ -323,7 +330,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
 <script>
 (function () {
   /* ================= Constantes et paramètres ================= */
-  var VERSION = "2026-09-25.3";          // à incrémenter à chaque mise en ligne, relu par la borne
+  var VERSION = "2026-09-25.4";          // à incrémenter à chaque mise en ligne, relu par la borne
   var NTFY = "https://ntfy.sh/";
   var Q = "os";
   var params = new URLSearchParams(location.search);
@@ -337,10 +344,10 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
   var T_VOTE = "mur-bureau-85683771c9-vote" + SUFFIXE;
   var PAGE_URL = location.origin + location.pathname + (isTest ? "?test" : "");
   var MAX_TEXT = 200, MAX_NAME = 24;
-  var LOCK_MS = 20000, DOUBLE_APPUI_MS = 1000, REFUS_ESPACE_MS = 600, REFUS_AFFICHE_MS = 2000;
+  var VOTE_S = 10, LOCK_MS = VOTE_S * 1000, D_MAX = 7 * 86400 / VOTE_S, DOUBLE_APPUI_MS = 1000, REFUS_ESPACE_MS = 600, REFUS_AFFICHE_MS = 2000;
   var SNAP_MIN_MS = 600000, SNAP_BAS_MS = 1800000, SNAP_GROUPE_MS = 60000, MAINTIEN_S = 21600;
   var QUOTA_SEUIL = 40, BULLETINS_MAX_JOUR = 1500, BORNES_MAX = 8, MANCHES_MAX = 52;
-  var VOTES_TEL_MAX = 4320, PREMIER_BULLETIN_MAX = 30, TEL_PUB_MS = 60000;   // un téléphone : un vote toutes les 20 s, son cumul du jour publié au plus une fois par minute
+  var VOTES_TEL_MAX = 86400 / VOTE_S, PREMIER_BULLETIN_MAX = 30, TEL_PUB_MS = 60000;   // un téléphone : un vote toutes les 10 s, son cumul du jour publié au plus une fois par minute
   var IGNORE_BORNES = [], IGNORE_VOTANTS = [], IGNORE_MOTS = ["07yZUVgGnL7O", "Imx72HnuJzBb", "R55XUHOC0usO"];   // remplies à la main (section 14) ; les 3 mots de test du 24/09
   var idUrl = /^[a-z0-9]{6}$/.test(params.get("id") || "") ? params.get("id") : null;
   var simule = isTest ? params.get("simule") : null;      // "reseau", "429" ou "42908"
@@ -710,14 +717,14 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     if (Object.keys(b.d).length > BORNES_MAX) { rejet("trop de bornes"); return null; }
     for (var k in b.d) {
       var v = b.d[k];
-      if (!/^[a-z0-9]{6}$/.test(k) || !Array.isArray(v) || v.length !== 2 || !entier(v[0], 30240) || !entier(v[1], 30240)) { rejet("ligne d"); return null; }
+      if (!/^[a-z0-9]{6}$/.test(k) || !Array.isArray(v) || v.length !== 2 || !entier(v[0], D_MAX) || !entier(v[1], D_MAX)) { rejet("ligne d"); return null; }
     }
     b.p = b.p && typeof b.p === "object" && !Array.isArray(b.p) ? b.p : {};
     for (var j in b.p) {
       var w = b.p[j];
       if (!/^\d{4}-\d{2}-\d{2}$/.test(j) || mancheDuJour(j) !== b.r || !Array.isArray(w) || w.length !== 2 || !entier(w[0], BULLETINS_MAX_JOUR) || !entier(w[1], BULLETINS_MAX_JOUR) || w[0] + w[1] > BULLETINS_MAX_JOUR) { rejet("ligne p"); return null; }
     }
-    if (b.h && !(/^\d{4}-W\d{2}$/.test(b.h.r) && entier(b.h.a, 1e7) && entier(b.h.i, 1e7) && b.h.a + b.h.i <= 30240 * BORNES_MAX + BULLETINS_MAX_JOUR * 7)) b.h = null;
+    if (b.h && !(/^\d{4}-W\d{2}$/.test(b.h.r) && entier(b.h.a, 1e7) && entier(b.h.i, 1e7) && b.h.a + b.h.i <= D_MAX * BORNES_MAX + BULLETINS_MAX_JOUR * 7)) b.h = null;
     return b;
   }
   function rejet(raison) { rejets.n++; rejets.derniers = rejets.derniers.concat(raison).slice(-5); }
@@ -737,7 +744,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
       var cle = j + "|" + b.v, prec = Array.isArray(V.dv[cle]) ? V.dv[cle] : [0, 0, 0];   // dv : [android, ios, time] déjà comptés pour ce téléphone ce jour
       var na = Math.max(prec[0], b.n[0]), ni = Math.max(prec[1], b.n[1]), da = na - prec[0], di = ni - prec[1];
       if (!da && !di) return null;                                    // écho ou cumul déjà vu
-      var permis = prec[2] ? Math.ceil((ev.time - prec[2]) / 20) + 1 : PREMIER_BULLETIN_MAX;
+      var permis = prec[2] ? Math.ceil((ev.time - prec[2]) / VOTE_S) + 1 : PREMIER_BULLETIN_MAX;
       if (da + di > permis) { rejet("hausse impossible " + b.v); return null; }
       var pj = V.pl[j] || [0, 0];
       if (pj[0] + pj[1] + da + di > BULLETINS_MAX_JOUR) { rejet("plafond du jour"); return null; }   // bulletins reçus ici : un faux p ne bloque rien
@@ -762,8 +769,8 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
       if (!V.d[id] && Object.keys(V.d).length >= BORNES_MAX) { rejet("borne en trop"); continue; }
       var cur = V.d[id] || [0, 0], na = Math.max(cur[0], b.d[id][0]), ni = Math.max(cur[1], b.d[id][1]);
       var hausse = (na - cur[0]) + (ni - cur[1]), permis;
-      if (!mienne && V.dt[id]) permis = Math.ceil((ev.time - V.dt[id]) / 20) + 1;
-      else { if (debut === null) debut = debutManche(ev.time); permis = Math.ceil((ev.time - debut) / 20) + 1; }
+      if (!mienne && V.dt[id]) permis = Math.ceil((ev.time - V.dt[id]) / VOTE_S) + 1;
+      else { if (debut === null) debut = debutManche(ev.time); permis = Math.ceil((ev.time - debut) / VOTE_S) + 1; }
       if (hausse > permis) { rejet("hausse impossible " + id); continue; }
       V.d[id] = [na, ni]; if (!mienne && id === b.f) V.dt[id] = ev.time;   // dt : dernier instantané de la borne elle-même, jamais un relais
     }
@@ -1030,7 +1037,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
       + '<div class="qr-box"><div class="qr-papier"></div><span class="punaise"></span><canvas id="qr" aria-label="QR code vers la page du mur"></canvas></div>'
       + '<div class="invite"><p class="t1">Un mot pour le bureau ?</p><button type="button" class="ecrire" id="ecrire">Écrire un mot</button><p class="t2">Ou scanne le code avec ton téléphone.</p><p class="t3" id="inviteVote">Tu peux aussi voter depuis ton téléphone.</p></div>'
       + '<section class="vote" aria-labelledby="voteTitre"><h2 id="voteTitre">Android ou iOS ?</h2>' + htmlDuel(false)
-      + '<p class="etat" id="etat">Touche ton camp pour voir le score.</p><p class="total" id="total"></p></section>'
+      + '<p class="etat" id="etat">Touche ton camp pour voir le score.</p><div class="bas-vote"><p class="total" id="total"></p><button type="button" class="voir" id="voir" aria-pressed="false">Voir les votes</button></div></section>'
       + '<p class="sr-only" role="status" id="annonce"></p></div>';
     frDom(app);
     var q = function (s) { return app.querySelector(s); };
@@ -1041,7 +1048,8 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     construireModale();
     $.qrBox = q(".qr-box"); $.qrPapier = q(".qr-papier"); $.qr = q("#qr");
     $.invite = q("#inviteVote"); $.vote = q(".vote"); $.h2 = q("#voteTitre"); $.duel = q(".duel");
-    $.etat = q("#etat"); $.total = q("#total");
+    $.etat = q("#etat"); $.total = q("#total"); $.voir = q("#voir");
+    $.voir.addEventListener("click", function () { if (etat === "ouvert") basculerApercu(!enApercu()); });
     prendreDuel($.duel, false);
     Array.prototype.forEach.call($.slots, function (s, i) { s.style.setProperty("--rot", ROT_PILE[i] + "deg"); s.style.setProperty("--dy", cu(DY_PILE[i])); });
   }
@@ -1351,7 +1359,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     $.etat.style.color = "";
     if (etat === "resultat") { nAffiche = Math.max(1, Math.ceil((finVerrou - performance.now()) / 1000)); chiffres($.etat, "Prochain vote dans " + nAffiche + " s"); }
     else if (etat === "lecture") chiffres($.etat, lire("remote", false) === true ? "Vote avec la télécommande ou scanne le code." : "Vote depuis ton téléphone : scanne le code.");
-    else chiffres($.etat, "Touche ton camp pour voir le score.");
+    else chiffres($.etat, enApercu() ? "Touche ton camp pour voter." : "Touche ton camp pour voter ou voir le score.");
   }
   function majTotal(impulsion) {
     if (!$.total) return;
@@ -1369,16 +1377,26 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
   function rendreVote() {
     if (isBorne) rendreVoteBorne(); else rendreVoteTel();
   }
+  var apercuJusqua = 0;                   // « Voir les votes » : score montré 10 s sans voter, pavés actifs
+  function enApercu() { return etat === "ouvert" && apercuJusqua > performance.now(); }
+  function basculerApercu(on) {
+    apercuJusqua = on ? performance.now() + 10000 : 0;
+    dernierAppui = Date.now();
+    rendreVoteBorne();
+    if (!reduit.matches) $.duel.animate([{ opacity: .5 }, { opacity: 1 }], { duration: 200, easing: EASE_OUT });
+  }
   function rendreVoteBorne() {
     if (!$.duel) return;
-    var t = totaux(), enRes = etat === "resultat" || etat === "lecture", d = $.duel._r;
+    var ap = enApercu();
+    var t = totaux(), enRes = etat === "resultat" || etat === "lecture" || ap, d = $.duel._r;
     transitions([d.fillA, d.fillI], ""); transitions(d.repos, ""); transitions(d.res, ""); transitions(d.traits, "");
-    $.h2.textContent = fr(etat === "resultat" ? (titre(t, avantCourant) || QUESTION) : QUESTION);
+    $.h2.textContent = fr(etat === "resultat" ? (titre(t, avantCourant) || QUESTION) : ap ? (titre(t, t) || QUESTION) : QUESTION);
+    if ($.voir) { $.voir.hidden = etat !== "ouvert"; $.voir.setAttribute("aria-pressed", ap ? "true" : "false"); $.voir.textContent = fr(ap ? "Masquer les votes" : "Voir les votes"); }
     $.duel.classList.toggle("res", enRes);
     d.fillA.classList.remove("appui"); d.fillI.classList.remove("appui");
     rendreDuel($.duel, t, enRes, 0, "linear", 0);
     var tr = 5;
-    if (enRes) tr = etat === "resultat" && !modeLecture ? Math.min(5, Math.max(0, Math.floor((performance.now() - t0) / 4000))) : 0;
+    if (enRes) tr = etat === "resultat" && !modeLecture && !ap ? Math.min(5, Math.max(0, Math.floor((performance.now() - t0) / (LOCK_MS / 5)))) : 0;
     poserTranches($.duel, tr);
     tamponsBorne();
     [d.padA, d.padI].forEach(function (b) { if (etat === "resultat") b.setAttribute("aria-disabled", "true"); else b.removeAttribute("aria-disabled"); });
@@ -1401,6 +1419,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
   function surClic(c) {
     var now = performance.now();
     if (now < finVerrou) return refus(now, c);
+    if (apercuJusqua) { apercuJusqua = 0; rendreVoteBorne(); }
     if (etat === "resultat") reouvrir(true);  // verrou fini mais pas encore rouvert : on rouvre d'abord, sans annonce
     terminerAnimations();
     var avant = totaux();
@@ -1408,15 +1427,15 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     ecrire("vote.lock", { fin: Date.now() + LOCK_MS, c: c });
     voterBorne(c);
     var apres = totaux();
-    avantCourant = avant; etat = "resultat"; programmerReouverture();
+    avantCourant = avant; etat = "resultat"; if ($.voir) $.voir.hidden = true; programmerReouverture();
     $.duel.querySelectorAll(".pad").forEach(function (b) { b.setAttribute("aria-disabled", "true"); });
     var phrase = titre(apres, avant); if (!/[!.]$/.test(phrase)) phrase += ".";
-    annoncer("Vote " + nomCamp(c) + " compté. " + phrase + " " + resume(apres) + " Prochain vote dans 20 secondes.");
+    annoncer("Vote " + nomCamp(c) + " compté. " + phrase + " " + resume(apres) + " Prochain vote dans " + VOTE_S + " secondes.");
     animerVote(c, avant, apres, modeLecture);
   }
   function animerVote(c, avant, apres, lecture) {
     var r = reduit.matches, d = $.duel._r, duel = $.duel, h2 = $.h2;
-    nAffiche = 20; $.etat.style.color = ""; chiffres($.etat, "Prochain vote dans 20 s");
+    nAffiche = VOTE_S; $.etat.style.color = ""; chiffres($.etat, "Prochain vote dans " + VOTE_S + " s");
     majTotal(false);
     d.fillA.classList.remove("appui"); d.fillI.classList.remove("appui");
     if (!lecture) {
@@ -1456,7 +1475,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     dernierRefus = now;
     var n = Math.ceil((finVerrou - now) / 1000);
     refusJusqua = now + REFUS_AFFICHE_MS;
-    chiffres($.etat, "Un vote toutes les 20 s. Encore " + n + " s.");
+    chiffres($.etat, "Un vote toutes les " + VOTE_S + " s. Encore " + n + " s.");
     $.etat.style.color = "var(--fg)";
     if (!reduit.matches) {
       $.etat.animate([{ transform: "translateX(0)" }, { transform: "translateX(" + px(-6) + ")" }, { transform: "translateX(" + px(6) + ")" },
@@ -1464,7 +1483,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
       var f = c === "a" ? $.duel._r.fillA : $.duel._r.fillI;
       if (!modeLecture || etat === "resultat") f.animate([{ transform: "translateY(0)" }, { transform: "translateY(" + px(3) + ")" }, { transform: "translateY(0)" }], { duration: 120, easing: EASE_OUT });
     }
-    if (!refusAnnonce) { refusAnnonce = true; annoncer("Un vote toutes les 20 secondes. Encore " + n + " secondes."); }
+    if (!refusAnnonce) { refusAnnonce = true; annoncer("Un vote toutes les " + VOTE_S + " secondes. Encore " + n + " secondes."); }
   }
   function reouvrir(sansAnnonce) {
     var r = reduit.matches, d = $.duel._r, duel = $.duel, h2 = $.h2, lecture = modeLecture;
@@ -1473,6 +1492,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     effacer("vote.lock");
     dernierAppui = Date.now(); refusJusqua = -Infinity;
     if (!sansAnnonce) annoncer("Le vote est rouvert.");
+    if ($.voir) { $.voir.hidden = etat !== "ouvert"; $.voir.setAttribute("aria-pressed", "false"); $.voir.textContent = fr("Voir les votes"); }
     majEtatLigne(); majTotal(false);
     var dur = r ? 150 : 200;
     // tampon
@@ -1513,11 +1533,12 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
         nAffiche = n; chiffres($.etat, "Prochain vote dans " + n + " s");
       }
       if (!modeLecture) {
-        var tr = Math.min(5, Math.floor((now - t0) / 4000));
+        var tr = Math.min(5, Math.floor((now - t0) / (LOCK_MS / 5)));
         if (tr !== $.duel._r.fillA._tr) poserTranches($.duel, tr);
       }
     } else if (etat === "ouvert") {
-      if (Date.now() - dernierAppui >= 45000 && Date.now() - dernierAppel >= 7000 && Date.now() >= motAnimJusqua && !reduit.matches) {
+      if (apercuJusqua && now >= apercuJusqua) { apercuJusqua = 0; rendreVoteBorne(); }
+      if (!apercuJusqua && Date.now() - dernierAppui >= 45000 && Date.now() - dernierAppel >= 7000 && Date.now() >= motAnimJusqua && !reduit.matches) {
         dernierAppel = Date.now();
         var coin = appelCote === "a" ? $.duel._r.coinA : $.duel._r.coinI; appelCote = appelCote === "a" ? "i" : "a";
         coin.animate([{ transform: "scale(0)" }, { transform: "scale(1)" }, { transform: "scale(0)" }], { duration: 900, easing: EASE_IN_OUT });
@@ -1535,6 +1556,13 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
   function borneChangement(ch) {
     var t = totaux();
     if (ch.type === "tel" && ch.direct) { plusUn(ch.c, ch.n || 1); }
+    if (etat === "ouvert" && enApercu()) {
+      majTotal(true);
+      $.h2.textContent = fr(titre(t, t) || QUESTION);
+      var rep_ = function () { if (enApercu()) rendreDuel($.duel, totaux(), true, reduit.matches ? 0 : 400, EASE_OUT, 0); };
+      if (ch.type === "tel" && ch.direct) tuile(ch.c, rep_); else rep_();
+      return;
+    }
     if (etat === "ouvert") {
       majTotal(true);
       if (ch.type === "tel" && ch.direct) tuile(ch.c, function () {
@@ -1666,8 +1694,8 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     etat = modeLecture ? "lecture" : "ouvert";
     var L = lire("vote.lock", null);
     if (L && typeof L === "object" && typeof L.fin === "number") {
-      var reste = Math.min(Math.max(L.fin - Date.now(), 0), 20000);
-      if (reste > 1000) { finVerrou = performance.now() + reste; t0 = finVerrou - 20000; camp = L.c === "i" ? "i" : "a"; etat = "resultat"; }
+      var reste = Math.min(Math.max(L.fin - Date.now(), 0), LOCK_MS);
+      if (reste > 1000) { finVerrou = performance.now() + reste; t0 = finVerrou - LOCK_MS; camp = L.c === "i" ? "i" : "a"; etat = "resultat"; }
       else effacer("vote.lock");
     }
     construireBorne();
@@ -1729,8 +1757,8 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
   var etatTel = "OUVERT", monV = null, fermeJour = null, moi = null, finTel = 0, telTimer = null, dernierCamp = null,
       pubTel = { enCours: false, derniere: 0, pause: 0, minuteur: null },
       ouvertJusqua = 0, avantTel = { A: 0, I: 0 }, miens = [], papier = "j", motEnCours = false;
-  var RESULTATS_TEL = { RESULTAT: 1, FERME: 1 };
-  var TEXTES_TEL = { OUVERT: "", FERME: "Le vote en ligne rouvre demain. Vote sur la borne, dans le couloir." };
+  var RESULTATS_TEL = { RESULTAT: 1, FERME: 1, APERCU: 1 };
+  var TEXTES_TEL = { OUVERT: "", APERCU: "Touche ton camp pour voter.", FERME: "Le vote en ligne rouvre demain. Vote sur la borne, dans le couloir." };
   function construireTel() {
     var h = location.hash === "#v";
     var papiers = [["j", "Jaune"], ["r", "Rose"], ["p", "Pêche"]].map(function (p) {
@@ -1747,8 +1775,9 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
       + '<button type="submit" class="send" id="send" disabled>Coller sur le mur</button></form>'
       + '<p class="status" id="status" role="status"></p>';
     var vote = '<section class="vote-tel" id="v" aria-labelledby="vt"><h2 id="vt" tabindex="-1">Android ou iOS ?</h2>'
-      + '<p class="aide" id="aide">Un vote toutes les 20 s. Le score s\'affiche après ton vote.</p>' + htmlDuel(true)
+      + '<p class="aide" id="aide">Un vote toutes les 10 s. Le score s\'affiche après ton vote, ou avec « Voir les votes ».</p>' + htmlDuel(true)
       + '<p class="etat" id="etatTel" role="status"><span id="etatTxt"></span><span class="sr-only" id="etatScore"></span></p>'
+      + '<button type="button" class="voir-tel" id="voirTel" aria-pressed="false">Voir les votes</button>'
       + '<p class="source" id="source" hidden></p>'
       + '<p class="direct"><span id="directTxt" tabindex="-1">En direct</span> <button type="button" id="actualiser" hidden>Actualiser</button></p></section>';
     var recent = '<section class="recent"><h2>Déjà sur la borne</h2><div id="recent"></div></section>';
@@ -1758,7 +1787,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     T.form = q("#form"); T.name = q("#name"); T.text = q("#text"); T.send = q("#send"); T.count = q("#count"); T.status = q("#status");
     T.note = q("#note"); T.recent = q("#recent"); T.vt = q("#vt"); T.aide = q("#aide"); T.duel = q(".duel");
     T.etatTxt = q("#etatTxt"); T.etatScore = q("#etatScore"); T.source = q("#source"); T.directTxt = q("#directTxt"); T.actualiser = q("#actualiser");
-    T.lien = q(".vers-vote");
+    T.lien = q(".vers-vote"); T.voir = q("#voirTel");
     prendreDuel(T.duel, true);
     $.duel = null;
     return h;
@@ -1869,8 +1898,11 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     var tc = etatTel === "RESULTAT" ? dernierCamp : null;
     d.tpA.hidden = tc !== "a"; d.tpI.hidden = tc !== "i";
     T.vt.textContent = fr(enRes ? (titre(t, avantTel) || QUESTION) : QUESTION);
-    [d.padA, d.padI].forEach(function (b) { b.disabled = enRes; b.removeAttribute("aria-disabled"); });
+    [d.padA, d.padI].forEach(function (b) { b.disabled = enRes && etatTel !== "APERCU"; b.removeAttribute("aria-disabled"); });
     T.aide.hidden = enRes;
+    T.voir.hidden = etatTel !== "OUVERT" && etatTel !== "APERCU";
+    T.voir.setAttribute("aria-pressed", etatTel === "APERCU" ? "true" : "false");
+    T.voir.textContent = fr(etatTel === "APERCU" ? "Masquer les votes" : "Voir les votes");
     T.etatTxt.textContent = fr(texteEtatTel());
     T.etatScore.textContent = enRes ? fr(" " + resume(t)) : "";
     majSource();
@@ -1896,7 +1928,8 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     majDirect();
   }
   function allerEtatTel(e, garderFill) { etatTel = e; rendreVoteTel(garderFill); }
-  function voterTel(c) {                  // un vote toutes les 20 s, compté tout de suite ici, publié en cumul
+  function voterTel(c) {                  // un vote toutes les 10 s, compté tout de suite ici, publié en cumul
+    if (etatTel === "APERCU") allerEtatTel("OUVERT");
     if (etatTel !== "OUVERT") return;
     if (!monV) { monV = hasard(8); ecrire("voter", monV); }
     avantTel = totauxTel();
@@ -2059,6 +2092,10 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
         voterTel(c);
       });
     });
+    T.voir.addEventListener("click", function () {
+      if (etatTel === "APERCU") allerEtatTel("OUVERT");
+      else if (etatTel === "OUVERT") { avantTel = totauxTel(); allerEtatTel("APERCU"); ouvertJusqua = Date.now() + 300000; gererFluxTel(); }
+    });
     T.actualiser.addEventListener("click", function () { ouvertJusqua = Date.now() + 120000; gererFluxTel(); });
     var interaction = function () { ouvertJusqua = Date.now() + 300000; gererFluxTel(); };
     document.addEventListener("pointerdown", interaction, true);
@@ -2214,8 +2251,9 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
       ok(debutManche(Date.UTC(2026, 8, 28, 2, 59) / 1000), Date.UTC(2026, 8, 21, 3) / 1000);
     });
     cas(23, function (ok) {
-      appliquer(snap(T0, { bbbbbb: [18542, 0] })); ok(tot(), [0, 0], "18542"); ok(/^hausse impossible/.test(rejets.derniers[rejets.derniers.length - 1]), true, "raison");
-      appliquer(snap(T0, { bbbbbb: [18541, 0] })); ok(tot(), [18541, 0], "18541");
+      var K = Math.ceil((T0 - debutManche(T0)) / VOTE_S) + 1;   // un vote toutes les VOTE_S depuis lundi 5 h
+      appliquer(snap(T0, { bbbbbb: [K + 1, 0] })); ok(tot(), [0, 0], "K + 1"); ok(/^hausse impossible/.test(rejets.derniers[rejets.derniers.length - 1]), true, "raison");
+      appliquer(snap(T0, { bbbbbb: [K, 0] })); ok(tot(), [K, 0], "K");
     });
     cas(24, function (ok) {
       var d = {}; for (var i = 1; i <= 8; i++) d["bbbbb" + i] = [1, 0];
@@ -2229,7 +2267,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     cas(26, function (ok) {
       var h = { r: "2026-W38", a: 40, i: 30 };
       appliquer(snap(T0, { bbbbbb: [1, 0] }, { h: h })); ok(V.h, [], "premier");
-      appliquer(snap(T0 + 600, { bbbbbb: [1, 0] }, { h: { r: "2026-W38", a: 300000, i: 30 } })); ok(V.h, [], "trop haut");
+      appliquer(snap(T0 + 600, { bbbbbb: [1, 0] }, { h: { r: "2026-W38", a: D_MAX * BORNES_MAX + BULLETINS_MAX_JOUR * 7, i: 30 } })); ok(V.h, [], "trop haut");
       appliquer(snap(T0 + 1200, { bbbbbb: [1, 0] }, { h: h })); ok(V.h, [h], "connue");
     });
     cas(27, function (ok) { appliquer(snap(T0, { bbbbbb: [5, 3] })); ok(tot(), [5, 3]); IGNORE_BORNES = ["bbbbbb"]; ok(tot(), [0, 0], "ignorée"); });
