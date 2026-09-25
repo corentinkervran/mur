@@ -1,294 +1,2153 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" translate="no">
 <head>
 <meta charset="utf-8">
+<meta name="google" content="notranslate">
+<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Mur</title>
+<link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
 <style>
+/* ---------- Jetons ---------- */
 :root {
-  --bg: #f5ecd8;
-  --fg: #1f1a12;
-  --muted: #7a6b52;
-  --ink: #5d523f;
-  --yellow: #ffe45c;
-  --pink: #ffb3c7;
-  --mint: #b8f0c8;
-  --sky: #bfe3ff;
-  --peach: #ffd9a8;
-  --red: #ff4d2e;
-  --red-dark: #c5341b;
+  --bg: #f5ecd8; --fg: #1f1a12; --ink: #5d523f;
+  --yellow: #ffe45c; --pink: #ffb3c7; --mint: #b8f0c8; --sky: #bfe3ff; --peach: #ffd9a8;
+  --red: #ff4d2e; --red-dark: #c5341b; --white: #ffffff;
+  --line: rgba(31, 26, 18, .22);
+  --u: calc(100vmin / 1080);
   --shadow: 0 10px 24px rgba(60, 40, 10, .14);
   --sans: Fredoka, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --hand: Caveat, "Comic Sans MS", cursive;
+  --ease-drop: cubic-bezier(.2, .9, .3, 1.2);
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+  --ease-in: cubic-bezier(.5, 0, .75, 0);
 }
+@supports (width: 1dvmin) { :root { --u: calc(100dvmin / 1080); } }
+@property --split { syntax: "<number>"; inherits: true; initial-value: 50; }
+@property --gap { syntax: "<length>"; inherits: true; initial-value: 0px; }
+
+/* ---------- Communs ---------- */
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; }
 body { background: var(--bg); color: var(--fg); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 button, input, textarea { font: inherit; color: inherit; }
+p, h1, h2 { margin: 0; }
+[hidden] { display: none !important; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+#etalon { position: absolute; left: 0; top: 0; width: calc(1000 * var(--u)); height: 0; visibility: hidden; pointer-events: none; }
+.c-j { background: var(--yellow); } .c-r { background: var(--pink); } .c-p { background: var(--peach); }
 .tag { display: inline-flex; padding: 8px 16px; background: var(--fg); color: var(--bg); border-radius: 999px; font-size: 16px; font-weight: 600; transform: rotate(-2deg); }
-.card { background: var(--yellow); border-radius: 6px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 8px; color: var(--fg); }
-.card .t { font-weight: 500; line-height: 1.15; margin: 0; overflow-wrap: anywhere; }
-.card .m { font-family: var(--hand); font-weight: 700; color: var(--ink); }
-.card .m b { font-weight: 700; }
-.c0 { background: var(--yellow); } .c1 { background: var(--pink); } .c2 { background: var(--mint); } .c3 { background: var(--sky); } .c4 { background: var(--peach); }
-@keyframes drop { 0% { opacity: 0; transform: translateY(-40px) rotate(var(--r)) scale(1.06); } 60% { opacity: 1; transform: translateY(6px) rotate(var(--r)) scale(.99); } 100% { opacity: 1; transform: translateY(0) rotate(var(--r)); } }
-.card { transform: rotate(var(--r, 0deg)); }
-.card.new { animation: drop .55s cubic-bezier(.2,.9,.3,1.2) both; }
-@media (prefers-reduced-motion: reduce) { .card.new { animation: none; } }
+.n { display: inline-block; width: .58em; text-align: center; }
+.nw { white-space: nowrap; }            /* un nombre ne se coupe jamais, le texte autour peut revenir à la ligne */
+@keyframes drop { 0% { opacity: 0; transform: translateY(calc(-40 * var(--u))) rotate(var(--r)) scale(1.06); } 60% { opacity: 1; transform: translateY(6px) rotate(var(--r)) scale(.99); } 100% { opacity: 1; transform: translateY(0) rotate(var(--r)); } }
 
-/* Téléphone */
-.phone { max-width: 520px; margin: 0 auto; padding: 40px 20px 56px; display: flex; flex-direction: column; gap: 22px; }
-.phone h1 { font-size: 34px; font-weight: 700; line-height: 1.05; margin: 14px 0 0; }
+/* ---------- Duel (borne et téléphone) ---------- */
+.duel { position: relative; height: calc(280 * var(--u)); --gap: calc(32 * var(--u)); }
+.fill { position: absolute; top: 0; bottom: 0; border-radius: calc(10 * var(--u)); transform: rotate(var(--r)); z-index: 4; overflow: hidden; pointer-events: none; }
+.fill.appui { transform: translateY(calc(4 * var(--u))) rotate(var(--r)); }
+.fill-a { left: 0; width: calc(var(--split) * 1% - var(--gap) / 2); background: var(--mint); --r: -1.5deg; --pad: var(--mint); }
+.fill-i { right: 0; width: calc((100 - var(--split)) * 1% - var(--gap) / 2); background: var(--sky); --r: 1.5deg; --pad: var(--sky); }
+.fill.eteint { opacity: .5; }
+.pad { position: absolute; top: 0; bottom: 0; width: calc(50% - calc(16 * var(--u))); background: transparent; border: 0; padding: 0; margin: 0; z-index: 6; overflow: visible;
+       color: var(--fg); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.pad[aria-disabled="true"], .pad:disabled { cursor: default; }
+.pad-a { left: 0; } .pad-i { right: 0; }
+.pad .repos { position: absolute; inset: 0; display: grid; place-items: center; font: 700 calc(80 * var(--u))/1 var(--sans); }
+.pad .res { position: absolute; inset: 0; padding: calc(24 * var(--u)) calc(32 * var(--u)); display: flex; flex-direction: column; opacity: 0; }
+.pad-a .res { align-items: flex-start; text-align: left; } .pad-i .res { align-items: flex-end; text-align: right; }
+.res .nom { font: 600 calc(36 * var(--u))/1.1 var(--sans); white-space: nowrap; }
+.res .chiffre { font: 700 calc(112 * var(--u))/1 var(--sans); margin-top: calc(8 * var(--u)); white-space: nowrap; }
+.res .voix { font: 700 calc(32 * var(--u))/1.1 var(--hand); color: var(--ink); margin-top: calc(8 * var(--u)); white-space: nowrap; }
+.date .n, .total .n { width: .6em; } .etat .n { width: .48em; }
+.pad:focus-visible { outline: calc(4 * var(--u)) solid var(--fg); outline-offset: calc(6 * var(--u)); border-radius: calc(12 * var(--u)); }
+.pad:focus:not(:focus-visible) { outline: none; }
+.fil { position: absolute; top: 0; bottom: 0; left: calc(var(--split) * 1%); width: calc(4 * var(--u)); margin-left: calc(-2 * var(--u)); background: var(--fg);
+       opacity: 0; z-index: 5; pointer-events: none; }
+.milieu { position: absolute; left: 50%; top: calc(-14 * var(--u)); bottom: calc(-14 * var(--u)); width: calc(4 * var(--u)); margin-left: calc(-2 * var(--u)); opacity: 0; z-index: 7; pointer-events: none; }
+.milieu::before, .milieu::after { content: ""; position: absolute; left: 0; width: calc(4 * var(--u)); height: calc(14 * var(--u)); background: var(--fg); }
+.milieu::before { top: 0; } .milieu::after { bottom: 0; }
+.punaise-f { position: absolute; top: calc(-14 * var(--u)); left: calc(var(--split) * 1%); width: calc(28 * var(--u)); height: calc(28 * var(--u)); margin-left: calc(-14 * var(--u)); border-radius: 50%;
+             background: var(--red); box-shadow: 0 calc(3 * var(--u)) 0 var(--red-dark); opacity: 0; z-index: 7; pointer-events: none; }
+.tampon { position: absolute; bottom: calc(-8 * var(--u)); padding: calc(8 * var(--u)) calc(16 * var(--u)); border: calc(5 * var(--u)) solid var(--fg); border-radius: calc(12 * var(--u)); white-space: nowrap;
+          font: 700 calc(40 * var(--u))/1 var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--fg); opacity: .92; }
+.pad-a .tampon { right: calc(24 * var(--u)); transform: rotate(-9deg); } .pad-i .tampon { left: calc(24 * var(--u)); transform: rotate(7deg); }
+.duel.res .fill { --r: 0deg; } .duel.res .fill-a { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.duel.res .fill-i { border-top-left-radius: 0; border-bottom-left-radius: 0; }
+.duel.res .repos { opacity: 0; } .duel.res .res, .duel.res .fil, .duel.res .milieu, .duel.res .punaise-f { opacity: 1; }
+.coin { position: absolute; bottom: 0; width: calc(88 * var(--u)); height: calc(88 * var(--u)); transform: scale(0); filter: drop-shadow(0 calc(4 * var(--u)) calc(6 * var(--u)) rgba(60, 40, 10, .25)); }
+.coin::before, .coin::after { content: ""; position: absolute; inset: 0; }
+.fill-i .coin { right: 0; transform-origin: 100% 100%; }
+.fill-i .coin::before { clip-path: polygon(100% 0, 100% 100%, 0 100%); background: rgba(31, 26, 18, .10); }
+.fill-i .coin::after { clip-path: polygon(0 0, 100% 0, 0 100%); background: var(--pad); }
+.fill-a .coin { left: 0; transform-origin: 0 100%; }
+.fill-a .coin::before { clip-path: polygon(0 0, 0 100%, 100% 100%); background: rgba(31, 26, 18, .10); }
+.fill-a .coin::after { clip-path: polygon(0 0, 100% 0, 100% 100%); background: var(--pad); }
+.feuille { position: absolute; z-index: 30; pointer-events: none; transform-origin: 50% 0; border-radius: calc(10 * var(--u)); }
+.feuille.fa { background: var(--mint); } .feuille.fi { background: var(--sky); }
+.feuille span { position: absolute; inset: 0; display: grid; place-items: center; font: 700 calc(80 * var(--u))/1 var(--sans); color: var(--fg); }
+
+/* ---------- Téléphone ---------- */
+.phone { --u: 1px; max-width: 520px; margin: 0 auto; padding: 40px 20px 56px; display: flex; flex-direction: column; gap: 22px; }
+.phone .tel-test { font: 500 14px/1.3 var(--sans); color: var(--red-dark); margin: 0 0 10px; }
+.phone h1 { font-size: 34px; font-weight: 700; line-height: 1.05; margin: 14px 0 0; text-wrap: balance; }
+.vers-vote { display: inline-flex; align-items: center; min-height: 44px; margin-top: 4px; font: 600 16px/1.2 var(--sans); color: var(--fg);
+             text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
 .phone form { display: flex; flex-direction: column; gap: 12px; }
-.phone label { font-size: 14px; font-weight: 600; color: var(--muted); }
+.phone .lab, .papiers legend { font-size: 14px; font-weight: 600; color: var(--ink); }
 .phone input.field { width: 100%; padding: 14px 16px; background: #fff; border: 2px solid var(--fg); border-radius: 10px; font-size: 18px; outline: none; }
 .phone input.field:focus { box-shadow: 0 0 0 3px var(--sky); }
-.note { position: relative; margin-top: 6px; }
-.note textarea { display: block; width: 100%; height: 170px; padding: 20px 18px 40px; background: var(--yellow); border: 0; border-radius: 6px; box-shadow: 0 14px 28px rgba(90, 60, 0, .18); transform: rotate(-1.5deg); font-size: 24px; font-weight: 500; line-height: 1.15; resize: none; outline: none; }
+.papiers { border: 0; margin: 0; padding: 0; min-width: 0; }
+.papiers legend { padding: 0; margin-bottom: 10px; }
+.papiers .choix { display: flex; gap: 16px; }
+.papier { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
+.papier .carre { width: 48px; height: 48px; border-radius: 6px; box-shadow: var(--shadow); }
+.papier:nth-child(1) .carre { transform: rotate(-3deg); } .papier:nth-child(2) .carre { transform: rotate(2deg); } .papier:nth-child(3) .carre { transform: rotate(-1deg); }
+.papier .nom { font: 500 14px/1.2 var(--sans); color: var(--fg); }
+.papier input:checked + .carre { outline: 3px solid var(--fg); outline-offset: 3px; }
+.papier input:focus-visible + .carre { outline: 3px dashed var(--fg); outline-offset: 3px; }
+.note { position: relative; margin-top: 6px; isolation: isolate; --note: var(--yellow); }
+.note-j { --note: var(--yellow); } .note-r { --note: var(--pink); } .note-p { --note: var(--peach); }
+.note::before, .note::after { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 6px; background: var(--note); box-shadow: 0 1px 0 var(--line); }
+.note::before { transform: translate(4px, 4px) rotate(-0.5deg); }
+.note::after { transform: translate(8px, 8px) rotate(1.5deg); }
+.note textarea { display: block; width: 100%; height: 170px; padding: 20px 18px 40px; background: var(--note); border: 0; border-radius: 6px; box-shadow: 0 14px 28px rgba(90, 60, 0, .18); transform: rotate(-1.5deg); font-size: 24px; font-weight: 500; line-height: 1.15; resize: none; outline: none; }
 .note textarea:focus { box-shadow: 0 14px 28px rgba(90, 60, 0, .18), 0 0 0 3px var(--fg); }
-.note .count { position: absolute; right: 18px; bottom: 14px; font-family: var(--hand); font-size: 20px; font-weight: 700; color: var(--ink); pointer-events: none; }
-.send { margin-top: 14px; padding: 18px; background: var(--red); color: #fff; border: 0; border-radius: 999px; font-size: 20px; font-weight: 700; box-shadow: 0 8px 0 var(--red-dark); cursor: pointer; transition: transform .1s, box-shadow .1s; }
+.note .partie { position: absolute; top: 0; left: 0; z-index: 2; pointer-events: none; }
+.note .count { position: absolute; right: 18px; bottom: 14px; font-family: var(--hand); font-size: 20px; font-weight: 700; color: var(--ink); pointer-events: none; z-index: 3; }
+.send { margin-top: 14px; padding: 18px; background: var(--red); color: var(--fg); border: 0; border-radius: 999px; font-size: 20px; font-weight: 700; box-shadow: 0 8px 0 var(--red-dark); cursor: pointer; transition: transform .1s, box-shadow .1s; }
 .send:active { transform: translateY(6px); box-shadow: 0 2px 0 var(--red-dark); }
 .send[disabled] { opacity: .45; cursor: default; box-shadow: 0 8px 0 var(--red-dark); transform: none; }
 .status { min-height: 24px; font-family: var(--hand); font-size: 20px; font-weight: 700; color: var(--ink); text-align: center; }
-.status.err { color: var(--red); }
+.status.err { color: var(--red-dark); }
+.vote-tel { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+.vote-tel h2 { font: 700 26px/1.1 var(--sans); text-wrap: balance; }
+.vote-tel h2:focus { outline: none; }
+.vote-tel .aide { font: 500 15px/1.35 var(--sans); color: var(--ink); }
+.duel-tel { height: 112px; --gap: 12px; margin: 4px 0 10px; }
+.duel-tel .pad { width: calc(50% - 6px); }
+.duel-tel .pad .repos { font-size: 28px; }
+.duel-tel .pad .res { padding: 10px 14px; }
+.duel-tel .res .nom { font-size: 15px; } .duel-tel .res .chiffre { font-size: 36px; margin-top: 2px; } .duel-tel .res .voix { font-size: 16px; margin-top: 2px; }
+.duel-tel .tampon { font-size: 20px; border-width: 3px; border-radius: 8px; bottom: -10px; }
+.duel-tel .pad-a .tampon { right: 10px; } .duel-tel .pad-i .tampon { left: 10px; }
+.duel-tel .punaise-f { width: 16px; height: 16px; margin-left: -8px; top: -8px; }
+.duel-tel .fil { width: 3px; margin-left: -1.5px; }
+.duel-tel .milieu { width: 3px; margin-left: -1.5px; } .duel-tel .milieu::before, .duel-tel .milieu::after { width: 3px; }
+.duel-tel .fill.appui { transform: translateY(3px) rotate(var(--r)); }
+.duel-tel .feuille span { font-size: 28px; }
+.vote-tel .etat { font: 700 20px/1.2 var(--hand); color: var(--ink); text-align: center; text-wrap: balance; }
+.vote-tel .source, .vote-tel .direct { font: 500 14px/1.35 var(--sans); color: var(--ink); }
+.vote-tel .direct { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; min-height: 44px; }
+#directTxt:focus { outline: none; }
+#actualiser { height: 44px; padding: 0 16px; background: transparent; border: 2px solid var(--fg); border-radius: 999px; font: 600 15px/1 var(--sans); color: var(--fg); cursor: pointer; }
 .recent { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
-.recent h2 { font-size: 14px; font-weight: 600; color: var(--muted); margin: 0; }
+.recent h2 { font-size: 14px; font-weight: 600; color: var(--ink); }
 .recent .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 12px; }
+.card { border-radius: 6px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 8px; color: var(--fg); transform: rotate(var(--r, 0deg)); }
+.card .t { font-weight: 500; line-height: 1.15; overflow-wrap: anywhere; text-wrap: balance; }
+.card .m { font-family: var(--hand); font-weight: 700; color: var(--ink); }
+.card .m b { font-weight: 700; }
 .recent .card { padding: 14px 16px; }
 .recent .card .t { font-size: 17px; }
 .recent .card .m { font-size: 17px; }
+.card.new { animation: drop 550ms var(--ease-drop) both; }
 .empty { font-family: var(--hand); font-size: 22px; font-weight: 700; color: var(--ink); }
 
-/* Borne */
-body.borne { overflow: hidden; cursor: none; }
-.wall { height: 100vh; height: 100dvh; padding: 48px 56px; display: grid; grid-template-columns: minmax(0, 1fr) 720px; grid-template-rows: auto minmax(0, 1fr) auto; column-gap: 72px; overflow: hidden; }
-.wall .top { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; }
-.wall .top .tag { padding: 10px 22px; font-size: 22px; }
-.wall .top .clock { font-size: 22px; font-weight: 500; color: var(--muted); font-variant-numeric: tabular-nums; }
-.wall .latest { grid-column: 1; grid-row: 2; align-self: center; min-width: 0; }
-.wall .latest .card { padding: 56px 60px 48px; border-radius: 10px; box-shadow: 0 24px 48px rgba(90, 60, 0, .18); gap: 24px; --r: -1.5deg; }
-.wall .latest .t { font-size: clamp(40px, 5vw, 96px); font-weight: 700; line-height: 1; letter-spacing: -.01em; }
-.wall .latest .m { font-size: clamp(24px, 2.3vw, 44px); }
-.wall .older { grid-column: 2; grid-row: 2 / 4; position: relative; min-height: 0; }
-.wall .older .card { position: absolute; width: 300px; padding: 22px 24px 20px; }
-.wall .older .t { font-size: 26px; }
-.wall .older .m { font-size: 22px; }
-.wall .invite { grid-column: 1; grid-row: 3; display: flex; align-items: center; gap: 26px; }
-.wall .invite .qr { width: 150px; height: 150px; padding: 12px; background: #fff; border-radius: 8px; box-shadow: var(--shadow); transform: rotate(3deg); }
-.wall .invite .qr img, .wall .invite .qr canvas { width: 100%; height: 100%; display: block; }
-.wall .invite p { margin: 0; font-size: 30px; font-weight: 600; line-height: 1.2; }
-.wall .invite p span { display: block; font-family: var(--hand); font-weight: 700; color: var(--muted); font-size: 30px; }
-.wall .empty { font-size: 48px; line-height: 1.1; }
-@media (max-width: 1200px) {
-  .wall { grid-template-columns: minmax(0, 1fr) 380px; column-gap: 40px; padding: 32px; }
-  .wall .older .card { width: 240px; padding: 16px 18px; }
-  .wall .older .t { font-size: 20px; } .wall .older .m { font-size: 18px; }
+/* ---------- Borne ---------- */
+html.borne, body.borne { touch-action: none; overscroll-behavior: none; user-select: none; -webkit-user-select: none; cursor: none; overflow: hidden; }
+body.borne button { -webkit-tap-highlight-color: transparent; }
+html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pavés compris */
+.wall { height: 100vh; height: 100dvh; display: grid; overflow: hidden; }
+.entete { grid-area: entete; display: flex; justify-content: space-between; align-items: center; gap: calc(24 * var(--u)); min-width: 0; }
+.entete .tag { flex: none; padding: calc(12 * var(--u)) calc(28 * var(--u)); font: 600 calc(28 * var(--u))/1 var(--sans); }
+.entete .date { display: flex; flex-direction: column; align-items: flex-end; text-align: right; min-width: 0; font: 500 calc(28 * var(--u))/1.15 var(--sans); color: var(--ink); }
+#alerte { font: 500 calc(24 * var(--u))/1.1 var(--sans); color: var(--red-dark); text-wrap: balance; }
+.dernier { grid-area: dernier; display: flex; flex-direction: column; justify-content: center; min-width: 0; min-height: 0; }
+.carte { position: relative; z-index: 1; display: flex; flex-direction: column; gap: calc(24 * var(--u)); max-height: 100%; padding: calc(48 * var(--u)) calc(56 * var(--u)) calc(40 * var(--u)); border-radius: calc(10 * var(--u));
+         box-shadow: 0 calc(24 * var(--u)) calc(48 * var(--u)) rgba(90, 60, 0, .18); --r: -1.5deg; transform: rotate(var(--r)); color: var(--fg); }
+.carte .t { font-weight: 700; font-size: calc(120 * var(--u)); line-height: 1.05; letter-spacing: -.01em; overflow-wrap: anywhere; text-wrap: balance; }
+.carte .t.clamp { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; -webkit-line-clamp: var(--lignes); }
+.carte .m { font: 700 calc(40 * var(--u))/1.1 var(--hand); color: var(--ink); }
+.carte .m b { font-weight: 700; }
+.carte .vide { font: 700 calc(64 * var(--u))/1.1 var(--sans); text-wrap: balance; }
+.carte .vide span { display: block; text-wrap: balance; }
+.carte.new { animation: drop 550ms var(--ease-drop) both; }
+.punaise { position: absolute; top: calc(-12 * var(--u)); left: 50%; width: calc(30 * var(--u)); height: calc(30 * var(--u)); margin-left: calc(-15 * var(--u)); border-radius: 50%; background: var(--red); box-shadow: 0 calc(3 * var(--u)) 0 var(--red-dark); z-index: 3; }
+.pile { grid-area: pile; display: flex; gap: calc(24 * var(--u)); align-items: flex-start; min-width: 0; min-height: 0; }
+.postit { position: relative; z-index: 1; flex: 1 1 0; min-width: 0; max-width: calc(290 * var(--u)); padding: calc(22 * var(--u)) calc(24 * var(--u)) calc(20 * var(--u)); border-radius: calc(6 * var(--u)); box-shadow: var(--shadow);
+          display: flex; flex-direction: column; gap: calc(8 * var(--u)); transform: rotate(var(--rot, 0deg)); margin-top: var(--dy, 0px); color: var(--fg); }
+.postit.vide { display: none; }
+.photos { grid-area: pile; justify-self: start; align-self: start; display: flex; align-items: flex-start; gap: calc(28 * var(--u)); min-width: 0; max-width: 100%; padding-top: calc(16 * var(--u)); pointer-events: none; }
+.photo { position: relative; z-index: 1; flex: 0 1 auto; min-width: 0; margin: 0; padding: calc(10 * var(--u)); background: var(--white); border-radius: calc(4 * var(--u)); box-shadow: var(--shadow); transform: rotate(var(--rot, 0deg)); }
+.photo img { display: block; height: calc(220 * var(--u)); width: auto; max-width: 100%; object-fit: contain; border-radius: calc(2 * var(--u)); }
+.photo .punaise { top: calc(-14 * var(--u)); }
+.photos.serre { visibility: hidden; }
+.wall.avec-photos .pile { justify-content: flex-end; }
+.postit .t { font: 500 calc(30 * var(--u))/1.15 var(--sans); text-wrap: balance; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; overflow-wrap: anywhere; }
+.postit .m { font: 700 calc(28 * var(--u))/1.1 var(--hand); color: var(--ink); }
+.postit .m b { font-weight: 700; }
+.qr-box { grid-area: qr; width: calc(407 * var(--u)); height: calc(407 * var(--u)); display: grid; place-items: center; position: relative; }
+.qr-papier { position: absolute; inset: calc(-12 * var(--u)); background: var(--white); border-radius: calc(6 * var(--u)); box-shadow: var(--shadow); transform: rotate(-2deg); z-index: 1; }
+.qr-box .punaise { width: calc(24 * var(--u)); height: calc(24 * var(--u)); margin-left: calc(-12 * var(--u)); top: calc(-22 * var(--u)); }
+#qr { display: block; image-rendering: pixelated; position: relative; z-index: 2; pointer-events: none; }
+.qr-box.sans-qr #qr { display: none; }
+.qr-box.sans-qr::after { content: "corentinkervran.github.io/mur"; position: relative; z-index: 2; padding: 0 calc(24 * var(--u)); font: 600 calc(28 * var(--u))/1.2 var(--sans); text-align: center; overflow-wrap: anywhere; }
+.invite { grid-area: invite; display: flex; flex-direction: column; justify-content: center; gap: calc(12 * var(--u)); min-width: 0; }
+.invite .t1 { font: 600 calc(44 * var(--u))/1.1 var(--sans); text-wrap: balance; }
+.invite .t2 { font: 700 calc(40 * var(--u))/1.1 var(--hand); color: var(--ink); text-wrap: balance; }
+.invite .t3 { font: 500 calc(26 * var(--u))/1.2 var(--sans); color: var(--ink); text-wrap: balance; }
+.invite .t3.plus { color: var(--fg); }
+.vote { grid-area: vote; display: flex; flex-direction: column; align-self: end; min-width: 0; text-align: left; }
+.vote h2 { font: 700 calc(64 * var(--u))/1 var(--sans); margin: 0 0 calc(24 * var(--u)); text-wrap: balance; }
+.vote .duel { margin-bottom: calc(24 * var(--u)); }
+.vote .etat { font: 700 calc(44 * var(--u))/1 var(--hand); color: var(--ink); margin: 0 0 calc(16 * var(--u)); }
+.vote .total { font: 500 calc(30 * var(--u))/1.2 var(--sans); color: var(--ink); transform-origin: 0 50%; }
+.tuile { position: fixed; left: 0; top: 0; z-index: 20; width: calc(72 * var(--u)); height: calc(72 * var(--u)); border-radius: calc(6 * var(--u)); box-shadow: var(--shadow); pointer-events: none; }
+.tuile.a { background: var(--mint); } .tuile.i { background: var(--sky); }
+.voyageur, .sortant { position: fixed; z-index: 20; margin: 0; pointer-events: none; }
+#debug { position: fixed; top: 0; left: 0; z-index: 40; max-width: 100vw; max-height: 100vh; overflow: hidden; padding: calc(12 * var(--u)) calc(16 * var(--u)); background: var(--white); color: var(--fg);
+         font: 500 calc(20 * var(--u))/1.3 var(--sans); white-space: pre-wrap; pointer-events: none; }
+#debug.tel { font-size: 12px; padding: 8px 10px; }
+#unit { margin: 24px; font: 500 14px/1.5 ui-monospace, Menlo, monospace; white-space: pre-wrap; }
+
+@media (orientation: portrait) {
+  .wall { padding: calc(48 * var(--u)) calc(56 * var(--u)); column-gap: calc(40 * var(--u)); row-gap: calc(24 * var(--u));
+    grid-template-columns: calc(407 * var(--u)) minmax(0, 1fr);
+    grid-template-rows: calc(64 * var(--u)) minmax(calc(300 * var(--u)), 1fr) calc(136 * var(--u)) calc(247 * var(--u)) calc(544 * var(--u)) minmax(0, var(--pied, calc(240 * var(--u))));
+    grid-template-areas: "entete entete" "dernier dernier" "qr invite" "qr pile" "vote vote" "pied pied"; }
+  .pile .postit:nth-child(3) { display: none; }
+  .photos { grid-area: pied; justify-self: center; align-self: center; padding-top: 0; }
+  .photo img { height: calc(196 * var(--u)); }
+  .postit .t { font-size: calc(26 * var(--u)); } .postit .m { font-size: calc(26 * var(--u)); }
+  .invite { gap: calc(4 * var(--u)); }
+  .vote h2 { font-size: calc(72 * var(--u)); }
+  .vote .duel { height: calc(320 * var(--u)); }
+  .vote .pad .repos, .wall .feuille span { font-size: calc(96 * var(--u)); }
+  .vote .pad .res { padding: calc(28 * var(--u)) calc(36 * var(--u)); }
+  .vote .res .nom { font-size: calc(40 * var(--u)); } .vote .res .chiffre { font-size: calc(128 * var(--u)); } .vote .res .voix { font-size: calc(36 * var(--u)); }
+  .vote .tampon { font-size: calc(44 * var(--u)); }
+  .vote .etat { font-size: calc(48 * var(--u)); }
+  .vote .total { font-size: calc(32 * var(--u)); }
 }
-@media (max-width: 900px) {
-  .wall { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; padding: 24px; }
-  .wall .older { display: none; }
-  .wall .invite { grid-row: 3; }
-  .wall .latest .card { padding: 32px; }
+@media (orientation: portrait) and (min-aspect-ratio: 2/3) {
+  .wall { grid-template-columns: calc(320 * var(--u)) minmax(0, 1fr);
+    grid-template-rows: calc(64 * var(--u)) minmax(calc(260 * var(--u)), 1fr) calc(136 * var(--u)) calc(160 * var(--u)) calc(544 * var(--u)) minmax(0, var(--pied, calc(240 * var(--u)))); }
+  .qr-box { width: calc(320 * var(--u)); height: calc(320 * var(--u)); }
+  .pile .postit .t { -webkit-line-clamp: 2; }
 }
+@media (orientation: landscape) {
+  .wall { padding: calc(40 * var(--u)) calc(56 * var(--u)); column-gap: calc(40 * var(--u)); row-gap: calc(24 * var(--u));
+    grid-template-columns: minmax(0, 1fr) calc(407 * var(--u)) calc(377 * var(--u));
+    grid-template-rows: calc(64 * var(--u)) calc(319 * var(--u)) minmax(0, 1fr) calc(240 * var(--u)) minmax(0, var(--pied, calc(57 * var(--u))));
+    grid-template-areas: "entete qr invite" "dernier qr invite" "dernier vote vote" "pile vote vote" "pile pied pied"; }
+  .wall.avec-photos .pile .postit:nth-child(n+2) { display: none; }
+}
+@media (orientation: landscape) and (max-aspect-ratio: 3/2) {
+  .wall { grid-template-columns: minmax(0, 1fr) calc(320 * var(--u)) calc(300 * var(--u)); }
+  .qr-box { width: calc(320 * var(--u)); height: calc(320 * var(--u)); align-self: center; }
+  .pad .repos, .wall .feuille span { font-size: calc(64 * var(--u)); }
+  .vote h2 { font-size: calc(56 * var(--u)); }
+  .vote .etat { font-size: calc(40 * var(--u)); }
+  .pile .postit:nth-child(3) { display: none; }
+  .wall.avec-photos .pile .postit { display: none; }
+  .entete .date { font-size: calc(24 * var(--u)); } #alerte { font-size: calc(20 * var(--u)); }   /* colonne de calc(628 * var(--u)) en 4:3 : la date tient sur une ligne */
+}
+@media (orientation: landscape) and (max-aspect-ratio: 13/10) {   /* 5:4 : colonne de calc(538 * var(--u)), la date passe sur deux lignes sous la pastille */
+  .entete { align-items: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card.new { animation: none; }
+  .carte.new { animation: fondu 150ms linear both; }
+}
+@keyframes fondu { from { opacity: 0; } to { opacity: 1; } }
 </style>
 </head>
 <body>
 <div id="app"></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<span id="etalon" aria-hidden="true"></span>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script>
 (function () {
-  var TOPIC = "mur-bureau-85683771c9";
-  var BASE = "https://ntfy.sh/" + TOPIC;
-  var KEY = "mur.msgs";
-  var NAME_KEY = "mur.name";
-  var MAX_TEXT = 200, MAX_NAME = 24;
+  /* ================= Constantes et paramètres ================= */
+  var VERSION = "2026-09-25.2";          // à incrémenter à chaque mise en ligne, relu par la borne
+  var NTFY = "https://ntfy.sh/";
+  var Q = "os";
+  var params = new URLSearchParams(location.search);
   var isBorne = /(^|[?&])borne/.test(location.search);
-  var app = document.getElementById("app");
-  var msgs = load();
-  var seen = {};
-  msgs.forEach(function (m) { seen[m.id] = true; });
+  var isTest = params.has("test");
+  var isDebug = params.has("debug");
+  var isUnit = isTest && params.has("unit");
+  var P = isTest ? "mur.test." : "mur.";
+  var SUFFIXE = isTest ? "-test" : "";
+  var T_MOTS = "mur-bureau-85683771c9" + SUFFIXE;
+  var T_VOTE = "mur-bureau-85683771c9-vote" + SUFFIXE;
+  var PAGE_URL = location.origin + location.pathname + (isTest ? "?test" : "");
+  var MAX_TEXT = 200, MAX_NAME = 24;
+  var LOCK_MS = 20000, DOUBLE_APPUI_MS = 1000, REFUS_ESPACE_MS = 600, REFUS_AFFICHE_MS = 2000;
+  var SNAP_MIN_MS = 600000, SNAP_BAS_MS = 1800000, SNAP_GROUPE_MS = 60000, MAINTIEN_S = 21600;
+  var QUOTA_SEUIL = 40, BULLETINS_MAX_JOUR = 150, BORNES_MAX = 8, MANCHES_MAX = 52;
+  var IGNORE_BORNES = [], IGNORE_VOTANTS = [], IGNORE_MOTS = ["07yZUVgGnL7O", "Imx72HnuJzBb", "R55XUHOC0usO"];   // remplies à la main (section 14) ; les 3 mots de test du 24/09
+  var idUrl = /^[a-z0-9]{6}$/.test(params.get("id") || "") ? params.get("id") : null;
+  var simule = isTest ? params.get("simule") : null;      // "reseau", "429" ou "42908"
+  var V = null, U = 1, lt = {}, restants = null, bloqueJusqua = 0, rejets = { n: 0, derniers: [] };
+  var horlogeSure = false, stockageOK = false, repriseMe = false, repriseJusqua = 0, debutPage = Date.now();
+  var publicationEnCours = false, attentePublication = 0, delaiPublication = 0, mancheAPublier = false;
+  lt[T_MOTS] = 0; lt[T_VOTE] = 0;
 
-  /* emplacements des post-it sur la borne : gauche, haut, rotation, opacité */
-  var SLOTS = [
-    [0, 10, 3, 1], [360, 40, -2, 1], [30, 250, -4, 1],
-    [380, 290, 2, 1], [60, 500, 5, .7], [400, 540, -3, .55]
-  ];
+  var QUESTION = "Android ou iOS ?";
+  var EASE_DROP = "cubic-bezier(.2, .9, .3, 1.2)", EASE_OUT = "cubic-bezier(.22, 1, .36, 1)",
+      EASE_IN_OUT = "cubic-bezier(.65, 0, .35, 1)", EASE_IN = "cubic-bezier(.5, 0, .75, 0)";
+  var reduit = matchMedia("(prefers-reduced-motion: reduce)");
+  var app = document.getElementById("app"), $etalon = document.getElementById("etalon");
+  var flux = null, premierOpen = true, horloge = [], dernierOpenS = 0;
+  var refServeur = 0, refPerf = 0, refDate = 0;   // dernier time serveur reçu (open ou keepalive), en ms, avec performance.now() et Date.now() au même instant
 
-  function load() {
-    try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; }
+  /* ================= Utilitaires (stockage, temps, format, hash) ================= */
+  function decoder(v, defaut) { if (v == null) return defaut; try { return JSON.parse(v); } catch (e) { return v; } }
+  function lire(cle, defaut) { try { return decoder(localStorage.getItem(P + cle), defaut); } catch (e) { return defaut; } }
+  function ecrire(cle, v) { if (isUnit) return false; try { localStorage.setItem(P + cle, JSON.stringify(v)); return true; } catch (e) { return false; } }
+  function effacer(cle) { if (isUnit) return; try { localStorage.removeItem(P + cle); } catch (e) {} }
+  function hasard(n) { var a = new Uint8Array(n), s = "abcdefghijklmnopqrstuvwxyz0123456789", r = ""; crypto.getRandomValues(a); for (var i = 0; i < n; i++) r += s[a[i] % 36]; return r; }
+  function fr(s) { return String(s).replace(/ ([?!:%])/g, " $1").replace(/(\d) (s|h|min|voix)\b/g, "$1 $2"); }
+  function nb(n) { return n.toLocaleString("fr-FR"); }
+  function chiffres(el, texte) {          // chiffres en cases (7.7) ; un nombre, une heure ou un millier ne se coupe pas
+    el.innerHTML = fr(texte).replace(/\d+(?:[:,\u00A0\u202F]\d+)*/g, function (g) { return '<span class="nw">' + g.replace(/\d/g, '<span class="n">$&</span>') + "</span>"; });
   }
-  function save() {
-    try { localStorage.setItem(KEY, JSON.stringify(msgs.slice(-500))); } catch (e) {}
+  var decalage = 0;                                           // horloge serveur moins horloge locale, en ms
+  function maintenant() { return Date.now() + decalage; }
+  function hash(s) { var h = 0; s = String(s); for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); }
+  function px(n) { return n * U + "px"; }                     // n unités de borne en px CSS (pour WAAPI)
+  function cu(n) { return "calc(" + n + " * var(--u))"; }
+
+  var FMT_JOUR = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Paris", year: "numeric", month: "2-digit", day: "2-digit" });
+  var FMT_HM = new Intl.DateTimeFormat("fr-FR", { timeZone: "Europe/Paris", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
+  function ymd(ms) { var p = {}; FMT_JOUR.formatToParts(new Date(ms)).forEach(function (x) { p[x.type] = x.value; }); return p.year + "-" + p.month + "-" + p.day; }
+  function jour(ms) { return ymd(ms - 5 * 3600000); }
+  function jourCal(ms) { return ymd(ms); }
+  function mancheDuJour(j) {
+    var y = +j.slice(0, 4), m = +j.slice(5, 7), d = +j.slice(8, 10);
+    var dt = new Date(Date.UTC(y, m - 1, d)), wd = (dt.getUTCDay() + 6) % 7;
+    dt.setUTCDate(dt.getUTCDate() - wd + 3);
+    var y1 = dt.getUTCFullYear(), jan4 = new Date(Date.UTC(y1, 0, 4));
+    var w = 1 + Math.round(((dt - jan4) / 86400000 - 3 + ((jan4.getUTCDay() + 6) % 7)) / 7);
+    return y1 + "-W" + (w < 10 ? "0" : "") + w;
   }
-  function hash(s) {
-    var h = 0; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
-    return Math.abs(h);
+  function manche(ms) { return mancheDuJour(jour(ms)); }
+  function manchePrecedente(r) {          // "2026-W39" -> "2026-W38", calendrier ISO seul (pas d'heure d'été en jeu)
+    var y = +r.slice(0, 4), w = +r.slice(6), jan4 = new Date(Date.UTC(y, 0, 4));
+    return mancheDuJour(new Date(Date.UTC(y, 0, 4 - (jan4.getUTCDay() + 6) % 7 + (w - 2) * 7)).toISOString().slice(0, 10));
   }
-  function color(m) { return "c" + (hash(m.id) % 5); }
-  function tilt(m, spread) { return (((hash(m.id + "r") % 100) / 100) * 2 * spread - spread).toFixed(1) + "deg"; }
-  function parse(ev) {
-    if (!ev || ev.event !== "message") return null;
-    var body = { n: "", t: ev.message || "" };
-    try { var j = JSON.parse(ev.message); if (j && typeof j.t === "string") body = j; } catch (e) {}
-    var t = String(body.t || "").trim().slice(0, MAX_TEXT);
-    if (!t) return null;
-    return { id: ev.id, time: ev.time * 1000, n: String(body.n || "").trim().slice(0, MAX_NAME), t: t };
+  function debutManche(s) {
+    var r = manche(s * 1000), bas = s - 8 * 86400, haut = s;
+    while (haut - bas > 1) { var mi = Math.floor((bas + haut) / 2); if (manche(mi * 1000) < r) bas = mi; else haut = mi; }
+    return haut;
   }
-  function add(m, fresh) {
-    if (!m || seen[m.id]) return false;
-    seen[m.id] = true;
-    if (fresh) m.fresh = true;
-    msgs.push(m);
-    msgs.sort(function (a, b) { return a.time - b.time; });
-    save();
-    return true;
-  }
-  function esc(s) {
-    return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; });
+  function heure(ms) { return new Date(ms).toLocaleTimeString("fr-FR", { timeZone: "Europe/Paris", hour: "2-digit", minute: "2-digit" }); }
+  function dateLongue(ms) { return new Date(ms).toLocaleString("fr-FR", { timeZone: "Europe/Paris", weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }); }
+  function quand(ms) {
+    var j = jourCal(ms);
+    if (j === jourCal(maintenant())) return "à " + heure(ms);
+    if (j === jourCal(maintenant() - 86400000)) return "hier à " + heure(ms);
+    return "le " + new Date(ms).toLocaleDateString("fr-FR", { timeZone: "Europe/Paris", day: "numeric", month: "long" }) + " à " + heure(ms);
   }
   function ago(ts) {
-    var d = (Date.now() - ts) / 1000;
+    var d = (maintenant() - ts) / 1000;
     if (d < 60) return "à l'instant";
     if (d < 3600) return "il y a " + Math.floor(d / 60) + " min";
     if (d < 86400) return "il y a " + Math.floor(d / 3600) + " h";
-    var day = new Date(ts), now = new Date();
-    if (now.getDate() - day.getDate() === 1) return "hier";
-    return day.toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
+    if (jourCal(ts) === jourCal(maintenant() - 86400000)) return "hier";
+    return new Date(ts).toLocaleDateString("fr-FR", { timeZone: "Europe/Paris", day: "numeric", month: "long" });
   }
-  function meta(m) {
-    return (m.n ? "<b>" + esc(m.n) + "</b>, " : "") + ago(m.time);
+  function minutesParis(ms) {             // minutes écoulées depuis minuit, heure de Paris
+    var p = {}; FMT_HM.formatToParts(new Date(ms)).forEach(function (x) { p[x.type] = x.value; });
+    return parseInt(p.hour, 10) * 60 + parseInt(p.minute, 10);
   }
-  function cardHtml(m, style, tiltSpread) {
-    var cls = "card " + color(m) + (m.fresh ? " new" : "");
-    var st = "--r:" + tilt(m, tiltSpread) + ";" + (style || "");
-    var html = '<div class="' + cls + '" style="' + st + '"><p class="t">' + esc(m.t) + '</p><div class="m">' + meta(m) + '</div></div>';
-    m.fresh = false;
-    return html;
+  function prochainMinuitUTC() { var d = new Date(maintenant()); return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1); }
+  function heureReouverture() {
+    return parseInt(new Intl.DateTimeFormat("fr-FR", { timeZone: "Europe/Paris", hour: "2-digit", hourCycle: "h23" })
+      .formatToParts(new Date(prochainMinuitUTC())).find(function (x) { return x.type === "hour"; }).value, 10);
   }
-  function fetchHistory(cb) {
-    fetch(BASE + "/json?poll=1&since=all").then(function (r) { return r.text(); }).then(function (txt) {
-      var changed = false;
-      txt.split("\n").forEach(function (line) {
-        if (!line) return;
-        try { if (add(parse(JSON.parse(line)))) changed = true; } catch (e) {}
-      });
-      if (cb) cb(changed);
-    }).catch(function () { if (cb) cb(false); });
-  }
-  function subscribe(onNew) {
-    if (!window.EventSource) return;
-    var es;
-    function open() {
-      es = new EventSource(BASE + "/sse");
-      es.onmessage = function (e) {
-        try { if (add(parse(JSON.parse(e.data)), true)) onNew(); } catch (err) {}
-      };
-      es.onerror = function () { es.close(); setTimeout(open, 5000); };
-    }
-    open();
-  }
-  function post(n, t) {
-    return fetch(BASE, { method: "POST", body: JSON.stringify({ n: n, t: t }) }).then(function (r) {
-      if (!r.ok) throw new Error(r.status);
-      return r.json();
+  function frDom(racine) {                // espaces fines des textes d'interface posés en HTML statique
+    var w = document.createTreeWalker(racine, NodeFilter.SHOW_TEXT), n;
+    while ((n = w.nextNode())) n.nodeValue = fr(n.nodeValue);
+    racine.querySelectorAll("[aria-label],[placeholder]").forEach(function (el) {
+      if (el.hasAttribute("aria-label")) el.setAttribute("aria-label", fr(el.getAttribute("aria-label")));
+      if (el.hasAttribute("placeholder")) el.setAttribute("placeholder", fr(el.getAttribute("placeholder")));
     });
   }
 
-  /* ---------- Borne ---------- */
-  function renderWall() {
-    var list = msgs.slice().reverse();
-    var latest = list[0], older = list.slice(1, 1 + SLOTS.length);
+  /* ================= Transport ntfy (publier, Flux, compte) ================= */
+  function publier(topic, corps) {
+    if (isTest && simule) return simulerPublication();
+    var ctrl = new AbortController(), to = setTimeout(function () { ctrl.abort(); }, 10000);
+    return fetch(NTFY + topic, { method: "POST", body: corps, signal: ctrl.signal })
+      .then(function (r) {                    // le délai court jusqu'à la fin de la lecture du corps
+        if (r.ok) return r.json().then(function (m) { return { ok: true, msg: m }; });
+        return r.json().catch(function () { return {}; }).then(function (j) { return { ok: false, status: r.status, code: j.code || 0 }; });
+      })
+      .then(function (res) { clearTimeout(to); return res; })
+      .catch(function (e) { clearTimeout(to); return { ok: false, status: 0, code: 0, delai: e.name === "AbortError" }; });
+  }
+  function simulerPublication() {
+    if (simule === "429") return Promise.resolve({ ok: false, status: 429, code: 42901 });
+    if (simule === "42908") return Promise.resolve({ ok: false, status: 429, code: 42908 });
+    return Promise.resolve({ ok: false, status: 0, code: 0, delai: false });
+  }
+
+  function lireAttente() {                // attente du flux gardée après un rejet HTTP, relue au chargement
+    var v = lire("flux.attente", null);
+    if (!v) { try { v = JSON.parse(sessionStorage.getItem(P + "flux.attente")); } catch (e) {} }
+    return v && typeof v === "object" && typeof v.p === "number" ? v : null;
+  }
+  function garderAttente(v) { if (!ecrire("flux.attente", v)) { try { sessionStorage.setItem(P + "flux.attente", JSON.stringify(v)); } catch (e) {} } }
+  function oublierAttente() { effacer("flux.attente"); try { sessionStorage.removeItem(P + "flux.attente"); } catch (e) {} }
+  function Flux(onLigne, onEtat, since) {
+    var modePoll = !(window.ReadableStream && window.Response && "body" in Response.prototype);
+    // Les durées se mesurent sur performance.now() : un saut de l'horloge locale ne fige ni une attente ni le chien de garde.
+    // dernierSigne : dernier événement ntfy valide (open, keepalive, message, poll réussi) ; derniereLigne : dernière ligne reçue, pour le chien de garde.
+    var etat = "ferme", ctrl = null, gen = 0, essai = 0, attente429 = 0, prochainEssai = 0, minuteur = null,
+        dernierSigne = 0, dernierSigneDate = 0, derniereLigne = 0, ouvertA = 0, lanceA = -Infinity, essais = 0, attenteGardee = false;
+    var garde = lireAttente();              // un rechargement n'abrège pas l'attente après un rejet
+    if (garde && garde.p > Date.now()) {
+      prochainEssai = performance.now() + Math.min(garde.p - Date.now(), 1081000);
+      attente429 = typeof garde.a === "number" ? Math.min(Math.max(garde.a, 0), 900000) : 0; attenteGardee = true;
+    } else if (garde) oublierAttente();
+    function changer(e) { etat = e; onEtat(e); }
+    function libreA() { return Math.max(prochainEssai, lanceA + 5000); }   // 5 s au moins entre deux requêtes lancées de l'extérieur
+    function signe() { dernierSigne = performance.now(); dernierSigneDate = Date.now(); }
+    function ouvrir() {
+      if (etat !== "ferme" || performance.now() < libreA()) return false;
+      lancer(); return true;
+    }
+    function lancer() {
+      clearTimeout(minuteur); if (ctrl) ctrl.abort();
+      var g = ++gen, c = ctrl = new AbortController(); essais++; lanceA = performance.now();
+      changer("connexion");
+      if (isTest && simule) { setTimeout(function () { simule === "reseau" ? echec(g, 0, 0) : echec(g, 429, 42901); }, 0); return; }
+      var url = NTFY + T_MOTS + "," + T_VOTE + "/json?" + (modePoll ? "poll=1&" : "") + "since=" + since();
+      fetch(url, { signal: c.signal }).then(function (r) {
+        if (g !== gen) return;
+        if (!r.ok) return r.json().catch(function () { return {}; }).then(function (j) { echec(g, r.status, j.code || 0); });
+        if (modePoll) return r.text().then(function (txt) {
+          if (g !== gen) return;
+          attente429 = 0; essai = 0; signe();
+          if (attenteGardee) { attenteGardee = false; oublierAttente(); }
+          onLigne({ event: "poll", time: Math.floor(Date.now() / 1000) });
+          txt.split("\n").forEach(function (l) { if (l.trim()) { try { onLigne(JSON.parse(l)); } catch (e) {} } });
+          prochainEssai = performance.now() + 60000; changer("attente"); minuteur = setTimeout(lancer, 60000);
+        });
+        derniereLigne = ouvertA = performance.now(); changer("ouvert");
+        var lecteur = r.body.getReader(), dec = new TextDecoder(), tampon = "";
+        function lireFlux() {
+          return lecteur.read().then(function (x) {
+            if (g !== gen) return;
+            if (x.done) return echec(g, 0, 0);
+            tampon += dec.decode(x.value, { stream: true });
+            var i, ev;
+            while ((i = tampon.indexOf("\n")) >= 0) {
+              var ligne = tampon.slice(0, i); tampon = tampon.slice(i + 1);
+              if (!ligne.trim()) continue;
+              derniereLigne = performance.now();
+              try { ev = JSON.parse(ligne); } catch (e) { continue; }
+              if (!ev || (ev.event !== "open" && ev.event !== "keepalive" && ev.event !== "message")) continue;
+              signe();
+              if (ev.event === "open") { attente429 = 0; if (attenteGardee) { attenteGardee = false; oublierAttente(); } }
+              try { onLigne(ev); } catch (e) {}
+            }
+            return lireFlux();
+          });
+        }
+        return lireFlux();
+      }).catch(function () { echec(g, 0, 0); });
+    }
+    function echec(g, status, code) {
+      if (g !== gen || (etat !== "connexion" && etat !== "ouvert")) return;
+      if (ctrl) ctrl.abort();
+      var d;
+      if (status >= 400) {
+        attente429 = attente429 ? Math.min(attente429 * 2, 900000) : 60000; d = attente429;
+      } else {
+        if (ouvertA && performance.now() - ouvertA > 60000) essai = 0;
+        d = [5000, 10000, 20000, 40000, 60000][Math.min(essai++, 4)];
+      }
+      ouvertA = 0;
+      d = Math.round(d * (0.8 + Math.random() * 0.4));
+      prochainEssai = performance.now() + d;
+      if (status >= 400) { garderAttente({ p: Date.now() + d, a: attente429 }); attenteGardee = true; }
+      changer("attente");
+      minuteur = setTimeout(lancer, d);
+    }
+    setInterval(function () {                           // chien de garde, toutes les 10 s
+      var t = performance.now();
+      if (etat === "ouvert" && t - derniereLigne > 100000) echec(gen, 0, 0);
+      else if (etat === "connexion" && t - lanceA > 30000) echec(gen, 0, 0);   // requête restée sans réponse (proxy muet, connexion morte)
+    }, 10000);
+    addEventListener("online", function () {            // retour du réseau : seulement après une erreur réseau, 5 s au moins après la dernière requête
+      if (etat === "attente" && !attente429 && !modePoll && performance.now() - lanceA >= 5000) { prochainEssai = 0; lancer(); }
+    });
+    return {
+      ouvrir: ouvrir,
+      fermer: function () {
+        if (etat === "connexion") prochainEssai = Math.max(prochainEssai, performance.now() + (attente429 || 5000));
+        clearTimeout(minuteur); gen++; if (ctrl) ctrl.abort(); ouvertA = 0; if (etat !== "ferme") changer("ferme");
+      },
+      etat: function () { return etat; },
+      prochainEssai: function () { return Date.now() + (libreA() - performance.now()); },   // en heure locale, pour l'affichage et « Actualiser »
+      dernierSigne: function () { return dernierSigne ? dernierSigneDate : 0; },            // en heure locale, pour l'affichage
+      silence: function () { return performance.now() - dernierSigne; },                  // ms depuis le dernier signe de vie (ou depuis le chargement)
+      essais: function () { return essais; },
+      modePoll: modePoll
+    };
+  }
+  function since() { return !lt[T_MOTS] || !lt[T_VOTE] ? "all" : Math.min(lt[T_MOTS], lt[T_VOTE]); }
+  function compte() {                     // quota du jour de l'IP ; aucune requête en simulation
+    if (isTest && simule) return Promise.resolve(restants);
+    return fetch(NTFY + "v1/account").then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+      restants = j && j.stats && typeof j.stats.messages_remaining === "number" ? j.stats.messages_remaining : null;
+      return restants;
+    }).catch(function () { restants = null; return null; });
+  }
+  function echantillon(tS) {              // horloge : médiane des 20 derniers écarts serveur - local
+    var e = tS * 1000 - Date.now();
+    if (horloge.length && Math.abs(e - decalage) > 60000) horloge = [];   // saut de l'horloge locale : les anciens écarts ne valent plus
+    horloge.push(e); if (horloge.length > 20) horloge.shift();
+    var s = horloge.slice().sort(function (a, b) { return a - b; }), n = s.length;
+    var med = n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2;
+    decalage = Math.abs(med) > 5000 ? Math.round(med) : 0;
+    refServeur = tS * 1000; refPerf = performance.now(); refDate = Date.now();
+  }
+  function heureServeur() {               // dernier time serveur plus le temps écoulé depuis (performance.now()), insensible à l'horloge locale
+    return refPerf ? refServeur + (performance.now() - refPerf) : maintenant();
+  }
+  function controlerHorloge() {           // horloge locale sautée (recalage NTP) ou page gelée depuis le dernier échantillon :
+    if (horlogeSure && refPerf && Math.abs((Date.now() - refDate) - (performance.now() - refPerf)) > 60000) horlogeSure = false;   // l'heure attend le prochain open ou keepalive
+    return horlogeSure;
+  }
+  function onLigne(ev) {
+    if (!ev || typeof ev !== "object") return;
+    if (ev.event === "open" || ev.event === "keepalive" || ev.event === "poll") {
+      if (ev.event !== "poll" && typeof ev.time === "number") echantillon(ev.time);
+      horlogeSure = true;
+      if (ev.event === "keepalive") return;
+      dernierOpenS = ev.time;
+      if (premierOpen) { premierOpen = false; repriseJusqua = ev.time; }
+      if (isBorne) { if (V.r === null) { V.r = manche(ev.time * 1000); ecrireV(); rendreVote(); } }
+      else if (!V) { V = nouvelEtat(null, manche(ev.time * 1000)); rendreVote(); }
+      if (V && V.r && V.r > manche(ev.time * 1000 + 600000)) {   // manche enregistrée après un ancien saut d'horloge : retour à la manche du serveur
+        rejet("manche stockée future " + V.r);
+        V.r = manche(ev.time * 1000); V.h = V.h.filter(function (x) { return x.r < V.r; }); V.dt = {}; V.snVu = 0;
+        V.gen++; if (V.me) { V.dirty = true; V.dirtyAt = 0; }
+        ecrireV(); rendreVote();
+      }
+      return;
+    }
+    if (ev.event !== "message" || typeof ev.time !== "number") return;
+    if (ev.topic === T_MOTS) surMot(ev);
+    else if (ev.topic === T_VOTE) surVote(ev);
+    if (ev.topic === T_MOTS || ev.topic === T_VOTE) lt[ev.topic] = Math.max(lt[ev.topic], ev.time);
+  }
+
+  /* ================= Mots (parse, liste) ================= */
+  var msgs = [], seen = {};
+  function parseMot(ev) {
+    if (!ev || ev.event !== "message" || ev.topic !== T_MOTS || IGNORE_MOTS.indexOf(ev.id) >= 0) return null;
+    var body = { n: "", t: ev.message || "" };
+    try {
+      var j = JSON.parse(ev.message);
+      if (j && typeof j === "object") { if ("k" in j) return null; if (typeof j.t === "string") body = j; }
+    } catch (e) {}
+    var t = String(body.t || "").trim().slice(0, MAX_TEXT);
+    if (!t) return null;
+    var c = body.c === "j" || body.c === "r" || body.c === "p" ? body.c : null;
+    return { id: ev.id, time: ev.time * 1000, n: String(body.n || "").trim().slice(0, MAX_NAME), t: t, c: c };
+  }
+  function couleur(m) { return "c-" + (m.c || ["j", "r", "p"][hash(m.id) % 3]); }
+  function chargerMsgs() {
+    var l = lire("msgs", []);
+    if (!Array.isArray(l)) l = [];
+    msgs = l.filter(function (m) {
+      return m && typeof m === "object" && typeof m.id === "string" && typeof m.t === "string" && typeof m.time === "number" && IGNORE_MOTS.indexOf(m.id) < 0;
+    }).map(function (m) {
+      return { id: m.id, time: m.time, n: String(m.n || ""), t: m.t, c: m.c === "j" || m.c === "r" || m.c === "p" ? m.c : null };
+    });
+    msgs.sort(function (a, b) { return a.time - b.time; });
+    msgs = msgs.slice(-500);
+    seen = {}; msgs.forEach(function (m) { seen[m.id] = true; });
+    ecrire("msgs", msgs);
+  }
+  function add(m) {
+    if (!m || seen[m.id]) return false;
+    seen[m.id] = true;
+    msgs.push(m);
+    msgs.sort(function (a, b) { return a.time - b.time; });
+    if (msgs.length > 500) { msgs = msgs.slice(-500); seen = {}; msgs.forEach(function (x) { seen[x.id] = true; }); }
+    if (msgs.indexOf(m) < 0) return false;
+    ecrire("msgs", msgs);
+    return true;
+  }
+  function surMot(ev) {
+    var m = parseMot(ev);
+    if (!m) return;
+    var frais = ev.time * 1000 >= maintenant() - 60000;
+    if (!add(m)) return;
+    if (isBorne) borneMot(m, frais); else telMot(m, frais);
+  }
+
+  /* ================= Vote (état, réducteur, totaux, affichage, titres) ================= */
+  // Bulletins : pl (jour -> [android, ios]) compte ceux reçus ici ; po (borne -> jour -> [oa, oi]) garde, pour chaque borne émettrice,
+  // le plus grand écart entre le p de ses instantanés et pl au moment de leur réception. Le p effectif vaut pl plus le plus grand écart
+  // des bornes non ignorées : c'est la fusion par maximum de 5.3, mais IGNORE_BORNES retire aussi le p d'une source forgée.
+  // L'instantané publié ne reprend que le p des bornes qui ont publié leur propre ligne (dt) et le sien : un p venu d'une source
+  // sans ligne n'est pas recopié sous l'id de cette borne.
+  function nouvelEtat(me, r) {
+    var d = {}; if (me) d[me] = [0, 0];
+    return { z: 1, q: Q, r: r, me: me, d: d, dt: {}, pl: {}, po: {}, ids: {}, dv: {}, lt: 0, h: [], gen: 0,
+             sn: { t: 0, any: 0, keepAt: 0 }, snVu: 0, dirty: false, dirtyAt: 0 };
+  }
+  function ecrireV() { if (isBorne && V && V.me) ecrire("vote", V); }
+  function pBrut(j, essai, publie) {      // somme de pl et du plus grand écart des bornes non ignorées ; essai : {f, o}, nouvel écart essayé pour f
+    var l = V.pl[j] || [0, 0], oa = 0, oi = 0, f, o;
+    for (f in V.po) {
+      if (IGNORE_BORNES.indexOf(f) >= 0 || (essai && f === essai.f) || !(o = V.po[f][j])) continue;
+      if (publie && f !== V.me && !V.dt[f]) continue;
+      oa = Math.max(oa, o[0]); oi = Math.max(oi, o[1]);
+    }
+    if (essai) { oa = Math.max(oa, essai.o[0]); oi = Math.max(oi, essai.o[1]); }
+    return { a: l[0] + oa, i: l[1] + oi, oa: oa, oi: oi };
+  }
+  function pJour(j, publie) {             // p effectif d'un jour
+    var x = pBrut(j, null, publie), trop = x.a + x.i - BULLETINS_MAX_JOUR;
+    if (trop <= 0) return [x.a, x.i];
+    // bulletins comptés ici après un instantané, au-delà de 150 : l'excédent est retiré de la part venue des instantanés (pl reste entier)
+    var ra = Math.min(x.oa, Math.round(trop * x.oa / (x.oa + x.oi))), ri = trop - ra;
+    if (ri > x.oi) { ri = x.oi; ra = trop - ri; }
+    return [x.a - ra, x.i - ri];
+  }
+  function pEffectif(publie) {            // jour -> [android, ios], 150 par jour au plus ; publie : p de l'instantané de cette borne
+    var o = {}, j, f;
+    if (!V) return o;
+    for (j in V.pl) o[j] = 1;
+    for (f in V.po) for (j in V.po[f]) o[j] = 1;
+    for (j in o) { o[j] = pJour(j, publie); if (publie && !o[j][0] && !o[j][1]) delete o[j]; }
+    return o;
+  }
+  function totaux() {
+    var A = 0, I = 0, k;
+    if (!V) return { A: 0, I: 0 };
+    for (k in V.d) if (IGNORE_BORNES.indexOf(k) < 0) { A += V.d[k][0]; I += V.d[k][1]; }
+    var p = pEffectif();
+    for (k in p) { A += p[k][0]; I += p[k][1]; }
+    return { A: A, I: I };
+  }
+  function valider(txt) {
+    var b; try { b = JSON.parse(txt); } catch (e) { rejet("json"); return null; }
+    if (!b || typeof b !== "object" || b.q !== Q || b.z !== 1 || (b.k !== "b" && b.k !== "s")) { rejet("schéma"); return null; }
+    function entier(x, max) { return Number.isInteger(x) && x >= 0 && x <= max; }
+    if (b.k === "b") {
+      if ((b.c !== "a" && b.c !== "i") || !/^[a-z0-9]{8}$/.test(b.v) || IGNORE_VOTANTS.indexOf(b.v) >= 0) { rejet("bulletin"); return null; }
+      return b;
+    }
+    if (!/^\d{4}-W\d{2}$/.test(b.r) || !/^[a-z0-9]{6}$/.test(b.f) || !b.d || typeof b.d !== "object" || Array.isArray(b.d)) { rejet("instantané"); return null; }
+    if (Object.keys(b.d).length > BORNES_MAX) { rejet("trop de bornes"); return null; }
+    for (var k in b.d) {
+      var v = b.d[k];
+      if (!/^[a-z0-9]{6}$/.test(k) || !Array.isArray(v) || v.length !== 2 || !entier(v[0], 30240) || !entier(v[1], 30240)) { rejet("ligne d"); return null; }
+    }
+    b.p = b.p && typeof b.p === "object" && !Array.isArray(b.p) ? b.p : {};
+    for (var j in b.p) {
+      var w = b.p[j];
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(j) || mancheDuJour(j) !== b.r || !Array.isArray(w) || w.length !== 2 || !entier(w[0], 150) || !entier(w[1], 150) || w[0] + w[1] > 150) { rejet("ligne p"); return null; }
+    }
+    if (b.h && !(/^\d{4}-W\d{2}$/.test(b.h.r) && entier(b.h.a, 1e7) && entier(b.h.i, 1e7) && b.h.a + b.h.i <= 30240 * BORNES_MAX + 150 * 7)) b.h = null;
+    return b;
+  }
+  function rejet(raison) { rejets.n++; rejets.derniers = rejets.derniers.concat(raison).slice(-5); }
+  function appliquer(ev) {
+    if (!V || !V.r) return null;
+    V.lt = Math.max(V.lt, ev.time);                                  // l'écho de ses propres instantanés compte aussi
+    if (V.ids[ev.id]) return null;
+    V.ids[ev.id] = ev.time;
+    var b = valider(ev.message); if (!b) return null;
+    var mEv = manche(ev.time * 1000);
+    if (mEv > V.r) changerManche(mEv, ev.time * 1000);                // le time d'un message est celui du serveur
+    if (b.k === "b") {
+      if (mEv !== V.r) return null;
+      var j = jour(ev.time * 1000), cle = j + "|" + b.v;
+      if (V.dv[cle]) return null;
+      var pj = V.pl[j] || [0, 0];
+      if (pj[0] + pj[1] >= BULLETINS_MAX_JOUR) { rejet("plafond du jour"); return null; }   // bulletins reçus ici : un faux p ne bloque rien
+      V.dv[cle] = 1; pj[b.c === "a" ? 0 : 1]++; V.pl[j] = pj;
+      ecrireV();
+      return { type: "tel", c: b.c, v: b.v, jour: j, id: ev.id, direct: ev.time * 1000 >= maintenant() - 30000 };
+    }
+    if (b.r !== V.r || mEv !== V.r) return null;
+    if (IGNORE_BORNES.indexOf(b.f) >= 0) return null;                  // source ignorée : ni lignes relayées, ni p, ni h
+    var jEv = jour(ev.time * 1000), jf;
+    for (jf in b.p) if (jf > jEv) { rejet("p futur " + jf); return null; }   // un instantané ne contient pas de bulletins à venir
+    V.snVu = Math.max(V.snVu, ev.time);
+    if (V.me) {                           // maintien : seulement si l'instantané garde la ligne de cette borne à sa valeur courante
+      var lm = b.d[V.me] || [0, 0], cm = V.d[V.me] || [0, 0];
+      if (lm[0] === cm[0] && lm[1] === cm[1]) V.sn.any = Math.max(V.sn.any, ev.time);
+    }
+    var avant = totaux(), connue = !!V.dt[b.f], id, debut = null;
+    for (id in b.d) {
+      var mienne = id === V.me;
+      if (IGNORE_BORNES.indexOf(id) >= 0) continue;
+      if (mienne && !(repriseMe && b.f === V.me && ev.time <= repriseJusqua)) continue;
+      if (!V.d[id] && Object.keys(V.d).length >= BORNES_MAX) { rejet("borne en trop"); continue; }
+      var cur = V.d[id] || [0, 0], na = Math.max(cur[0], b.d[id][0]), ni = Math.max(cur[1], b.d[id][1]);
+      var hausse = (na - cur[0]) + (ni - cur[1]), permis;
+      if (!mienne && V.dt[id]) permis = Math.ceil((ev.time - V.dt[id]) / 20) + 1;
+      else { if (debut === null) debut = debutManche(ev.time); permis = Math.ceil((ev.time - debut) / 20) + 1; }
+      if (hausse > permis) { rejet("hausse impossible " + id); continue; }
+      V.d[id] = [na, ni]; if (!mienne && id === b.f) V.dt[id] = ev.time;   // dt : dernier instantané de la borne elle-même, jamais un relais
+    }
+    var pSource = b.f !== V.me || (repriseMe && ev.time <= repriseJusqua);   // son propre p seulement en reprise (9.11)
+    for (var j2 in b.p) {
+      if (!pSource) break;
+      if (!V.po[b.f] && Object.keys(V.po).length >= BORNES_MAX) { rejet("borne en trop " + b.f); break; }
+      var l2 = V.pl[j2] || [0, 0], o0 = V.po[b.f] && V.po[b.f][j2];
+      var o2 = [b.p[j2][0] - l2[0], b.p[j2][1] - l2[1]];
+      if (o0) o2 = [Math.max(o0[0], o2[0]), Math.max(o0[1], o2[1])];
+      var x0 = pBrut(j2), x2 = pBrut(j2, { f: b.f, o: o2 });
+      if (x2.a + x2.i > BULLETINS_MAX_JOUR && x2.a + x2.i > x0.a + x0.i) { rejet("p trop haut " + j2); continue; }   // fusion au-delà de 150 : refusée
+      if (!V.po[b.f]) V.po[b.f] = {};
+      V.po[b.f][j2] = o2;
+    }
+    if (b.h && b.h.r !== manchePrecedente(b.r)) b.h = null;             // h : la manche qui précède celle de l'instantané, rien d'autre
+    if (b.h && connue && !V.h.some(function (x) { return x.r === b.h.r; })) {
+      V.h.push({ r: b.h.r, a: b.h.a, i: b.h.i });
+      V.h.sort(function (x, y) { return x.r < y.r ? -1 : 1; }); V.h = V.h.slice(-MANCHES_MAX);
+    }
+    ecrireV();
+    var apres = totaux();
+    return (apres.A !== avant.A || apres.I !== avant.I) ? { type: "borne", avant: avant } : null;
+  }
+  function voterBorne(c) { V.d[V.me][c === "a" ? 0 : 1]++; V.gen++; if (!V.dirty) V.dirtyAt = maintenant(); V.dirty = true; ecrireV(); }
+  function changerManche(nouvelle, preuve) {   // preuve : heure serveur (ms) qui justifie la nouvelle manche
+    if (nouvelle > manche((preuve || heureServeur()) + 600000)) { rejet("manche future " + nouvelle); return; }
+    var t = totaux();
+    if (V.r && t.A + t.I > 0) { V.h.push({ r: V.r, a: t.A, i: t.I }); V.h = V.h.slice(-MANCHES_MAX); }
+    V.r = nouvelle; V.d = {}; if (V.me) V.d[V.me] = [0, 0]; V.dt = {}; V.pl = {}; V.po = {}; V.snVu = 0;
+    V.gen++; V.dirty = !!V.me; V.dirtyAt = 0;
+    mancheAPublier = !!V.me;
+    ecrireV(); rendreVote();
+    if (V.me && !isUnit) setTimeout(tacheInstantane, 0);     // la borne publie tout de suite la manche à zéro (5.6)
+  }
+  function hPrecedente() {
+    var der = V && V.h[V.h.length - 1];
+    return der && der.r === manche(maintenant() - 7 * 86400000) ? der : null;
+  }
+  function purger() {                     // seuils pris sur l'heure sûre et jamais au-delà du plus grand time serveur vu
+    if (!V || !horlogeSure) return;
+    var ref = Math.min(maintenant(), V.lt * 1000), lim = ref / 1000 - 46800, j0 = jour(ref - 2 * 86400000), k;
+    for (k in V.ids) if (V.ids[k] < lim) delete V.ids[k];
+    for (k in V.dv) if (k.slice(0, 10) < j0) delete V.dv[k];
+    ecrireV();
+  }
+  function tacheInstantane() {
+    if (!V || !V.me || !V.r || !horlogeSure || publicationEnCours || maintenant() < bloqueJusqua || performance.now() < attentePublication) return;
+    // sn.t, dirtyAt et keepAt sont en heure serveur ; une valeur future vient d'une horloge locale fausse au moment où elle a été notée
+    var t = maintenant();
+    if (V.dirtyAt > t) V.dirtyAt = t;
+    if (V.sn.t > t) V.sn.t = 0;
+    if (V.sn.keepAt > t + 600000) V.sn.keepAt = 0;
+    var actives = Object.keys(V.dt).filter(function (id) { return IGNORE_BORNES.indexOf(id) < 0 && V.dt[id] >= t / 1000 - 43200; }).length;
+    var nbBornes = Math.min(BORNES_MAX, 1 + actives);
+    var intervalle = (restants !== null && restants < QUOTA_SEUIL ? SNAP_BAS_MS : SNAP_MIN_MS) * nbBornes;
+    var parChangement = V.dirty && t - V.dirtyAt >= SNAP_GROUPE_MS && t - V.sn.t >= intervalle;
+    var maintienDu = t / 1000 - V.sn.any >= MAINTIEN_S;
+    if (maintienDu && !V.sn.keepAt) { V.sn.keepAt = t + Math.random() * 600000; ecrireV(); }
+    var parMaintien = maintienDu && V.sn.keepAt && t >= V.sn.keepAt;
+    if (!mancheAPublier && !parChangement && !parMaintien) return;
+    publicationEnCours = true;
+    var gen0 = V.gen;
+    var corps = JSON.stringify({ t: "", k: "s", q: Q, z: 1, r: V.r, f: V.me, d: bornesLimitees(), p: pEffectif(true), h: hPrecedente() });
+    publier(T_VOTE, corps).then(function (res) {
+      publicationEnCours = false;
+      if (res.ok) {
+        V.ids[res.msg.id] = res.msg.time; V.sn.t = maintenant(); V.sn.any = Math.max(V.sn.any, res.msg.time); V.sn.keepAt = 0;
+        V.snVu = Math.max(V.snVu, res.msg.time); delaiPublication = 0;
+        if (V.gen === gen0) { V.dirty = false; V.dirtyAt = 0; mancheAPublier = false; }
+        else { V.dirty = true; V.dirtyAt = maintenant(); }
+        ecrireV();
+      } else if (res.status === 429 && res.code === 42908) { bloqueJusqua = prochainMinuitUTC(); }
+      else { delaiPublication = delaiPublication ? Math.min(delaiPublication * 2, 900000) : 120000; attentePublication = performance.now() + delaiPublication; }
+    });
+  }
+  function bornesLimitees() {
+    var ids = Object.keys(V.d).filter(function (k) { return k !== V.me && IGNORE_BORNES.indexOf(k) < 0; })
+      .sort(function (a, b) { return (V.d[b][0] + V.d[b][1]) - (V.d[a][0] + V.d[a][1]); }).slice(0, BORNES_MAX - 1);
+    var o = {}; o[V.me] = V.d[V.me]; ids.forEach(function (k) { o[k] = V.d[k]; }); return o;
+  }
+  function surVote(ev) {
+    var avant = totaux();
+    var ch = appliquer(ev);
+    if (!ch) return;
+    ch.avant = ch.avant || avant;
+    ch.enDirect = ev.time > dernierOpenS && ev.time * 1000 >= maintenant() - 30000;   // publié après l'ouverture du flux : pas un rejeu
+    if (isBorne) borneChangement(ch); else telChangement(ch);
+  }
+
+  function valeurs(t) {
+    var T = t.A + t.I;
+    if (T < 10) return { va: nb(t.A), vi: nb(t.I), pct: false, ca: "voix", ci: "voix" };
+    var a = Math.round(100 * t.A / T);
+    if (t.A > 0 && t.I > 0) a = Math.min(99, Math.max(1, a));
+    return { va: a + " %", vi: (100 - a) + " %", pct: true, ca: nb(t.A) + " voix", ci: nb(t.I) + " voix" };
+  }
+  function partage(t) {
+    var T = t.A + t.I;
+    if (T === 0) return 50;
+    if (t.I === 0) return 100;
+    if (t.A === 0) return 0;
+    return Math.min(92, Math.max(8, 100 * t.A / T));
+  }
+  function titre(t, avant) {
+    var T = t.A + t.I;
+    if (T === 0) return null;
+    if (T === 1) return "Premier vote !";
+    if (t.A === t.I) return "Égalité";
+    var tete = t.A > t.I ? "Android" : "iOS";
+    var tete0 = avant.A > avant.I ? "Android" : avant.I > avant.A ? "iOS" : null;
+    if (tete0 !== tete) return tete + " passe devant";
+    var n = Math.abs(t.A - t.I);
+    return n === 1 ? tete + " mène d'une voix" : tete + " mène de " + nb(n) + " voix";
+  }
+  function resume(t) {
+    var v = valeurs(t);
+    return v.pct ? "Android " + v.va + ", iOS " + v.vi + "." : "Android " + v.va + " voix, iOS " + v.vi + " voix.";
+  }
+  function nomCamp(c) { return c === "a" ? "Android" : "iOS"; }
+  function ligneSemaine() {               // « Semaine dernière : … » ou null
+    var h = hPrecedente(); if (!h) return null;
+    if (h.a === h.i) return "Semaine dernière : égalité";
+    return "Semaine dernière : " + (h.a > h.i ? "Android" : "iOS") + ", " + Math.round(100 * Math.max(h.a, h.i) / (h.a + h.i)) + " %";
+  }
+  function ligneTotal() {
+    var t = totaux(), n = t.A + t.I;
+    return n === 0 ? "Premier vote de la semaine : à toi." : nb(n) + " voix cette semaine";
+  }
+
+  /* ================= Rendu commun du duel ================= */
+  function htmlDuel(tel) {
+    function pad(c, nom) {
+      return '<button type="button" class="pad pad-' + c + '" data-c="' + c + '" aria-label="' + nom + '">'
+        + '<span class="repos" aria-hidden="true">' + nom + '</span>'
+        + '<span class="res" aria-hidden="true"><span class="nom">' + nom + '</span><span class="chiffre"></span><span class="voix"></span></span>'
+        + '<span class="tampon" aria-hidden="true" hidden>A VOTÉ</span></button>';
+    }
+    return '<div class="duel' + (tel ? " duel-tel" : "") + '" style="--split:50">'
+      + '<div class="fill fill-a"><span class="coin"></span></div><div class="fill fill-i"><span class="coin"></span></div>'
+      + '<span class="fil"></span><span class="milieu"></span><span class="punaise-f"></span>'
+      + pad("a", "Android") + pad("i", "iOS") + "</div>";
+  }
+  function prendreDuel(duel, tel) {       // références des éléments du duel, gardées sur l'élément
+    var q = function (s) { return duel.querySelector(s); };
+    duel._tel = tel; duel._gap = tel ? "12px" : "calc(32 * var(--u))";
+    duel._r = {
+      fillA: q(".fill-a"), fillI: q(".fill-i"), padA: q(".pad-a"), padI: q(".pad-i"),
+      chA: q(".pad-a .chiffre"), chI: q(".pad-i .chiffre"), vxA: q(".pad-a .voix"), vxI: q(".pad-i .voix"),
+      tpA: q(".pad-a .tampon"), tpI: q(".pad-i .tampon"), coinA: q(".fill-a .coin"), coinI: q(".fill-i .coin"),
+      repos: duel.querySelectorAll(".repos"), res: duel.querySelectorAll(".pad .res"),
+      traits: duel.querySelectorAll(".fil, .milieu, .punaise-f")
+    };
+    [duel._r.chA, duel._r.chI].forEach(function (el) { el._valeur = 0; chiffres(el, "0"); });
+    duel.style.setProperty("--gap", duel._gap);
+    return duel._r;
+  }
+  function rendreDuel(duel, t, avecRes, ms, courbe, delai, msCh, delaiCh) {
+    var v = valeurs(t), d = duel._r;
+    duel.style.transition = "--split " + ms + "ms " + courbe + " " + (delai || 0) + "ms, --gap " + ms + "ms " + courbe + " " + (delai || 0) + "ms";
+    duel.style.setProperty("--split", avecRes ? partage(t) : 50);
+    duel.style.setProperty("--gap", avecRes ? "0px" : duel._gap);
+    d.padA.setAttribute("aria-label", avecRes ? fr("Android, " + (v.pct ? v.va : v.va + " voix")) : "Android");
+    d.padI.setAttribute("aria-label", avecRes ? fr("iOS, " + (v.pct ? v.vi : v.vi + " voix")) : "iOS");
+    if (!avecRes) return;
+    d.vxA.textContent = fr(v.ca); d.vxI.textContent = fr(v.ci);
+    var ch = function (tt) {
+      var w = valeurs(tt), m = msCh == null ? ms : msCh;
+      compteur(d.chA, w.pct ? parseInt(w.va, 10) : tt.A, w.pct, m); compteur(d.chI, w.pct ? parseInt(w.vi, 10) : tt.I, w.pct, m);
+    };
+    if (delaiCh) planifier(delaiCh, function () { ch(totaux()); });   // valeurs du moment : un changement reçu entre-temps n'est pas écrasé
+    else ch(t);
+  }
+  function compteur(el, vers, pct, ms) {    // un seul roulement par élément : le suivant annule le précédent
+    var jeton = el._jeton = (el._jeton || 0) + 1;
+    var de = el._pct === undefined || el._pct === pct ? (el._valeur || 0) : vers;   // 0 au premier affichage, pas de roulement entre comptes et %
+    el._valeur = vers; el._pct = pct;
+    var suffixe = pct ? " %" : "", debut = performance.now();
+    if (reduit.matches || !ms || de === vers) { chiffres(el, (pct ? vers : nb(vers)) + suffixe); return; }
+    requestAnimationFrame(function pas(t) {
+      if (el._jeton !== jeton) return;
+      var k = Math.max(0, Math.min(1, (t - debut) / ms)), x = Math.round(de + (vers - de) * (1 - Math.pow(1 - k, 4)));
+      chiffres(el, (pct ? x : nb(x)) + suffixe);
+      if (k < 1) requestAnimationFrame(pas);
+    });
+  }
+  function tranches(n) {
+    var s = [];
+    for (var k = 1; k <= n; k++) { s.push("0 " + (3 * k - 1) * U + "px 0 var(--pad)"); s.push("0 " + 3 * k * U + "px 0 var(--line)"); }
+    s.push("0 " + (3 * n + 12) * U + "px " + 24 * U + "px rgba(60,40,10,.18)");
+    return s.join(",");
+  }
+  function poserTranches(duel, na, ni) {
+    var d = duel._r;
+    d.fillA._tr = na; d.fillI._tr = ni == null ? na : ni;
+    d.fillA.style.boxShadow = tranches(d.fillA._tr); d.fillI.style.boxShadow = tranches(d.fillI._tr);
+  }
+  function arracher(duel, c) {            // feuille arrachée (11.1 et 11.3)
+    var d = duel._r, fill = c === "a" ? d.fillA : d.fillI, r = c === "a" ? -1.5 : 1.5, tel = duel._tel;
+    var f = document.createElement("div");
+    f.className = "feuille " + (c === "a" ? "fa" : "fi");
+    f.style.left = fill.offsetLeft + "px"; f.style.top = fill.offsetTop + "px";
+    f.style.width = fill.offsetWidth + "px"; f.style.height = fill.offsetHeight + "px";
+    var s = document.createElement("span"); s.textContent = nomCamp(c); f.appendChild(s);
+    var depart = tel ? "translateY(-8px) rotate(" + (r - 3) + "deg)" : "rotate(" + r + "deg)";
+    var lever = "rotate(" + (r - 6) + "deg) translateY(" + (tel ? "-16px" : px(-16)) + ") scale(1.02)";
+    var chute = (tel ? "translate(20px, 400px)" : "translate(" + px(40) + ", " + px(900) + ")") + " rotate(" + (r + 24) + "deg)";
+    var dl = tel ? 120 : 140, dc = tel ? 360 : 620;
+    f.style.transform = depart;
+    duel.appendChild(f); duel._feuille = f;
+    f.animate([{ transform: depart }, { transform: lever }], { duration: dl, easing: EASE_OUT, fill: "forwards" });
+    f.animate([{ transform: lever }, { transform: chute }], { duration: dc, delay: dl, easing: EASE_IN, fill: "forwards" });
+    f.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, delay: dl + dc - 160, fill: "forwards" });
+    setTimeout(function () { if (f.parentNode) f.remove(); if (duel._feuille === f) duel._feuille = null; }, dl + dc + 30);
+  }
+  var planifies = [];
+  function planifier(ms, fn) {
+    var o = { at: performance.now() + ms, fn: fn };
+    o.id = setTimeout(function () { var i = planifies.indexOf(o); if (i >= 0) planifies.splice(i, 1); fn(); }, ms);
+    planifies.push(o);
+  }
+  function viderPlanifies() {             // exécute tout de suite les étapes en attente, dans l'ordre
+    var l = planifies.slice().sort(function (a, b) { return a.at - b.at; });
+    planifies = [];
+    l.forEach(function (o) { clearTimeout(o.id); });
+    l.forEach(function (o) { try { o.fn(); } catch (e) {} });
+  }
+  function transitions(els, valeur) { Array.prototype.forEach.call(els, function (el) { el.style.transition = valeur; }); }
+
+  /* ================= Borne (DOM, mise en page, QR, machine à états, mur, maintenance) ================= */
+  var $ = {};
+  var modeLecture = false, etat = null, t0 = -Infinity, finVerrou = 0, camp = null, dernierRefus = -Infinity,
+      dernierAppui = Date.now(), dernierAppel = 0, refusAnnonce = false, avantCourant = { A: 0, I: 0 };
+  var refusJusqua = -Infinity, nAffiche = null, appelCote = "a", motAnimJusqua = 0, pileIds = [], respIndex = 0,
+      heureVue = null, rechargeVoulue = false, prochaineRecharge = 0, memoireBase = 0, wakeLock = null,
+      plusN = 0, plusTimer = null, fileTuiles = 0, dernierDepart = 0, dernierMotA = 0,
+      titrePlanifie = false, reouvTimer = null, fileMots = [], fileMotsTimer = null, pileGen = 0;
+  var ROT_PILE = [3, -2, 2.5], DY_PILE = [0, 16, 6];
+  var PHOTOS = [   // photos punaisées sur la borne (dossier photos/)
+    { src: "photos/photo-1.webp", w: 1200, h: 800, rot: -3 },
+    { src: "photos/photo-2.webp", w: 900, h: 900, rot: 2.5 }
+  ];
+  function calerPhotos() {         // en portrait, le pied peut être trop bas pour les photos (écran presque carré, réglage ?bas)
+    if (!$.photos) return;
+    $.photos.classList.remove("serre");
+    var portrait = matchMedia("(orientation: portrait)").matches;
+    if (portrait && $.wall.getBoundingClientRect().bottom - $.vote.getBoundingClientRect().bottom < 150 * U) $.photos.classList.add("serre");
+  }
+
+  function lireU() { U = $etalon.getBoundingClientRect().width / 1000 || 1; }
+  function construireBorne() {
+    document.documentElement.classList.add("borne"); document.body.classList.add("borne");
+    var mf = document.createElement("link"); mf.rel = "manifest"; mf.href = "borne.webmanifest"; document.head.appendChild(mf);
+    var vp = document.querySelector('meta[name="viewport"]');
+    if (vp) vp.setAttribute("content", "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover");
     app.innerHTML = '<div class="wall">'
-      + '<div class="top"><span class="tag">Mur du bureau</span><span class="clock" id="clock"></span></div>'
-      + '<div class="latest">' + (latest
-        ? cardHtml(latest, "", 0)
-        : '<div class="card empty" style="--r:-1.5deg; padding: 48px 56px">Rien encore.<br>Scanne le code et colle le premier mot.</div>') + '</div>'
-      + '<div class="older">' + older.map(function (m, i) {
-        var s = SLOTS[i];
-        return cardHtml(m, "left:" + s[0] + "px;top:" + s[1] + "px;--r:" + s[2] + "deg;opacity:" + s[3], 0);
-      }).join("") + '</div>'
-      + '<div class="invite"><div class="qr" id="qr"></div><p>Un mot pour le bureau ?<span>Scanne, écris, ça se colle ici.</span></p></div>'
-      + '</div>';
-    tick();
-    var url = location.origin + location.pathname;
-    if (window.QRCode) new QRCode(document.getElementById("qr"), { text: url, width: 126, height: 126, colorDark: "#1f1a12", correctLevel: QRCode.CorrectLevel.M });
+      + '<header class="entete"><span class="tag">Mur du bureau</span><span class="date"><span id="clock"></span><span id="alerte" hidden></span></span></header>'
+      + '<section class="dernier"><div class="carte c-j"></div></section>'
+      + '<section class="pile" aria-hidden="true">'
+      + [0, 1, 2].map(function () { return '<div class="postit vide"><p class="t"></p><p class="m"></p></div>'; }).join("") + "</section>"
+      + (PHOTOS.length ? '<div class="photos" aria-hidden="true">' + PHOTOS.map(function (ph) {
+          return '<figure class="photo" style="--rot:' + ph.rot + 'deg"><span class="punaise"></span><img src="' + ph.src + '" width="' + ph.w + '" height="' + ph.h + '" alt="" decoding="async" draggable="false"></figure>';
+        }).join("") + "</div>" : "")
+      + '<div class="qr-box"><div class="qr-papier"></div><span class="punaise"></span><canvas id="qr" aria-label="QR code vers la page du mur"></canvas></div>'
+      + '<div class="invite"><p class="t1">Un mot pour le bureau ?</p><p class="t2">Scanne, écris, ça se colle ici.</p><p class="t3" id="inviteVote">Tu peux aussi voter depuis ton téléphone.</p></div>'
+      + '<section class="vote" aria-labelledby="voteTitre"><h2 id="voteTitre">Android ou iOS ?</h2>' + htmlDuel(false)
+      + '<p class="etat" id="etat">Touche ton camp pour voir le score.</p><p class="total" id="total"></p></section>'
+      + '<p class="sr-only" role="status" id="annonce"></p></div>';
+    frDom(app);
+    var q = function (s) { return app.querySelector(s); };
+    $.wall = q(".wall"); $.clock = q("#clock"); $.alerte = q("#alerte"); $.tag = q(".entete .tag");
+    $.dernier = q(".dernier"); $.pile = q(".pile"); $.slots = app.querySelectorAll(".postit"); $.photos = q(".photos");
+    if ($.photos) $.wall.classList.add("avec-photos");
+    $.qrBox = q(".qr-box"); $.qrPapier = q(".qr-papier"); $.qr = q("#qr");
+    $.invite = q("#inviteVote"); $.vote = q(".vote"); $.h2 = q("#voteTitre"); $.duel = q(".duel");
+    $.etat = q("#etat"); $.total = q("#total");
+    prendreDuel($.duel, false);
+    Array.prototype.forEach.call($.slots, function (s, i) { s.style.setProperty("--rot", ROT_PILE[i] + "deg"); s.style.setProperty("--dy", cu(DY_PILE[i])); });
   }
-  function tick() {
-    var el = document.getElementById("clock");
-    if (el) el.textContent = new Date().toLocaleString("fr-FR", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
+
+  /* --- Mur : dernier mot et pile --- */
+  function remplirMeta(el, m) {
+    el.textContent = "";
+    if (m.n) { var b = document.createElement("b"); b.textContent = m.n; el.appendChild(b); el.appendChild(document.createTextNode(", ")); }
+    el.appendChild(document.createTextNode(fr(ago(m.time))));
   }
-  function bootWall() {
-    document.body.className = "borne";
-    renderWall();
-    setInterval(tick, 15000);
-    setInterval(renderWall, 60000);
-    fetchHistory(function (changed) { if (changed) renderWall(); });
-    subscribe(renderWall);
-    setInterval(function () { fetchHistory(function (c) { if (c) renderWall(); }); }, 120000);
-    if (navigator.wakeLock && navigator.wakeLock.request) {
-      var lock = function () { navigator.wakeLock.request("screen").catch(function () {}); };
-      lock();
-      document.addEventListener("visibilitychange", function () { if (!document.hidden) lock(); });
+  function rendreDernier(m) {
+    var carte = $.dernier.firstElementChild;
+    carte.classList.remove("new");
+    if (!m) {
+      carte.className = "carte c-j"; carte._id = null;
+      carte.innerHTML = '<span class="punaise"></span><p class="vide"><span>Rien encore.</span> <span>Scanne le code et colle le premier mot.</span></p>';
+      frDom(carte);
+      return carte;
+    }
+    if (!carte.querySelector(".t")) carte.innerHTML = '<span class="punaise"></span><p class="t"></p><p class="m"></p>';
+    carte.className = "carte " + couleur(m); carte._id = m.id; carte._m = m;
+    carte.querySelector(".t").textContent = m.t;
+    remplirMeta(carte.querySelector(".m"), m);
+    return carte;
+  }
+  function remplirSlot(slot, m) {
+    slot._m = m || null;
+    if (!m) { slot.className = "postit vide"; return; }
+    slot.className = "postit " + couleur(m);
+    slot.querySelector(".t").textContent = m.t;
+    remplirMeta(slot.querySelector(".m"), m);
+  }
+  function rendreMur() {                  // pose sans animation : dernier mot et pile chronologique (sans les mots frais encore en file)
+    var l = msgs.filter(function (m) { return fileMots.indexOf(m) < 0; }).reverse();
+    pileGen++;
+    rendreDernier(l[0]);
+    pileIds = [];
+    Array.prototype.forEach.call($.slots, function (s, i) { remplirSlot(s, l[i + 1]); pileIds[i] = l[i + 1] ? l[i + 1].id : null; });
+    ajusterDernier();
+  }
+  var PALIERS = [120, 104, 92, 80, 68, 58, 50, 44, 38, 32];
+  function ajusterDernier() {
+    var zone = $.dernier, carte = zone && zone.firstElementChild, t = carte && carte.querySelector(".t"); if (!t) return;
+    t.classList.remove("clamp");
+    for (var k = 0; k < PALIERS.length; k++) {
+      t.style.fontSize = "calc(" + PALIERS[k] + " * var(--u))";
+      if (carte.scrollHeight <= zone.clientHeight) return;
+    }
+    t.classList.add("clamp");
+    t.style.setProperty("--lignes", Math.max(1, Math.floor((zone.clientHeight - carte.querySelector(".m").offsetHeight - 112 * U) / (32 * U * 1.05))));
+  }
+  function majAges() {
+    var carte = $.dernier.firstElementChild;
+    if (carte._id && carte._m) remplirMeta(carte.querySelector(".m"), carte._m);
+    Array.prototype.forEach.call($.slots, function (s) { if (s._m) remplirMeta(s.querySelector(".m"), s._m); });
+  }
+  function capacitePile() {
+    if (matchMedia("(orientation: portrait)").matches) return 2;
+    var etroit = matchMedia("(max-aspect-ratio: 3/2)").matches;
+    if ($.photos) return etroit ? 0 : 1;
+    return etroit ? 2 : 3;
+  }
+  function rectCentre(el) { var r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }
+  var motsEnAttente = null;
+  function borneMot(m, frais) {
+    if (!$.dernier) return;
+    if (!frais) { planifierRenduMur(); return; }
+    fileMots.push(m); avancerFileMots();
+  }
+  function avancerFileMots() {            // mots frais un par un (600 ms chacun) : chacun est annoncé, et animé s'il est le plus récent
+    if (fileMotsTimer) return;
+    var att = motAnimJusqua - Date.now();
+    if (att > 0) { fileMotsTimer = setTimeout(function () { fileMotsTimer = null; avancerFileMots(); }, att); return; }
+    var m = fileMots.shift(); if (!m) return;
+    annoncer(m.n ? "Nouveau mot de " : "Nouveau mot : ", m.n ? m.n + " : " + m.t : m.t);
+    var i = msgs.indexOf(m), apres = i < 0 ? [] : msgs.slice(i + 1);
+    if (i >= 0 && apres.every(function (x) { return fileMots.indexOf(x) >= 0; })) arriveeMot(msgs.slice(0, i + 1).reverse());
+    else planifierRenduMur();
+    if (fileMots.length) avancerFileMots();
+  }
+  function planifierRenduMur() {
+    if (motsEnAttente) return;
+    var att = Math.max(0, motAnimJusqua - Date.now());
+    motsEnAttente = setTimeout(function () { motsEnAttente = null; if (Date.now() < motAnimJusqua) planifierRenduMur(); else rendreMur(); }, att);
+  }
+  function arriveeMot(l) {                // chorégraphie 11.2
+    var r = reduit.matches, carte = $.dernier.firstElementChild, ancien = carte._id ? carte._m : null;
+    var cap = capacitePile(), slots = Array.prototype.slice.call($.slots, 0, cap), i;
+    motAnimJusqua = Date.now() + 600; dernierMotA = Date.now(); pileGen++;
+    // 1. positions et rotations avant le décalage (emplacements remplis seulement)
+    var avant = slots.map(function (s) { return s._m ? { c: rectCentre(s), rot: getComputedStyle(s).getPropertyValue("--rot").trim() || "0deg" } : null; });
+    // 2. le plus ancien post-it visible tombe
+    var dernierSlot = slots[cap - 1];
+    if (ancien && dernierSlot && dernierSlot._m) {
+      var cs = avant[cap - 1].c, so = dernierSlot.cloneNode(true);
+      so.classList.add("sortant");
+      so.style.width = dernierSlot.offsetWidth + "px"; so.style.height = dernierSlot.offsetHeight + "px";
+      so.style.left = (cs.x - dernierSlot.offsetWidth / 2) + "px"; so.style.top = (cs.y - dernierSlot.offsetHeight / 2) + "px";
+      so.style.marginTop = "0px"; so.style.flex = "none"; so.style.maxWidth = "none";
+      document.body.appendChild(so);
+      if (r) so.animate([{ transform: "rotate(" + avant[cap - 1].rot + ")", opacity: 1 }, { transform: "rotate(" + avant[cap - 1].rot + ")", opacity: 0 }], { duration: 150, fill: "forwards" });
+      else so.animate([{ transform: "rotate(" + avant[cap - 1].rot + ")", opacity: 1 }, { transform: "translate(0, " + px(120) + ") rotate(12deg)", opacity: 0 }], { duration: 500, easing: EASE_IN, fill: "forwards" });
+      setTimeout(function () { so.remove(); }, r ? 170 : 520);
+    }
+    // 3. voyageur : clone de l'ancien dernier mot
+    var voy = null;
+    if (ancien && slots[0] && !r) {
+      var cc = rectCentre(carte), w = carte.offsetWidth, h = carte.offsetHeight;
+      voy = carte.cloneNode(true); voy.classList.remove("new"); voy.classList.add("voyageur");
+      voy.style.width = w + "px"; voy.style.height = h + "px"; voy.style.left = (cc.x - w / 2) + "px"; voy.style.top = (cc.y - h / 2) + "px";
+      voy.style.maxHeight = "none";
+      document.body.appendChild(voy);
+    }
+    // 4. nouveau contenu
+    rendreDernier(l[0]);
+    pileIds = [];
+    Array.prototype.forEach.call($.slots, function (s, k) { remplirSlot(s, l[k + 1]); pileIds[k] = l[k + 1] ? l[k + 1].id : null; });
+    ajusterDernier();
+    // 5. arrivée du nouveau mot
+    void carte.offsetWidth; carte.classList.add("new");
+    var pun = carte.querySelector(".punaise");
+    if (pun && !r) pun.animate([{ transform: "scale(1.4)" }, { transform: "scale(1)" }], { duration: 180, delay: 380, easing: EASE_IN, fill: "backwards" });
+    // 6. voyageur vers l'emplacement 1, puis FLIP des autres
+    if (voy && slots[0]._m) {
+      var cible = rectCentre(slots[0]), dep = rectCentre(voy), k = slots[0].offsetWidth / voy.offsetWidth;
+      var rotC = getComputedStyle(slots[0]).getPropertyValue("--rot").trim() || "0deg";
+      voy.animate([{ transform: "rotate(-1.5deg)" }, { transform: "translate(" + (cible.x - dep.x) + "px, " + (cible.y - dep.y) + "px) rotate(" + rotC + ") scale(" + k + ")" }], { duration: 600, easing: EASE_OUT, fill: "forwards" });
+      voy.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 150, delay: 450, fill: "forwards" });
+      setTimeout(function () { voy.remove(); }, 620);
+      slots[0].animate([{ opacity: 0 }, { opacity: 0, offset: 0.75 }, { opacity: 1 }], { duration: 600 });
+    } else if (voy) { voy.remove(); }
+    else if (slots[0]._m) slots[0].animate([{ opacity: 0 }, { opacity: 1 }], { duration: 150 });
+    for (i = 1; i < slots.length; i++) {
+      if (!slots[i]._m) continue;
+      if (r || !avant[i - 1]) { slots[i].animate([{ opacity: 0 }, { opacity: 1 }], { duration: 150 }); continue; }
+      var apres = rectCentre(slots[i]), rotN = getComputedStyle(slots[i]).getPropertyValue("--rot").trim() || "0deg";
+      var dx = avant[i - 1].c.x - apres.x, dy = avant[i - 1].c.y - apres.y;
+      slots[i].animate([{ transform: "translate(" + dx + "px, " + dy + "px) rotate(" + avant[i - 1].rot + ")" }, { transform: "rotate(" + rotN + ")" }], { duration: 600, easing: EASE_OUT });
     }
   }
-
-  /* ---------- Téléphone ---------- */
-  function renderRecent() {
-    var el = document.getElementById("recent");
-    if (!el) return;
-    var list = msgs.slice().reverse().slice(0, 20);
-    el.innerHTML = list.length
-      ? '<div class="grid">' + list.map(function (m) { return cardHtml(m, "", 3); }).join("") + '</div>'
-      : '<p class="empty">Rien encore. À toi.</p>';
+  function respiration() {                // 9.7 : un emplacement montre un mot plus ancien
+    if (!$.slots || !msgs.length) return;
+    var der = msgs[msgs.length - 1];
+    if (maintenant() - der.time < 600000 || Date.now() - dernierMotA < 600000) return;
+    var nVis = capacitePile(), aff = {}, i;
+    if (!nVis) return;
+    aff[der.id] = true; pileIds.forEach(function (id) { if (id) aff[id] = true; });
+    var choix = msgs.filter(function (m) { return !aff[m.id]; });
+    if (!choix.length) return;
+    var s = $.slots[respIndex % nVis]; respIndex++;
+    if (!s._m) return;
+    var m = choix[Math.floor(Math.random() * choix.length)];
+    var d = reduit.matches ? 150 : 400, g = pileGen;
+    var sortie = s.animate([{ opacity: 1 }, { opacity: 0 }], { duration: d / 2, fill: "forwards" });
+    sortie.onfinish = function () {
+      if (g !== pileGen) { sortie.cancel(); return; }   // un mot est arrivé pendant le fondu : la pile est déjà dans l'ordre
+      i = Array.prototype.indexOf.call($.slots, s);
+      remplirSlot(s, m); pileIds[i] = m.id;
+      sortie.cancel();
+      s.animate([{ opacity: 0 }, { opacity: 1 }], { duration: d / 2 });
+    };
   }
-  function bootPhone() {
-    var name = "";
-    try { name = localStorage.getItem(NAME_KEY) || ""; } catch (e) {}
-    app.innerHTML = '<div class="phone">'
-      + '<div><span class="tag">Mur du bureau</span><h1>Colle un mot sur la borne</h1></div>'
-      + '<form id="form">'
-      + '<label for="name">Ton prénom</label>'
-      + '<input class="field" id="name" placeholder="Prénom" maxlength="' + MAX_NAME + '" value="' + esc(name) + '" autocomplete="given-name">'
-      + '<label for="text">Ton mot</label>'
-      + '<div class="note"><textarea id="text" placeholder="Un mot, une idée, un merci" maxlength="' + MAX_TEXT + '"></textarea><span class="count" id="count">0 / ' + MAX_TEXT + '</span></div>'
-      + '<button type="submit" class="send" id="send" disabled>Coller sur le mur</button>'
-      + '</form>'
-      + '<div class="status" id="status"></div>'
-      + '<div class="recent"><h2>Déjà sur la borne</h2><div id="recent"></div></div>'
-      + '</div>';
-    var form = document.getElementById("form"), text = document.getElementById("text"), send = document.getElementById("send"),
-        count = document.getElementById("count"), status = document.getElementById("status"),
-        nameEl = document.getElementById("name");
-    text.addEventListener("input", function () {
-      count.textContent = text.value.length + " / " + MAX_TEXT;
-      send.disabled = !text.value.trim();
+
+  /* --- Horloge, alerte, rotations --- */
+  function majHorloge() { chiffres($.clock, dateLongue(maintenant()).replace(" à ", " à\u00A0")); }   // « à » reste avec l'heure si la date passe à la ligne
+  function majAlerte() {
+    var parts = [], sig = flux ? flux.dernierSigne() : 0, silence = flux ? flux.silence() : performance.now();
+    if (isTest) parts.push("Mode test : rien n'est compté pour de vrai.");
+    if (silence > 100000) parts.push("Hors ligne depuis " + heure((sig || debutPage) + decalage));
+    $.alerte.textContent = fr(parts.join(" "));
+    $.alerte.hidden = !parts.length;
+  }
+  function heureParis() { return Math.floor(minutesParis(maintenant()) / 60); }
+  function rotations(h) {
+    Array.prototype.forEach.call($.slots, function (s, i) {
+      var k = i + 1, deg = 1 + (hash(k + "|" + h) % 31) / 10; if (k === 2) deg = -deg;
+      s.style.setProperty("--rot", deg + "deg");
     });
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var n = nameEl.value.trim().slice(0, MAX_NAME), t = text.value.trim().slice(0, MAX_TEXT);
-      if (!t) return;
-      try { localStorage.setItem(NAME_KEY, n); } catch (err) {}
-      send.disabled = true; status.className = "status"; status.textContent = "Ça part…";
-      post(n, t).then(function (ev) {
-        add({ id: ev.id, time: ev.time * 1000, n: n, t: t }, true);
-        text.value = ""; count.textContent = "0 / " + MAX_TEXT;
-        status.textContent = "Collé sur la borne !";
-        renderRecent();
-        setTimeout(function () { status.textContent = ""; }, 3000);
-      }).catch(function () {
-        status.className = "status err"; status.textContent = "Ça n'est pas parti. Réessaie.";
-        send.disabled = false;
+    $.tag.style.transform = "rotate(" + (-(1 + (hash("tag|" + h) % 21) / 10)) + "deg)";
+    $.qrPapier.style.transform = "rotate(" + ((hash("qr|" + h) % 61) / 10 - 3) + "deg)";
+  }
+
+  /* --- QR --- */
+  function dessinerQR() {
+    var url = PAGE_URL + (modeLecture ? "#v" : "");
+    var box = $.qrBox, canvas = $.qr, dpr = window.devicePixelRatio || 1;
+    if (!window.qrcode) { box.classList.add("sans-qr"); return; }
+    box.classList.remove("sans-qr");
+    var q = qrcode(0, "M"); q.addData(url); q.make();
+    var n = q.getModuleCount(), m = n + 8;
+    var k = Math.max(1, Math.floor(box.getBoundingClientRect().width * dpr / m + 1e-6));
+    canvas.width = canvas.height = m * k;
+    canvas.style.width = canvas.style.height = (m * k / dpr) + "px";
+    var ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, m * k, m * k);
+    ctx.fillStyle = "#1f1a12";
+    for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) if (q.isDark(r, c)) ctx.fillRect((c + 4) * k, (r + 4) * k, k, k);
+    $.qrInfo = { n: n, k: k, url: url };
+    alignerQR();
+  }
+  function alignerQR() {
+    var canvas = $.qr; if (!canvas) return;
+    canvas.style.transform = "";
+    var r = canvas.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    var fx = (r.left * dpr) % 1, fy = (r.top * dpr) % 1;
+    canvas.style.transform = "translate(" + (-fx / dpr) + "px," + (-fy / dpr) + "px)";
+  }
+
+  /* --- Hauteur au sol --- */
+  function calerPied() {
+    var bas = parseFloat(params.get("bas"));
+    if (!isFinite(bas)) { $.wall.style.removeProperty("--pied"); return; }
+    var pouces = parseFloat(params.get("pouces")) || 43, portrait = matchMedia("(orientation: portrait)").matches;
+    var mmParU = (pouces * 25.4) / Math.hypot(screen.width, screen.height) * U;
+    var c = (1100 - bas * 10) / mmParU;
+    var pied = portrait ? c - 360 : c - 324;
+    pied = Math.max(0, Math.min(portrait ? 480 : 57, pied));
+    $.wall.style.setProperty("--pied", "calc(" + pied + " * var(--u))");
+  }
+  function hauteursDuel() {               // debug : hauteurs au sol du duel, si bas et pouces sont donnés
+    var bas = parseFloat(params.get("bas")), pouces = parseFloat(params.get("pouces"));
+    if (!isFinite(bas) || !isFinite(pouces)) return null;
+    var mmParPx = (pouces * 25.4) / Math.hypot(screen.width, screen.height), r = $.duel.getBoundingClientRect();
+    var f = function (y) { return ((bas * 10 + (innerHeight - y) * mmParPx) / 1000).toFixed(2).replace(".", ","); };
+    return f(r.bottom) + " à " + f(r.top) + " m";
+  }
+
+  /* --- Vote : rendu et machine à états --- */
+  function annoncer(txt, brut) {
+    var el = document.getElementById("annonce"); if (!el) return;
+    el.textContent = "";
+    setTimeout(function () { el.textContent = fr(txt) + (brut || ""); }, 50);
+  }
+  function majEtatLigne() {
+    if (!$.etat) return;
+    $.etat.style.color = "";
+    if (etat === "resultat") { nAffiche = Math.max(1, Math.ceil((finVerrou - performance.now()) / 1000)); chiffres($.etat, "Prochain vote dans " + nAffiche + " s"); }
+    else if (etat === "lecture") chiffres($.etat, lire("remote", false) === true ? "Vote avec la télécommande ou scanne le code." : "Vote depuis ton téléphone : scanne le code.");
+    else chiffres($.etat, "Touche ton camp pour voir le score.");
+  }
+  function majTotal(impulsion) {
+    if (!$.total) return;
+    var s = etat === "ouvert" ? null : ligneSemaine();
+    var txt = fr(s || ligneTotal());
+    if ($.total.textContent !== txt) {
+      chiffres($.total, s || ligneTotal());   // chiffres en cases de 0,6 em : l'espace fine reste visible après un 1
+      if (impulsion && etat === "ouvert" && !reduit.matches) $.total.animate([{ transform: "scale(1)" }, { transform: "scale(1.06)" }, { transform: "scale(1)" }], { duration: 300, easing: EASE_OUT });
+    }
+  }
+  function tamponsBorne() {
+    var d = $.duel._r, voir = etat === "resultat" && camp;
+    d.tpA.hidden = !(voir && camp === "a"); d.tpI.hidden = !(voir && camp === "i");
+  }
+  function rendreVote() {
+    if (isBorne) rendreVoteBorne(); else rendreVoteTel();
+  }
+  function rendreVoteBorne() {
+    if (!$.duel) return;
+    var t = totaux(), enRes = etat === "resultat" || etat === "lecture", d = $.duel._r;
+    transitions([d.fillA, d.fillI], ""); transitions(d.repos, ""); transitions(d.res, ""); transitions(d.traits, "");
+    $.h2.textContent = fr(etat === "resultat" ? (titre(t, avantCourant) || QUESTION) : QUESTION);
+    $.duel.classList.toggle("res", enRes);
+    d.fillA.classList.remove("appui"); d.fillI.classList.remove("appui");
+    rendreDuel($.duel, t, enRes, 0, "linear", 0);
+    var tr = 5;
+    if (enRes) tr = etat === "resultat" && !modeLecture ? Math.min(5, Math.max(0, Math.floor((performance.now() - t0) / 4000))) : 0;
+    poserTranches($.duel, tr);
+    tamponsBorne();
+    [d.padA, d.padI].forEach(function (b) { if (etat === "resultat") b.setAttribute("aria-disabled", "true"); else b.removeAttribute("aria-disabled"); });
+    majEtatLigne(); majTotal(false);
+  }
+  function terminerAnimations() {
+    viderPlanifies();
+    $.vote.getAnimations({ subtree: true }).forEach(function (a) { try { a.finish(); } catch (e) {} });
+    if ($.duel._feuille) { $.duel._feuille.remove(); $.duel._feuille = null; }
+    var t = totaux(), v = valeurs(t), d = $.duel._r;
+    if ($.duel.classList.contains("res")) {
+      compteur(d.chA, v.pct ? parseInt(v.va, 10) : t.A, v.pct, 0);
+      compteur(d.chI, v.pct ? parseInt(v.vi, 10) : t.I, v.pct, 0);
+    }
+  }
+  function programmerReouverture() {     // 8.7 : réouverture dès finVerrou, la tâche de 250 ms reste en secours
+    clearTimeout(reouvTimer);
+    reouvTimer = setTimeout(function () { if (etat === "resultat" && performance.now() >= finVerrou) reouvrir(); }, Math.max(0, finVerrou - performance.now()) + 1);
+  }
+  function surClic(c) {
+    var now = performance.now();
+    if (now < finVerrou) return refus(now, c);
+    if (etat === "resultat") reouvrir(true);  // verrou fini mais pas encore rouvert : on rouvre d'abord, sans annonce
+    terminerAnimations();
+    var avant = totaux();
+    t0 = now; finVerrou = now + LOCK_MS; camp = c; refusAnnonce = false; refusJusqua = -Infinity;
+    ecrire("vote.lock", { fin: Date.now() + LOCK_MS, c: c });
+    voterBorne(c);
+    var apres = totaux();
+    avantCourant = avant; etat = "resultat"; programmerReouverture();
+    $.duel.querySelectorAll(".pad").forEach(function (b) { b.setAttribute("aria-disabled", "true"); });
+    var phrase = titre(apres, avant); if (!/[!.]$/.test(phrase)) phrase += ".";
+    annoncer("Vote " + nomCamp(c) + " compté. " + phrase + " " + resume(apres) + " Prochain vote dans 20 secondes.");
+    animerVote(c, avant, apres, modeLecture);
+  }
+  function animerVote(c, avant, apres, lecture) {
+    var r = reduit.matches, d = $.duel._r, duel = $.duel, h2 = $.h2;
+    nAffiche = 20; $.etat.style.color = ""; chiffres($.etat, "Prochain vote dans 20 s");
+    majTotal(false);
+    d.fillA.classList.remove("appui"); d.fillI.classList.remove("appui");
+    if (!lecture) {
+      poserTranches(duel, 0);
+      if (!r) arracher(duel, c);
+      transitions(d.repos, "opacity 120ms linear");
+      transitions([d.fillA, d.fillI], r ? "none" : "transform 240ms " + EASE_OUT + " 120ms, border-radius 240ms " + EASE_OUT + " 120ms");
+      transitions(d.traits, r ? "opacity 150ms linear" : "opacity 200ms linear 120ms");
+      transitions(d.res, r ? "opacity 150ms linear" : "opacity 200ms linear 300ms");
+      duel.classList.add("res");
+      rendreDuel(duel, apres, true, r ? 0 : 700, EASE_OUT, 120, r ? 0 : 600, 300);
+    } else {
+      rendreDuel(duel, apres, true, r ? 0 : 400, EASE_OUT, 0, r ? 0 : 600, 300);
+    }
+    // question puis titre
+    var out = h2.animate([{ opacity: 1 }, { opacity: 0 }], { duration: r ? 150 : 120, delay: 150, fill: "both" });
+    titrePlanifie = true;
+    planifier(r ? 300 : 270, function () {
+      titrePlanifie = false;
+      h2.textContent = fr(titre(totaux(), avantCourant) || QUESTION); out.cancel();   // totaux du moment : un changement reçu depuis le toucher compte
+      if (r) h2.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 150 });
+      else h2.animate([{ opacity: 0, transform: "translateY(" + px(8) + ")" }, { opacity: 1, transform: "none" }], { duration: 200, easing: EASE_OUT });
+    });
+    // tampon et impact
+    var tp = c === "a" ? d.tpA : d.tpI, autre = c === "a" ? d.tpI : d.tpA;
+    autre.hidden = true; tp.hidden = false;
+    var r0 = c === "a" ? "rotate(-14deg)" : "rotate(12deg)", r1 = c === "a" ? "rotate(-9deg)" : "rotate(7deg)";
+    if (r) tp.animate([{ opacity: 0 }, { opacity: .92 }], { duration: 150, delay: 760, fill: "backwards" });
+    else {
+      tp.animate([{ transform: "scale(1.6) " + r0, opacity: 0 }, { transform: "scale(1) " + r1, opacity: .92 }], { duration: 160, delay: 760, easing: EASE_IN, fill: "backwards" });
+      duel.animate([{ transform: "translateY(0)", easing: EASE_OUT }, { transform: "translateY(" + px(3) + ")", offset: 1 / 3, easing: EASE_OUT }, { transform: "translateY(0)" }], { duration: 180, delay: 920 });
+    }
+  }
+  function refus(now, c) {
+    if (now - t0 < DOUBLE_APPUI_MS) return;
+    if (now - dernierRefus < REFUS_ESPACE_MS) return;
+    dernierRefus = now;
+    var n = Math.ceil((finVerrou - now) / 1000);
+    refusJusqua = now + REFUS_AFFICHE_MS;
+    chiffres($.etat, "Un vote toutes les 20 s. Encore " + n + " s.");
+    $.etat.style.color = "var(--fg)";
+    if (!reduit.matches) {
+      $.etat.animate([{ transform: "translateX(0)" }, { transform: "translateX(" + px(-6) + ")" }, { transform: "translateX(" + px(6) + ")" },
+        { transform: "translateX(" + px(-4) + ")" }, { transform: "translateX(" + px(4) + ")" }, { transform: "translateX(0)" }], { duration: 320, easing: EASE_IN_OUT });
+      var f = c === "a" ? $.duel._r.fillA : $.duel._r.fillI;
+      if (!modeLecture || etat === "resultat") f.animate([{ transform: "translateY(0)" }, { transform: "translateY(" + px(3) + ")" }, { transform: "translateY(0)" }], { duration: 120, easing: EASE_OUT });
+    }
+    if (!refusAnnonce) { refusAnnonce = true; annoncer("Un vote toutes les 20 secondes. Encore " + n + " secondes."); }
+  }
+  function reouvrir(sansAnnonce) {
+    var r = reduit.matches, d = $.duel._r, duel = $.duel, h2 = $.h2, lecture = modeLecture;
+    etat = lecture ? "lecture" : "ouvert"; clearTimeout(reouvTimer);
+    [d.padA, d.padI].forEach(function (b) { b.removeAttribute("aria-disabled"); });
+    effacer("vote.lock");
+    dernierAppui = Date.now(); refusJusqua = -Infinity;
+    if (!sansAnnonce) annoncer("Le vote est rouvert.");
+    majEtatLigne(); majTotal(false);
+    var dur = r ? 150 : 200;
+    // tampon
+    var tp = camp === "i" ? d.tpI : d.tpA;
+    tp.animate([{ opacity: .92 }, { opacity: 0 }], { duration: dur, fill: "forwards" });
+    planifier(dur, function () { d.tpA.hidden = true; d.tpI.hidden = true; tp.getAnimations().forEach(function (a) { a.cancel(); }); });
+    // titre puis question
+    var out = h2.animate([{ opacity: 1 }, { opacity: 0 }], { duration: dur, fill: "forwards" });
+    planifier(200, function () {
+      h2.textContent = fr(QUESTION); out.cancel();
+      h2.animate([{ opacity: 0 }, { opacity: 1 }], { duration: dur });
+    });
+    camp = null;
+    if (lecture) return;
+    transitions(d.res, "opacity " + dur + "ms linear");
+    transitions(d.traits, "opacity " + dur + "ms linear");
+    transitions(d.repos, r ? "opacity 150ms linear" : "opacity 200ms linear 300ms");
+    transitions([d.fillA, d.fillI], r ? "none" : "transform 500ms " + EASE_IN_OUT + ", border-radius 500ms " + EASE_IN_OUT);
+    duel.classList.remove("res");
+    rendreDuel(duel, totaux(), false, r ? 0 : 500, EASE_IN_OUT, 0);
+    planifier(200, function () {
+      poserTranches(duel, 5);
+      if (r) return;
+      [[d.fillA, -1.5, 0], [d.fillI, 1.5, 60]].forEach(function (x) {
+        x[0].animate([{ transform: "translateY(" + px(-12) + ") rotate(" + x[1] + "deg) scale(1.04)", opacity: .6 }, { transform: "rotate(" + x[1] + "deg)", opacity: 1 }],
+          { duration: 550, delay: x[2], easing: EASE_DROP, fill: "backwards" });
       });
     });
-    renderRecent();
-    fetchHistory(function () { renderRecent(); });
-    subscribe(renderRecent);
+  }
+  function tache250() {
+    var now = performance.now();
+    if (etat === "resultat") {
+      if (now >= finVerrou) { reouvrir(); return; }
+      var n = Math.ceil((finVerrou - now) / 1000);
+      if (now >= refusJusqua && (n !== nAffiche || $.etat.style.color)) {
+        if (refusJusqua > -Infinity && now >= refusJusqua) { refusJusqua = -Infinity; $.etat.style.color = ""; }
+        nAffiche = n; chiffres($.etat, "Prochain vote dans " + n + " s");
+      }
+      if (!modeLecture) {
+        var tr = Math.min(5, Math.floor((now - t0) / 4000));
+        if (tr !== $.duel._r.fillA._tr) poserTranches($.duel, tr);
+      }
+    } else if (etat === "ouvert") {
+      if (Date.now() - dernierAppui >= 45000 && Date.now() - dernierAppel >= 7000 && Date.now() >= motAnimJusqua && !reduit.matches) {
+        dernierAppel = Date.now();
+        var coin = appelCote === "a" ? $.duel._r.coinA : $.duel._r.coinI; appelCote = appelCote === "a" ? "i" : "a";
+        coin.animate([{ transform: "scale(0)" }, { transform: "scale(1)" }, { transform: "scale(0)" }], { duration: 900, easing: EASE_IN_OUT });
+      }
+    }
+  }
+  function appui(c, on) {
+    if (etat !== "ouvert") return;
+    var f = c === "a" ? $.duel._r.fillA : $.duel._r.fillI;
+    if (!reduit.matches) { f.style.transition = "transform " + (on ? 90 : 140) + "ms " + EASE_OUT; f.classList.toggle("appui", on); }
+    f._tr = on ? 4 : 5; f.style.boxShadow = tranches(f._tr);
   }
 
-  if (isBorne) bootWall(); else bootPhone();
+  /* --- Votes reçus du réseau --- */
+  function borneChangement(ch) {
+    var t = totaux();
+    if (ch.type === "tel" && ch.direct) { plusUn(ch.c); }
+    if (etat === "ouvert") {
+      majTotal(true);
+      if (ch.type === "tel" && ch.direct) tuile(ch.c, function () {
+        if (etat !== "ouvert" || reduit.matches) return;
+        var f = ch.c === "a" ? $.duel._r.fillA : $.duel._r.fillI, rr = ch.c === "a" ? -1.5 : 1.5;
+        f.animate([{ transform: "rotate(" + rr + "deg) scale(1)" }, { transform: "rotate(" + rr + "deg) scale(1.03)" }, { transform: "rotate(" + rr + "deg) scale(1)" }], { duration: 300, easing: EASE_DROP });
+      });
+      return;
+    }
+    avantCourant = ch.avant;
+    majTotal(false);
+    if (etat === "resultat" && !titrePlanifie) {   // titre en attente (toucher de moins de 270 ms) : l'étape le calculera
+      var nouveau = fr(titre(t, avantCourant) || QUESTION);
+      if ($.h2.textContent !== nouveau) {
+        $.h2.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 75 }).onfinish = function () {
+          if (etat !== "resultat") return;       // réouverture commencée entre-temps : la question revient
+          $.h2.textContent = fr(titre(totaux(), avantCourant) || QUESTION); $.h2.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 75 });
+        };
+      }
+    }
+    var reprise = function () {
+      if (etat !== "resultat" && etat !== "lecture") return;
+      rendreDuel($.duel, totaux(), true, reduit.matches ? 0 : 400, EASE_OUT, 0);
+    };
+    if (ch.type === "tel" && ch.direct) tuile(ch.c, reprise); else reprise();
+  }
+  function tuile(c, arrivee) {            // 8.6 : tuile du QR vers le pavé ou la frontière
+    if (reduit.matches || fileTuiles >= 5 || !$.qrBox) { arrivee(); return; }
+    fileTuiles++;
+    var attente = Math.max(0, dernierDepart + 250 - Date.now());
+    dernierDepart = Date.now() + attente;
+    setTimeout(function () {
+      var de = rectCentre($.qrBox.classList.contains("sans-qr") ? $.qrBox : $.qr), cible;   // sans bibliothèque, le canvas est masqué
+      if (etat === "ouvert") cible = rectCentre(c === "a" ? $.duel._r.padA : $.duel._r.padI);
+      else { var rd = $.duel.getBoundingClientRect(); cible = { x: rd.left + rd.width * partage(totaux()) / 100, y: rd.top + rd.height / 2 }; }
+      var el = document.createElement("div"), s = 72 * U, rot = Math.round(Math.random() * 120 - 60) / 10;
+      el.className = "tuile " + c;
+      document.body.appendChild(el);
+      el.animate([{ transform: "translate(" + (de.x - s / 2) + "px, " + (de.y - s / 2) + "px) rotate(" + rot + "deg) scale(1)" },
+        { transform: "translate(" + (cible.x - s / 2) + "px, " + (cible.y - s / 2) + "px) rotate(" + rot + "deg) scale(.8)" }], { duration: 700, easing: EASE_OUT, fill: "forwards" })
+        .onfinish = function () { el.remove(); fileTuiles--; arrivee(); };
+    }, attente);
+  }
+  function plusUn(c) {
+    plusN++;
+    var txt = plusN === 1 ? "+1 " + nomCamp(c) + ", depuis un téléphone" : "+" + plusN + " voix depuis des téléphones";
+    fonduTexte($.invite, fr(txt), true);
+    clearTimeout(plusTimer);
+    plusTimer = setTimeout(function () { plusN = 0; fonduTexte($.invite, fr("Tu peux aussi voter depuis ton téléphone."), false); }, 4000);
+  }
+  function fonduTexte(el, txt, plus) {
+    el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 75 }).onfinish = function () {
+      el.textContent = txt; el.classList.toggle("plus", plus);
+      el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 75 });
+    };
+  }
+
+  /* --- Maintenance --- */
+  function calme() { return etat !== "resultat" && Date.now() - dernierAppui >= 60000 && !publicationEnCours; }
+  function essayerRecharge(quotidien) {
+    prochaineRecharge = Date.now() + 300000;
+    fetch(location.href, { cache: "no-store" }).then(function (r) {
+      if (r.status !== 200) return;
+      if (quotidien && !ecrire("recharge", jour(maintenant()))) return;
+      location.reload();
+    }).catch(function () {});
+  }
+  function lireVersionEnLigne(cb) {  // index.html en ligne, sans cache du navigateur ni du CDN
+    fetch(location.origin + location.pathname + "?v=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.ok ? r.text() : ""; }).then(function (txt) {
+      var m = /var VERSION = "([^"]+)"/.exec(txt);
+      if (m) cb(m[1]);
+    }).catch(function () {});
+  }
+  function verifierVersion() {
+    lireVersionEnLigne(function (v) { if (v !== VERSION) rechargeVoulue = true; });
+  }
+  function verifierMemoire() {
+    if (!stockageOK || !performance.memory) return;
+    var u = performance.memory.usedJSHeapSize;
+    if (!memoireBase) memoireBase = u; else if (u >= 2 * memoireBase) rechargeVoulue = true;
+  }
+  function tenirEcran() {
+    if (!navigator.wakeLock || !navigator.wakeLock.request || document.hidden) return;
+    if (wakeLock && !wakeLock.released) return;
+    navigator.wakeLock.request("screen").then(function (l) { wakeLock = l; }).catch(function () {});
+  }
+  function tache60Borne() {
+    tenirEcran();
+    var hs = heureServeur();
+    if (controlerHorloge() && V.r && manche(hs) > V.r) changerManche(manche(hs), hs);
+    purger();
+    tacheInstantane();
+    if (Date.now() >= prochaineRecharge) {
+      var mn = minutesParis(maintenant());
+      if (stockageOK && horlogeSure && mn >= 315 && mn <= 345 && lire("recharge", "") !== jour(maintenant()) && calme()) essayerRecharge(true);
+      else if (rechargeVoulue && calme()) essayerRecharge(false);
+    }
+  }
+  function antiRemanence() {
+    var dpr = window.devicePixelRatio || 1;
+    var dx = Math.round(Math.random() * 8 * U * dpr) / dpr, dy = Math.round(Math.random() * 8 * U * dpr) / dpr;
+    app.style.transform = "translate(" + dx + "px, " + dy + "px)";
+    alignerQR();
+  }
+  function surResize() {
+    lireU(); calerPied();
+    poserTranches($.duel, $.duel._r.fillA._tr, $.duel._r.fillI._tr);
+    ajusterDernier(); dessinerQR(); calerPhotos();
+  }
+
+  function demarrerBorne() {
+    // 8.1 DEMARRAGE
+    V = lire("vote", null);
+    if (!V || typeof V !== "object" || V.z !== 1 || !/^[a-z0-9]{6}$/.test(V.me || "")) { V = nouvelEtat(idUrl || hasard(6), null); repriseMe = idUrl !== null; }
+    if (V.p && !V.pl) V.pl = V.p;         // état d'une version précédente : p devient les bulletins comptés ici
+    delete V.p;
+    var neuf = nouvelEtat(V.me, V.r);
+    for (var k in neuf) if (V[k] === undefined || V[k] === null && k !== "r") V[k] = neuf[k];
+    if (!V.d[V.me]) V.d[V.me] = [0, 0];
+    V.gen = V.gen || 0;
+    IGNORE_BORNES.forEach(function (id) { delete V.d[id]; delete V.dt[id]; delete V.po[id]; });
+    ecrireV();
+    if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {});
+    chargerMsgs();
+    lt[T_MOTS] = msgs.length ? Math.floor(msgs[msgs.length - 1].time / 1000) : 0;
+    lt[T_VOTE] = V.lt || 0;
+    var tact = params.get("tactile");
+    modeLecture = tact === "0" ? true : tact === "1" ? false : navigator.maxTouchPoints === 0 && !matchMedia("(any-pointer: coarse)").matches;
+    etat = modeLecture ? "lecture" : "ouvert";
+    var L = lire("vote.lock", null);
+    if (L && typeof L === "object" && typeof L.fin === "number") {
+      var reste = Math.min(Math.max(L.fin - Date.now(), 0), 20000);
+      if (reste > 1000) { finVerrou = performance.now() + reste; t0 = finVerrou - 20000; camp = L.c === "i" ? "i" : "a"; etat = "resultat"; }
+      else effacer("vote.lock");
+    }
+    construireBorne();
+    lireU();
+    calerPied(); calerPhotos();
+    avantCourant = totaux();
+    rendreMur();
+    rendreVote();
+    if (etat === "resultat") programmerReouverture();
+    majHorloge(); majAlerte();
+    heureVue = heureParis();
+    dessinerQR();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { ajusterDernier(); dessinerQR(); });
+
+    // entrées
+    [$.duel._r.padA, $.duel._r.padI].forEach(function (b) {
+      var c = b.getAttribute("data-c");
+      b.addEventListener("pointerdown", function (e) { if (e.isPrimary) appui(c, true); });
+      ["pointerup", "pointercancel", "pointerleave"].forEach(function (t) { b.addEventListener(t, function () { if ($.duel._r[c === "a" ? "fillA" : "fillI"].classList.contains("appui") || etat === "ouvert") appui(c, false); }); });
+      b.addEventListener("click", function (e) { if (e.detail > 0) b.blur(); surClic(c); });   // toucher : pas de focus laissé (8.9)
+    });
+    document.addEventListener("pointerdown", function () { dernierAppui = Date.now(); }, true);
+    document.addEventListener("keydown", function (e) {
+      dernierAppui = Date.now();
+      if (lire("remote", false) !== true) { ecrire("remote", true); if (etat === "lecture") majEtatLigne(); }
+      if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); surClic("a"); }
+      else if (e.key === "ArrowRight" || e.key === "PageDown") { e.preventDefault(); surClic("i"); }
+    });
+    document.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) tenirEcran(); });
+    var rt = null;
+    addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(surResize, 300); });
+
+    // réseau
+    flux = Flux(onLigne, function () { majAlerte(); }, since);
+    (function ouvrirFlux() {              // une attente gardée d'un rechargement précédent repousse la première requête
+      if (!flux.ouvrir() && flux.etat() === "ferme") setTimeout(ouvrirFlux, Math.max(1000, flux.prochainEssai() - Date.now() + 50));
+    })();
+    tenirEcran();
+
+    // minuteurs (9.12)
+    setInterval(tache250, 250);
+    setInterval(function () {
+      majHorloge(); majAges(); majAlerte();
+      var h = heureParis(); if (h !== heureVue) { heureVue = h; rotations(h); }
+    }, 15000);
+    setInterval(tache60Borne, 60000);
+    setInterval(respiration, 90000);
+    setInterval(function () { verifierMemoire(); antiRemanence(); }, 600000);
+    setInterval(verifierVersion, 120000);
+    setTimeout(function () { compte(); setInterval(compte, 900000); }, 30000);
+    setTimeout(verifierMemoire, 60000);
+  }
+
+  /* ================= Téléphone ================= */
+  var T = {};
+  var etatTel = "OUVERT", monV = null, envoi = null, douteux = false, fermeJour = null, voteMoi = null,
+      ouvertJusqua = 0, aVoteVisite = false, avantTel = { A: 0, I: 0 }, occupeTimer = null, miens = [], papier = "j", motEnCours = false;
+  var RESULTATS_TEL = { FAIT: 1, DEJA: 1, FERME: 1 };
+  var TEXTES_TEL = {
+    OUVERT: "", ENVOI: "Ça part…",
+    FERME: "Le vote en ligne rouvre demain. Vote sur la borne, dans le couloir.",
+    ERREUR: "Pas de réseau, ton vote n'est pas parti.",
+    ECHEC: "Ton vote n'est pas parti. Réessaie.",
+    OCCUPE: "Trop de monde en même temps. Réessaie dans une minute."
+  };
+  function construireTel() {
+    var h = location.hash === "#v";
+    var papiers = [["j", "Jaune"], ["r", "Rose"], ["p", "Pêche"]].map(function (p) {
+      return '<label class="papier"><input type="radio" name="papier" value="' + p[0] + '" class="sr-only"><span class="carre c-' + p[0] + '"></span><span class="nom">' + p[1] + "</span></label>";
+    }).join("");
+    var tete = '<div class="tete">' + (isTest ? '<p class="tel-test">Mode test : rien n\'est compté pour de vrai.</p>' : "")
+      + '<span class="tag">Mur du bureau</span><h1>Colle un mot sur la borne</h1><a class="vers-vote" href="#v"' + (h ? " hidden" : "") + ">Voter : Android ou iOS</a></div>";
+    var form = '<form id="form" novalidate>'
+      + '<label class="lab" for="name">Ton prénom</label>'
+      + '<input class="field" id="name" placeholder="Prénom" maxlength="' + MAX_NAME + '" autocomplete="given-name">'
+      + '<fieldset class="papiers"><legend>Ton papier</legend><div class="choix">' + papiers + "</div></fieldset>"
+      + '<label class="lab" for="text">Ton mot</label>'
+      + '<div class="note note-j" id="note"><textarea id="text" placeholder="Un mot, une idée, un merci" maxlength="' + MAX_TEXT + '"></textarea><span class="count" id="count">0 / ' + MAX_TEXT + "</span></div>"
+      + '<button type="submit" class="send" id="send" disabled>Coller sur le mur</button></form>'
+      + '<p class="status" id="status" role="status"></p>';
+    var vote = '<section class="vote-tel" id="v" aria-labelledby="vt"><h2 id="vt" tabindex="-1">Android ou iOS ?</h2>'
+      + '<p class="aide" id="aide">Un vote par téléphone et par jour. Le score s\'affiche après ton vote.</p>' + htmlDuel(true)
+      + '<p class="etat" id="etatTel" role="status"><span id="etatTxt"></span><span class="sr-only" id="etatScore"></span></p>'
+      + '<p class="source" id="source" hidden></p>'
+      + '<p class="direct"><span id="directTxt" tabindex="-1">En direct</span> <button type="button" id="actualiser" hidden>Actualiser</button></p></section>';
+    var recent = '<section class="recent"><h2>Déjà sur la borne</h2><div id="recent"></div></section>';
+    app.innerHTML = '<main class="phone">' + tete + (h ? vote + form : form + vote) + recent + "</main>";
+    frDom(app);
+    var q = function (s) { return app.querySelector(s); };
+    T.form = q("#form"); T.name = q("#name"); T.text = q("#text"); T.send = q("#send"); T.count = q("#count"); T.status = q("#status");
+    T.note = q("#note"); T.recent = q("#recent"); T.vt = q("#vt"); T.aide = q("#aide"); T.duel = q(".duel");
+    T.etatTxt = q("#etatTxt"); T.etatScore = q("#etatScore"); T.source = q("#source"); T.directTxt = q("#directTxt"); T.actualiser = q("#actualiser");
+    T.lien = q(".vers-vote");
+    prendreDuel(T.duel, true);
+    $.duel = null;
+    return h;
+  }
+  function choisirPapier(c) {
+    papier = c === "r" || c === "p" ? c : "j";
+    T.note.className = "note note-" + papier;
+    app.querySelectorAll('input[name="papier"]').forEach(function (i) { i.checked = i.value === papier; });
+  }
+  function renderRecent(nouveauId) {
+    var el = T.recent; if (!el) return;
+    var list = msgs.slice().reverse().slice(0, 20);
+    el.textContent = "";
+    if (!list.length) { var p = document.createElement("p"); p.className = "empty"; p.textContent = fr("Rien encore. À toi."); el.appendChild(p); return; }
+    var g = document.createElement("div"); g.className = "grid";
+    list.forEach(function (m) {
+      var c = document.createElement("div");
+      c.className = "card " + couleur(m) + (m.id === nouveauId ? " new" : "");
+      c.style.setProperty("--r", (((hash(m.id + "r") % 100) / 100) * 6 - 3).toFixed(1) + "deg");
+      var t = document.createElement("p"); t.className = "t"; t.textContent = m.t;
+      var mt = document.createElement("div"); mt.className = "m"; mt._m = m; metaTel(mt);
+      c.appendChild(t); c.appendChild(mt); g.appendChild(c);
+    });
+    el.appendChild(g);
+  }
+  function metaTel(mt) {             // prénom, âge du mot et « le tien »
+    remplirMeta(mt, mt._m);
+    if (miens.indexOf(mt._m.id) >= 0) mt.appendChild(document.createTextNode(fr(", le tien")));
+  }
+  function majAgesTel() {
+    if (document.hidden || !T.recent) return;
+    Array.prototype.forEach.call(T.recent.querySelectorAll(".m"), function (mt) { if (mt._m) metaTel(mt); });
+  }
+  var versionTel = null;
+  function versionTelDispo() {        // une nouvelle version en ligne : rechargement quand personne n'écrit ni ne vote
+    if (document.hidden) return;
+    lireVersionEnLigne(function (v) { if (v !== VERSION) versionTel = v; });
+  }
+  function rechargerTelSiCalme() {
+    if (!versionTel || document.hidden || motEnCours || etatTel === "ENVOI") return;
+    var a = document.activeElement;
+    if (T.text.value.trim() || (a && (a.tagName === "INPUT" || a.tagName === "TEXTAREA"))) return;
+    location.reload();
+  }
+  function telMot(m, frais) { renderRecent(frais ? m.id : null); }
+  function envoyerMot(e) {
+    e.preventDefault();
+    var n = T.name.value.trim().slice(0, MAX_NAME), t = T.text.value.trim().slice(0, MAX_TEXT);
+    if (!t || motEnCours) return;
+    ecrire("name", n);
+    motEnCours = true;
+    T.send.disabled = true; T.status.className = "status"; T.status.textContent = fr("Ça part…");
+    var c = papier;
+    publier(T_MOTS, JSON.stringify({ n: n, t: t, c: c })).then(function (res) {
+      motEnCours = false;
+      if (res.ok) {
+        var inchange = T.text.value.trim().slice(0, MAX_TEXT) === t;   // texte tapé pendant l'envoi : on le garde
+        if (inchange) animerEnvoiMot();
+        var ev = res.msg;
+        miens = miens.concat(ev.id).slice(-20); ecrire("miens", miens);
+        add({ id: ev.id, time: ev.time * 1000, n: n, t: t, c: c });
+        if (inchange) { T.text.value = ""; T.count.textContent = "0 / " + MAX_TEXT; }
+        T.send.disabled = !T.text.value.trim();
+        T.status.textContent = fr("Collé sur la borne !");
+        renderRecent(ev.id);
+        setTimeout(function () { if (T.status.textContent === fr("Collé sur la borne !")) T.status.textContent = ""; }, 3000);
+      } else {
+        T.status.className = "status err";
+        T.status.textContent = fr(res.status === 429 && res.code === 42908 ? "Le mur est plein pour aujourd'hui. Il rouvre cette nuit à " + heureReouverture() + " h." : "Ça n'est pas parti. Réessaie.");
+        T.send.disabled = !T.text.value.trim();
+      }
+    });
+  }
+  function animerEnvoiMot() {
+    if (reduit.matches) return;
+    var ta = T.text, clone = ta.cloneNode(false);
+    clone.value = ta.value; clone.className = "partie"; clone.setAttribute("aria-hidden", "true"); clone.tabIndex = -1; clone.readOnly = true;
+    clone.removeAttribute("id"); clone.style.width = ta.offsetWidth + "px"; clone.style.height = ta.offsetHeight + "px";
+    T.note.appendChild(clone);
+    clone.animate([{ transform: "rotate(-1.5deg)", opacity: 1 }, { transform: "translate(40px, -120%) rotate(-8deg)", opacity: 0 }], { duration: 450, easing: EASE_IN, fill: "forwards" })
+      .onfinish = function () { clone.remove(); };
+    ta.animate([{ transform: "translateY(4px) rotate(-1.5deg)" }, { transform: "rotate(-1.5deg)" }], { duration: 200, easing: EASE_OUT });
+  }
+
+  function aujourdhui() { return jour(maintenant()); }
+  function doutePour() { return douteux && envoi && envoi.j === aujourdhui() ? envoi.c : null; }
+  function texteEtatTel() {
+    if (etatTel === "FAIT" || etatTel === "DEJA") return "Tu as voté " + nomCamp(voteMoi ? voteMoi.c : "a") + " aujourd'hui. Tu pourras revoter demain, ou sur la borne du couloir.";
+    if (etatTel === "DOUTE") return "Pas de réponse. Touche " + nomCamp(envoi ? envoi.c : "a") + " pour réessayer, ton vote ne comptera qu'une fois.";
+    return TEXTES_TEL[etatTel] || "";
+  }
+  function rendreVoteTel(garderFill) {
+    if (!T.duel) return;
+    var d = T.duel._r, t = totaux(), enRes = !!RESULTATS_TEL[etatTel];
+    transitions(d.repos, ""); transitions(d.res, ""); transitions(d.traits, "");
+    if (!garderFill) { transitions([d.fillA, d.fillI], ""); [d.fillA, d.fillI].forEach(function (f) { f.classList.remove("appui"); f.style.transform = ""; }); }
+    T.duel.classList.toggle("res", enRes);
+    rendreDuel(T.duel, t, enRes, 0, "linear", 0);
+    poserTranches(T.duel, enRes ? 0 : 3);
+    var tc = (etatTel === "FAIT" || etatTel === "DEJA") && voteMoi ? voteMoi.c : null;
+    d.tpA.hidden = tc !== "a"; d.tpI.hidden = tc !== "i";
+    T.vt.textContent = fr(enRes ? (titre(t, avantTel) || QUESTION) : QUESTION);
+    // pavés
+    var dc = doutePour();
+    [d.padA, d.padI].forEach(function (b) {
+      var c = b.getAttribute("data-c"), f = c === "a" ? d.fillA : d.fillI;
+      b.disabled = enRes; b.removeAttribute("aria-disabled"); f.classList.remove("eteint");
+      if (enRes) return;
+      if (etatTel === "ENVOI" || etatTel === "OCCUPE") b.setAttribute("aria-disabled", "true");
+      else if (dc && c !== dc) { b.setAttribute("aria-disabled", "true"); f.classList.add("eteint"); }
+    });
+    T.aide.hidden = enRes;
+    T.etatTxt.textContent = fr(texteEtatTel());
+    T.etatScore.textContent = enRes ? fr(" " + resume(t)) : "";
+    majSource();
+  }
+  function majSource() {
+    var enRes = !!RESULTATS_TEL[etatTel];
+    T.source.hidden = !enRes;
+    if (!enRes) return;
+    T.source.textContent = fr(V && V.snVu > 0 ? "Votes de la borne comptés " + quand(V.snVu * 1000) + "." : "Score partiel : la borne n'a rien envoyé depuis 12 h.");
+  }
+  function majDirect() {
+    if (!T.directTxt) return;
+    var e = flux.etat(), s = flux.dernierSigne();
+    T.directTxt.textContent = fr(e === "ouvert" ? "En direct" : s ? "Mis à jour " + quand(s + decalage) : e === "connexion" ? "Connexion…" : "Pas de connexion.");
+    var cacher = !(e === "ferme" && Date.now() >= flux.prochainEssai());
+    if (cacher && !T.actualiser.hidden && document.activeElement === T.actualiser) T.directTxt.focus();   // le focus reste à sa place
+    T.actualiser.hidden = cacher;
+  }
+  function gererFluxTel() {
+    var doit = !document.hidden && Date.now() < ouvertJusqua;
+    if (!doit && flux.etat() !== "ferme") flux.fermer();
+    if (doit && flux.etat() === "ferme") flux.ouvrir();
+    majDirect();
+  }
+  function allerEtatTel(e, garderFill) { etatTel = e; rendreVoteTel(garderFill); }
+  function voterTel(c) {
+    if (!navigator.onLine) { allerEtatTel("ERREUR"); return; }
+    if (!monV) { monV = hasard(8); ecrire("voter", monV); }
+    envoi = { j: aujourdhui(), c: c }; ecrire("vote.envoi", envoi);
+    allerEtatTel("ENVOI");
+    var d = T.duel._r, f = c === "a" ? d.fillA : d.fillI, r = c === "a" ? -1.5 : 1.5;
+    if (!reduit.matches) { f.style.transition = "transform 120ms " + EASE_OUT; f.style.transform = "translateY(-8px) rotate(" + (r - 3) + "deg)"; }
+    publier(T_VOTE, JSON.stringify({ t: "", k: "b", q: Q, c: c, v: monV, z: 1 })).then(function (res) {
+      if (res.ok) {
+        effacer("vote.envoi"); douteux = false;
+        if (etatTel === "FAIT") return;                 // déjà confirmé par le flux, animation jouée
+        var msg = res.msg;
+        if (!V) V = nouvelEtat(null, manche(msg.time * 1000));
+        avantTel = totaux();
+        appliquer(msg);
+        faitTel(c, msg.id, jour(msg.time * 1000), true);
+        return;
+      }
+      if (res.status > 0) { if (!douteux) effacer("vote.envoi"); }
+      if (etatTel !== "ENVOI") return;
+      if (res.status === 0) { douteux = true; allerEtatTel("DOUTE", true); }
+      else if (res.status === 429 && res.code === 42908) { fermeJour = aujourdhui(); avantTel = totaux(); allerEtatTel("FERME", true); }
+      else if (res.status === 429 && (res.code === 42901 || res.code === 42903 || res.code === 42905)) {
+        allerEtatTel("OCCUPE", true);
+        clearTimeout(occupeTimer);
+        occupeTimer = setTimeout(function () { if (etatTel === "OCCUPE") allerEtatTel(doutePour() ? "DOUTE" : "OUVERT"); }, 60000);
+      } else allerEtatTel("ECHEC", true);
+      retourFill(f);
+    });
+  }
+  function retourFill(f) {
+    f.classList.remove("appui");
+    if (reduit.matches) { f.style.transition = ""; f.style.transform = ""; return; }
+    f.style.transition = "transform 400ms " + EASE_DROP + ", opacity 400ms linear"; f.style.transform = "";
+  }
+  function faitTel(c, id, j, anime) {
+    var avaitFocus = T.duel.contains(document.activeElement);
+    voteMoi = { j: j, c: c, id: id }; ecrire("vote.moi", voteMoi);
+    aVoteVisite = true; ouvertJusqua = Date.now() + 120000;
+    var d = T.duel._r, f = c === "a" ? d.fillA : d.fillI, r = reduit.matches;
+    etatTel = "FAIT";
+    if (anime && navigator.vibrate) { try { navigator.vibrate(30); } catch (e) {} }   // vote parti (11.3), mouvement réduit compris
+    if (!anime || r) {
+      rendreVoteTel();
+      if (anime && r) T.duel.animate([{ opacity: .4 }, { opacity: 1 }], { duration: 150 });
+    } else {
+      // 11.3 : vote parti
+      arracher(T.duel, c);
+      f.style.transition = "none"; f.style.transform = ""; f.classList.remove("appui"); void f.offsetWidth;
+      poserTranches(T.duel, 0);
+      transitions(d.repos, "opacity 120ms linear");
+      transitions([d.fillA, d.fillI], "transform 240ms " + EASE_OUT + " 120ms, border-radius 240ms " + EASE_OUT + " 120ms");
+      transitions(d.traits, "opacity 200ms linear 120ms");
+      transitions(d.res, "opacity 200ms linear 300ms");
+      T.duel.classList.add("res");
+      var t = totaux();
+      rendreDuel(T.duel, t, true, 600, EASE_OUT, 120, 400, 300);
+      var tp = c === "a" ? d.tpA : d.tpI, r0 = c === "a" ? "rotate(-14deg)" : "rotate(12deg)", r1 = c === "a" ? "rotate(-9deg)" : "rotate(7deg)";
+      d.tpA.hidden = c !== "a"; d.tpI.hidden = c !== "i";
+      tp.animate([{ transform: "scale(1.6) " + r0, opacity: 0 }, { transform: "scale(1) " + r1, opacity: .92 }], { duration: 140, delay: 500, easing: EASE_IN, fill: "backwards" });
+      [d.padA, d.padI].forEach(function (b) { b.disabled = true; b.removeAttribute("aria-disabled"); });
+      d.fillA.classList.remove("eteint"); d.fillI.classList.remove("eteint");
+      T.aide.hidden = true;
+      T.vt.textContent = fr(titre(t, avantTel) || QUESTION);
+      T.etatTxt.textContent = fr(texteEtatTel());
+      T.etatScore.textContent = fr(" " + resume(t));
+      majSource();
+    }
+    if (avaitFocus) T.vt.focus();
+  }
+  function telChangement(ch) {
+    if (ch.type === "tel" && ch.v === monV && ch.jour === aujourdhui() && etatTel !== "FAIT" && etatTel !== "DEJA") {
+      effacer("vote.envoi"); douteux = false;
+      avantTel = ch.avant;
+      faitTel(ch.c, ch.id, ch.jour, etatTel === "ENVOI");
+      return;
+    }
+    if (!RESULTATS_TEL[etatTel]) return;
+    avantTel = ch.enDirect ? ch.avant : totaux();   // un message rejoué n'est pas un changement vu par la personne
+    var t = totaux();
+    rendreDuel(T.duel, t, true, reduit.matches ? 0 : 400, EASE_OUT, 0);
+    T.vt.textContent = fr(titre(t, avantTel) || QUESTION);
+    T.etatScore.textContent = fr(" " + resume(t));
+    majSource();
+  }
+  function lendemainTel() {
+    var j = aujourdhui(), perime = douteux && envoi && envoi.j !== j && etatTel !== "ENVOI";
+    if (perime) { douteux = false; envoi = null; effacer("vote.envoi"); }   // camp douteux de la veille : la règle ne vaut plus
+    if (perime && etatTel !== "DOUTE") rendreVoteTel();
+    if (((etatTel === "FAIT" || etatTel === "DEJA") && voteMoi && voteMoi.j !== j) || (etatTel === "FERME" && fermeJour !== j) || (etatTel === "DOUTE" && !doutePour())) {
+      aVoteVisite = false; ouvertJusqua = Date.now() + 300000;
+      allerEtatTel(doutePour() ? "DOUTE" : "OUVERT");
+      compte().then(function (n) { if (etatTel === "OUVERT" && n !== null && n < QUOTA_SEUIL) { fermeJour = aujourdhui(); avantTel = totaux(); allerEtatTel("FERME"); } });
+      gererFluxTel();
+    }
+  }
+  function tache60Tel() {
+    var hs = heureServeur();
+    if (controlerHorloge() && V && manche(hs) > V.r) changerManche(manche(hs), hs);
+    purger();
+    renderRecent(null);
+  }
+  function demarrerTel() {
+    chargerMsgs();
+    miens = lire("miens", []); if (!Array.isArray(miens)) miens = [];
+    var h = construireTel();
+    T.name.value = String(lire("name", ""));
+    choisirPapier(String(lire("papier", "j")));
+    app.querySelectorAll('input[name="papier"]').forEach(function (i) {
+      i.addEventListener("change", function () { if (i.checked) { choisirPapier(i.value); ecrire("papier", papier); } });
+    });
+    T.text.addEventListener("input", function () {
+      T.count.textContent = T.text.value.length + " / " + MAX_TEXT;
+      T.send.disabled = motEnCours || !T.text.value.trim();   // pendant un envoi, le bouton reste inactif
+    });
+    T.form.addEventListener("submit", envoyerMot);
+    renderRecent(null);
+
+    // vote
+    monV = lire("voter", null); if (typeof monV !== "string" || !/^[a-z0-9]{8}$/.test(monV)) monV = null;
+    envoi = lire("vote.envoi", null); if (!envoi || typeof envoi !== "object") envoi = null;
+    voteMoi = lire("vote.moi", null); if (!voteMoi || typeof voteMoi !== "object") voteMoi = null;
+    var j = aujourdhui();
+    if (voteMoi && voteMoi.j === j) etatTel = "DEJA";
+    else if (envoi && envoi.j === j) { douteux = true; etatTel = "DOUTE"; }
+    else etatTel = "OUVERT";
+    rendreVoteTel();
+    var d = T.duel._r;
+    [d.padA, d.padI].forEach(function (b) {
+      var c = b.getAttribute("data-c"), f = c === "a" ? d.fillA : d.fillI;
+      var actif = function () { return !b.disabled && b.getAttribute("aria-disabled") !== "true"; };
+      b.addEventListener("pointerdown", function (e) {
+        if (!e.isPrimary || !actif() || reduit.matches) { if (e.isPrimary && actif()) { f._tr = 2; f.style.boxShadow = tranches(2); } return; }
+        f.style.transition = "transform 90ms " + EASE_OUT; f.classList.add("appui"); f._tr = 2; f.style.boxShadow = tranches(2);
+      });
+      ["pointerup", "pointercancel", "pointerleave"].forEach(function (t) {
+        b.addEventListener(t, function () {
+          if (!f.classList.contains("appui") && f._tr !== 2) return;
+          f.style.transition = "transform 140ms " + EASE_OUT; f.classList.remove("appui");
+          if (!T.duel.classList.contains("res") && etatTel !== "ENVOI") { f._tr = 3; f.style.boxShadow = tranches(3); }
+        });
+      });
+      b.addEventListener("click", function () {
+        f.classList.remove("appui");
+        if (!actif()) return;
+        voterTel(c);
+      });
+    });
+    T.actualiser.addEventListener("click", function () { ouvertJusqua = Date.now() + 120000; gererFluxTel(); });
+    var interaction = function () { if (!aVoteVisite) ouvertJusqua = Date.now() + 300000; gererFluxTel(); };
+    document.addEventListener("pointerdown", interaction, true);
+    document.addEventListener("keydown", interaction, true);
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) lendemainTel(); gererFluxTel(); });
+    addEventListener("hashchange", function () { if (location.hash === "#v") T.vt.focus(); });
+    T.lien.addEventListener("click", function () { setTimeout(function () { T.vt.focus(); }, 0); });   // hash déjà à #v : pas de hashchange
+    if (h) { T.vt.focus(); addEventListener("load", function () { T.vt.focus(); }, { once: true }); }   // le défilement vers #v reprend le focus
+
+    flux = Flux(onLigne, function () { majDirect(); }, since);
+    ouvertJusqua = Date.now() + 300000;
+    gererFluxTel();
+    if (etatTel !== "DEJA") compte().then(function (n) {
+      if (etatTel === "OUVERT" && n !== null && n < QUOTA_SEUIL) { fermeJour = aujourdhui(); avantTel = totaux(); allerEtatTel("FERME"); }
+    });
+    setInterval(function () { gererFluxTel(); lendemainTel(); majSource(); rechargerTelSiCalme(); }, 5000);
+    setInterval(majAgesTel, 30000);
+    setInterval(versionTelDispo, 120000);
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) { majAgesTel(); versionTelDispo(); } });
+    setInterval(tache60Tel, 60000);
+  }
+
+  /* ================= Debug ================= */
+  function demarrerDebug() {
+    var el = document.createElement("pre"); el.id = "debug"; if (!isBorne) el.className = "tel";
+    el.setAttribute("aria-hidden", "true");
+    document.body.appendChild(el);
+    function hm(ms) { return ms ? heure(ms) : "jamais"; }
+    function majDebug() {
+      var t = totaux(), l = [];
+      var etatFlux = flux ? (flux.modePoll ? "poll" : "flux") + ", " + flux.etat() + ", requêtes " + flux.essais() + ", prochain essai " + (flux.prochainEssai() > Date.now() ? "dans " + Math.round((flux.prochainEssai() - Date.now()) / 1000) + " s" : "libre") : "aucun";
+      if (isBorne) {
+        l.push("fenêtre " + innerWidth + " × " + innerHeight + ", DPR " + (window.devicePixelRatio || 1) + ", " + (matchMedia("(orientation: portrait)").matches ? "portrait" : "paysage"));
+        l.push("1u = " + U.toFixed(3) + " px ; tactile détecté " + (navigator.maxTouchPoints > 0 || matchMedia("(any-pointer: coarse)").matches ? "oui" : "non") + ", forcé " + (params.get("tactile") || "non") + ", mode " + (modeLecture ? "lecture" : "tactile"));
+        l.push("QR : " + ($.qrInfo ? $.qrInfo.n + " modules, k = " + $.qrInfo.k : "indisponible") + " ; VERSION " + VERSION);
+        l.push("borne " + V.me + (idUrl && idUrl === V.me ? " (URL)" : "") + " ; stockage : " + (stockageOK ? "ok" : "indisponible") + " ; horloge sûre : " + (horlogeSure ? "oui" : "non"));
+        l.push("manche " + V.r + " ; totaux A " + t.A + " I " + t.I + " ; état " + etat);
+        Object.keys(V.d).forEach(function (k) { l.push("  d " + k + " [" + V.d[k].join(", ") + "]" + (V.dt[k] ? " vu il y a " + Math.round(maintenant() / 1000 - V.dt[k]) + " s" : "")); });
+        l.push("restants " + (restants === null ? "?" : restants) + " ; flux " + etatFlux);
+        l.push("dernier signe " + hm(flux && flux.dernierSigne()) + " ; décalage " + decalage + " ms");
+        l.push("instantané publié " + hm(V.sn.t) + ", vu " + (V.sn.any ? heure(V.sn.any * 1000) : "jamais") + " ; bloqué jusqu'à " + (bloqueJusqua ? heure(bloqueJusqua) : "non"));
+        l.push("rejets " + rejets.n + (rejets.derniers.length ? " : " + rejets.derniers.join(" / ") : ""));
+        var hd = hauteursDuel(); if (hd) l.push("duel au sol : " + hd);
+      } else {
+        l.push("vote " + etatTel + (douteux ? " (douteux)" : "") + " ; flux " + etatFlux);
+        l.push("horloge sûre : " + (horlogeSure ? "oui" : "non") + " ; décalage " + decalage + " ms");
+        l.push("totaux A " + t.A + " I " + t.I + " ; rejets " + rejets.n + (rejets.derniers.length ? " : " + rejets.derniers.join(" / ") : ""));
+      }
+      el.textContent = l.join("\n");
+    }
+    majDebug(); setInterval(majDebug, 2000);
+  }
+
+  /* ================= Auto-tests (section 12) ================= */
+  function autoTests() {
+    var lignes = [], reussis = 0, total = 0;
+    var T0 = Date.UTC(2026, 8, 25, 10) / 1000, nId = 0;
+    function preparer() {
+      V = nouvelEtat("aaaaaa", "2026-W39"); rejets = { n: 0, derniers: [] };
+      IGNORE_BORNES = []; IGNORE_MOTS = []; repriseMe = false; repriseJusqua = 0;
+      decalage = T0 * 1000 - Date.now();
+    }
+    function id() { return "t" + (++nId); }
+    function bul(t, c, v, extra) {
+      var o = { t: "", k: "b", q: "os", c: c, v: v, z: 1 }, k; for (k in extra || {}) o[k] = extra[k];
+      return { id: id(), time: t, event: "message", topic: T_VOTE, message: JSON.stringify(o) };
+    }
+    function snap(t, d, extra) {
+      var o = { t: "", k: "s", q: "os", z: 1, r: "2026-W39", f: "bbbbbb", d: d, p: {}, h: null }, k; for (k in extra || {}) o[k] = extra[k];
+      return { id: id(), time: t, event: "message", topic: T_VOTE, message: JSON.stringify(o) };
+    }
+    function tot() { var t = totaux(); return [t.A, t.I]; }
+    function cas(n, fn) {
+      total++; preparer();
+      var err = [];
+      var ok = function (obtenu, attendu, quoi) {
+        if (JSON.stringify(obtenu) !== JSON.stringify(attendu)) err.push((quoi ? quoi + " : " : "") + "attendu " + JSON.stringify(attendu) + " obtenu " + JSON.stringify(obtenu));
+      };
+      try { fn(ok); } catch (e) { err.push("exception " + (e && e.message)); }
+      if (err.length) lignes.push(n + ". ECHEC " + err.join(" ; ")); else { reussis++; lignes.push(n + ". OK"); }
+    }
+    cas(1, function (ok) { ok(jour(Date.UTC(2026, 8, 25, 12)), "2026-09-25"); ok(jour(Date.UTC(2026, 8, 25, 2, 30)), "2026-09-24"); });
+    cas(2, function (ok) { ok(manche(Date.UTC(2026, 8, 28, 2, 59)), "2026-W39"); ok(manche(Date.UTC(2026, 8, 28, 3, 0)), "2026-W40"); });
+    cas(3, function (ok) { ok(mancheDuJour("2027-01-01"), "2026-W53"); ok(mancheDuJour("2026-01-01"), "2026-W01"); });
+    cas(4, function (ok) { var b = bul(T0, "a", "k3f9x2qa"); appliquer(b); ok(tot(), [1, 0]); appliquer(b); ok(tot(), [1, 0], "rejoué"); });
+    cas(5, function (ok) {
+      appliquer(bul(T0, "a", "k3f9x2qa")); appliquer(bul(T0, "a", "k3f9x2qa")); ok(tot(), [1, 0]);
+      appliquer(bul(T0 + 86400, "a", "k3f9x2qa")); ok(tot(), [2, 0], "lendemain");
+    });
+    cas(6, function (ok) {
+      appliquer(bul(T0, "a", "k3f9x2qa", { z: 2 })); appliquer(bul(T0, "x", "k3f9x2qa")); appliquer(bul(T0, "a", "ABC")); appliquer(bul(T0, "a", "k3f9x2qa", { q: "autre" }));
+      ok(tot(), [0, 0]); ok(rejets.n, 4, "rejets");
+    });
+    cas(7, function (ok) { for (var i = 0; i < 151; i++) appliquer(bul(T0, "a", ("v" + (1000000 + i)).slice(0, 8))); ok(tot(), [150, 0]); });
+    cas(8, function (ok) {
+      appliquer(snap(T0, { bbbbbb: [5, 3] })); ok(tot(), [5, 3]);
+      appliquer(snap(T0, { bbbbbb: [5, 3] })); ok(tot(), [5, 3], "rejoué");
+      appliquer(snap(T0 + 10, { bbbbbb: [4, 3] })); ok(tot(), [5, 3], "maximum");
+    });
+    cas(9, function (ok) { appliquer(snap(T0, { aaaaaa: [99, 99] })); ok(tot(), [0, 0]); });
+    cas(10, function (ok) {
+      appliquer(snap(T0, { bbbbbb: [0, 0] })); appliquer(snap(T0 + 60, { bbbbbb: [10, 0] })); ok(tot(), [0, 0], "rejeté");
+      appliquer(snap(T0 + 60, { bbbbbb: [4, 0] })); ok(tot(), [4, 0], "accepté");
+    });
+    cas(11, function (ok) { appliquer(bul(T0, "a", "k3f9x2qa")); appliquer(snap(T0 + 5, { bbbbbb: [0, 0] }, { p: { "2026-09-25": [1, 0] } })); ok(tot(), [1, 0]); });
+    cas(12, function (ok) { appliquer(snap(T0, {}, { p: { "2026-09-25": [3, 1] } })); ok(tot(), [3, 1]); });
+    cas(13, function (ok) { appliquer(snap(T0, { bbbbbb: [5, 3] }, { r: "2026-W38" })); ok(tot(), [0, 0]); });
+    cas(14, function (ok) {
+      decalage = Date.UTC(2026, 8, 28, 6) - Date.now();
+      voterBorne("a"); appliquer(bul(Date.UTC(2026, 8, 28, 6) / 1000, "i", "k3f9x2qa"));
+      ok(V.r, "2026-W40"); ok(V.h[V.h.length - 1], { r: "2026-W39", a: 1, i: 0 }, "h"); ok(V.d.aaaaaa, [0, 0], "d[me]"); ok(tot(), [0, 1]);
+    });
+    cas(15, function (ok) {
+      var v = valeurs({ A: 3, I: 1 }); ok([v.va, v.vi, v.pct, v.ca, v.ci], ["3", "1", false, "voix", "voix"]);
+      v = valeurs({ A: 31, I: 24 }); ok([v.va, v.vi, v.ca, v.ci], ["56 %", "44 %", "31 voix", "24 voix"]);
+      v = valeurs({ A: 199, I: 1 }); ok([v.va, v.vi], ["99 %", "1 %"]);
+    });
+    cas(16, function (ok) {
+      ok(partage({ A: 0, I: 0 }), 50); ok(partage({ A: 1, I: 0 }), 100); ok(partage({ A: 0, I: 4 }), 0); ok(partage({ A: 1, I: 30 }), 8);
+      var p = partage({ A: 101, I: 100 }); ok(p > 50.24 && p < 50.25, true, "101 contre 100");
+    });
+    cas(17, function (ok) {
+      ok(titre({ A: 1, I: 0 }, { A: 0, I: 0 }), "Premier vote !"); ok(titre({ A: 3, I: 3 }, { A: 3, I: 2 }), "Égalité");
+      ok(titre({ A: 4, I: 3 }, { A: 3, I: 3 }), "Android passe devant"); ok(titre({ A: 5, I: 3 }, { A: 4, I: 3 }), "Android mène de 2 voix");
+      ok(titre({ A: 3, I: 4 }, { A: 3, I: 3 }), "iOS passe devant"); ok(titre({ A: 6, I: 5 }, { A: 6, I: 4 }), "Android mène d'une voix");
+      ok(titre({ A: 5, I: 6 }, { A: 5, I: 4 }), "iOS passe devant"); ok(titre({ A: 1200, I: 1000 }, { A: 1199, I: 1000 }), "Android mène de 200 voix");
+    });
+    cas(18, function (ok) {
+      var ev = function (msg) { return { id: id(), time: T0, event: "message", topic: T_MOTS, message: msg }; };
+      var m = parseMot(ev('{"n":"A","t":"B","c":"r"}')); ok(m && couleur(m), "c-r");
+      ok(parseMot(ev('{"t":"","k":"b","q":"os","c":"a","v":"k3f9x2qa","z":1}')), null, "bulletin");
+      m = parseMot(ev("Salut")); ok(m && [m.n, m.t, m.c], ["", "Salut", null], "brut");
+      ok(parseMot(ev('{"k":"s","t":"x"}')), null, "k");
+    });
+    cas(19, function (ok) {
+      ok(fr("Android ou iOS ?").indexOf(" ?") >= 0, true, "?"); ok(fr("Prochain vote dans 20 s").indexOf("20 s") >= 0, true, "s");
+      ok(fr("il y a 3 min").indexOf("3 min") >= 0, true, "min"); ok(fr("12 voix").indexOf("12 voix") >= 0, true, "voix");
+    });
+    cas(20, function (ok) {
+      var n = function (s) { return s.split(/,(?![^(]*\))/).length; };
+      ok(n(tranches(5)), 11); ok(n(tranches(0)), 1);
+    });
+    cas(21, function (ok) {
+      var d = {}; for (var i = 1; i <= 9; i++) d["bbbbb" + i] = [1, 0];
+      appliquer(snap(T0, d)); ok(rejets.derniers[rejets.derniers.length - 1], "trop de bornes"); ok(tot(), [0, 0]);
+    });
+    cas(22, function (ok) {
+      ok(debutManche(T0), Date.UTC(2026, 8, 21, 3) / 1000);
+      ok(debutManche(Date.UTC(2026, 8, 28, 3, 0, 30) / 1000), Date.UTC(2026, 8, 28, 3) / 1000);
+      ok(debutManche(Date.UTC(2026, 8, 28, 2, 59) / 1000), Date.UTC(2026, 8, 21, 3) / 1000);
+    });
+    cas(23, function (ok) {
+      appliquer(snap(T0, { bbbbbb: [18542, 0] })); ok(tot(), [0, 0], "18542"); ok(/^hausse impossible/.test(rejets.derniers[rejets.derniers.length - 1]), true, "raison");
+      appliquer(snap(T0, { bbbbbb: [18541, 0] })); ok(tot(), [18541, 0], "18541");
+    });
+    cas(24, function (ok) {
+      var d = {}; for (var i = 1; i <= 8; i++) d["bbbbb" + i] = [1, 0];
+      appliquer(snap(T0, d)); ok(rejets.derniers[rejets.derniers.length - 1], "borne en trop"); ok(tot(), [7, 0]);
+    });
+    cas(25, function (ok) {
+      appliquer(snap(T0, {}, { f: "cccccc", p: { "2026-09-25": [150, 0] } })); appliquer(snap(T0 + 1, {}, { f: "cccccc", p: { "2026-09-25": [0, 150] } }));
+      ok(pEffectif()["2026-09-25"], [150, 0]); ok(rejets.n, 1, "rejets");
+    });
+    cas(26, function (ok) {
+      var h = { r: "2026-W38", a: 40, i: 30 };
+      appliquer(snap(T0, { bbbbbb: [1, 0] }, { h: h })); ok(V.h, [], "premier");
+      appliquer(snap(T0 + 600, { bbbbbb: [1, 0] }, { h: { r: "2026-W38", a: 300000, i: 30 } })); ok(V.h, [], "trop haut");
+      appliquer(snap(T0 + 1200, { bbbbbb: [1, 0] }, { h: h })); ok(V.h, [h], "connue");
+    });
+    cas(27, function (ok) { appliquer(snap(T0, { bbbbbb: [5, 3] })); ok(tot(), [5, 3]); IGNORE_BORNES = ["bbbbbb"]; ok(tot(), [0, 0], "ignorée"); });
+    cas(28, function (ok) {
+      changerManche("2026-W41"); ok(V.r, "2026-W39");
+      V.r = null; var b = bul(T0, "a", "k3f9x2qa"); ok(appliquer(b), null, "appliquer"); ok(!!V.ids[b.id], false, "ids");
+    });
+    cas(29, function (ok) {
+      repriseMe = true; repriseJusqua = T0 + 100;
+      appliquer(snap(T0, { aaaaaa: [5, 2] }, { f: "aaaaaa" })); ok(V.d.aaaaaa, [5, 2]);
+      appliquer(snap(T0 + 200, { aaaaaa: [9, 2] }, { f: "aaaaaa" })); ok(V.d.aaaaaa, [5, 2], "après chargement"); ok(V.dt, {}, "dt");
+    });
+    cas(30, function (ok) {
+      ok(decoder("Léa", ""), "Léa"); ok(decoder('"Léa"', ""), "Léa"); ok(decoder(null, "x"), "x");
+      IGNORE_MOTS = ["m999"];
+      ok(parseMot({ id: "m999", time: T0, event: "message", topic: T_MOTS, message: '{"n":"A","t":"B"}' }), null, "ignoré");
+    });
+    // Cas ajoutés avec les corrections de la relecture du 25/09
+    cas(31, function (ok) {              // p d'un jour à venir : instantané ignoré en entier
+      appliquer(snap(T0, {}, { f: "zzzzzz", p: { "2026-09-25": [5, 0], "2026-09-26": [150, 0] } }));
+      ok(tot(), [0, 0]); ok(/^p futur/.test(rejets.derniers[rejets.derniers.length - 1]), true, "raison");
+    });
+    cas(32, function (ok) {              // p d'une source ignorée retiré, plafond sur les bulletins reçus ici
+      appliquer(snap(T0, {}, { f: "zzzzzz", p: { "2026-09-25": [0, 150] } })); ok(tot(), [0, 150]);
+      appliquer(bul(T0 + 30, "a", "vraiv001")); ok(tot(), [1, 149], "bulletin compté malgré le faux p");
+      IGNORE_BORNES = ["zzzzzz"]; ok(tot(), [1, 0], "source ignorée");
+      appliquer(snap(T0 + 60, {}, { f: "zzzzzz", p: { "2026-09-25": [0, 150] } })); ok(tot(), [1, 0], "nouveau message ignoré");
+    });
+    cas(33, function (ok) {              // un bulletin reçu après un instantané s'ajoute à son p
+      appliquer(snap(T0, {}, { p: { "2026-09-25": [3, 1] } })); appliquer(bul(T0 + 10, "a", "k3f9x2qa")); ok(tot(), [4, 1]);
+    });
+    cas(34, function (ok) {              // un relais ne remet pas dt à jour
+      appliquer(snap(T0, { cccccc: [10, 0] }, { f: "cccccc" }));
+      appliquer(snap(T0 + 590, { rrrrrr: [0, 0], cccccc: [10, 0] }, { f: "rrrrrr" }));
+      appliquer(snap(T0 + 600, { cccccc: [40, 0] }, { f: "cccccc" }));
+      ok(tot(), [40, 0]); ok(V.dt.cccccc, T0 + 600, "dt");
+    });
+    cas(35, function (ok) {              // h d'une autre manche que la précédente : ignoré
+      appliquer(snap(T0, { bbbbbb: [1, 0] })); V.h = [{ r: "2026-W38", a: 10, i: 5 }];
+      appliquer(snap(T0 + 30, { bbbbbb: [1, 0] }, { h: { r: "2099-W01", a: 1, i: 0 } })); ok(V.h.map(function (x) { return x.r; }), ["2026-W38"]);
+      ok(manchePrecedente("2026-W01"), "2025-W52", "précédente"); ok(manchePrecedente("2027-W01"), "2026-W53", "53");
+    });
+    cas(36, function (ok) {              // maintien : seul un instantané qui garde la ligne de cette borne le repousse
+      voterBorne("a");
+      appliquer(snap(T0, { bbbbbb: [1, 0] })); ok(V.sn.any, 0, "sans la ligne");
+      appliquer(snap(T0 + 10, { bbbbbb: [1, 0], aaaaaa: [1, 0] })); ok(V.sn.any, T0 + 10, "avec la ligne");
+      appliquer(snap(T0 + 20, { bbbbbb: [1, 0] }, { r: "2026-W30" })); ok(V.sn.any, T0 + 10, "autre manche");
+    });
+    cas(37, function (ok) {              // purge : rien tant que l'horloge n'est pas sûre
+      appliquer(bul(T0 - 50000, "a", "k3f9x2qa")); var n0 = Object.keys(V.ids).length;
+      horlogeSure = false; purger(); ok(Object.keys(V.ids).length, n0, "horloge pas sûre");
+      horlogeSure = true; appliquer(bul(T0, "i", "k3f9x2qb")); purger(); ok(Object.keys(V.ids).length, 1, "horloge sûre"); horlogeSure = false;
+    });
+    cas(38, function (ok) {              // saut de l'horloge locale : les anciens écarts sont oubliés
+      var d0 = decalage; horloge = []; decalage = 0;
+      echantillon(Date.now() / 1000 + 259200); ok(Math.round(decalage / 1000), 259200, "écart appris");
+      echantillon(Date.now() / 1000); ok(Math.abs(decalage) < 5000, true, "écart oublié");
+      horloge = []; refPerf = 0; refServeur = 0; refDate = 0; decalage = d0;
+    });
+    decalage = 0; IGNORE_BORNES = []; IGNORE_MOTS = []; V = null; repriseMe = false; repriseJusqua = 0; horloge = []; horlogeSure = false;
+    var pre = document.createElement("pre"); pre.id = "unit";
+    pre.textContent = lignes.join("\n") + "\nunit: " + reussis + "/" + total;
+    app.appendChild(pre);
+  }
+
+  /* ================= Démarrage ================= */
+  if (isUnit) { autoTests(); return; }
+  stockageOK = ecrire("sonde", 1) && lire("sonde", 0) === 1; effacer("sonde");
+  if (isBorne) demarrerBorne(); else demarrerTel();
+  if (isDebug) demarrerDebug();
 })();
 </script>
 </body>
