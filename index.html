@@ -335,8 +335,8 @@ html.vj, body.vj { margin: 0; height: 100%; background: #7fd0ff; overflow: hidde
 .vj-btn { position: absolute; left: 35px; top: 400px; width: 400px; height: 150px; margin: 0; padding: 0; border: 6px solid #1f1a12; border-radius: 999px; background: #ffffff;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 14px 0 #1f1a12; cursor: none; -webkit-tap-highlight-color: transparent;
   transition: transform .08s, box-shadow .08s, opacity .2s linear; }
-.vj-btn .l1 { font: 700 30px/1 var(--sans); color: #1f1a12; } .vj-btn .l2 { font: 400 64px/1 Bungee, sans-serif; letter-spacing: -.01em; }
-.vj-k .vj-btn .l2 { color: #c41d22; } .vj-p .vj-btn .l2 { color: #1f55c2; }
+.vj-btn { font: 400 76px/1 Bungee, sans-serif; letter-spacing: -.01em; }
+.vj-k .vj-btn { color: #c41d22; } .vj-p .vj-btn { color: #1f55c2; }
 .vj-btn:active, .vj-btn.appui { transform: translateY(10px); box-shadow: 0 4px 0 #1f1a12; }
 .vj-res { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity .25s linear .15s; }
 .vj-rang { position: absolute; left: 0; right: 0; top: 34px; text-align: center; font: 400 64px/1 Bungee, sans-serif; opacity: .45; }
@@ -365,7 +365,7 @@ html.vj, body.vj { margin: 0; height: 100%; background: #7fd0ff; overflow: hidde
 <script>
 (function () {
   /* ================= Constantes et paramètres ================= */
-  var VERSION = "2026-09-28.1";          // à incrémenter à chaque mise en ligne, relu par la borne
+  var VERSION = "2026-09-28.2";          // à incrémenter à chaque mise en ligne, relu par la borne
   var NTFY = "https://ntfy.sh/";
   var Q = "os";
   var params = new URLSearchParams(location.search);
@@ -2393,7 +2393,7 @@ html.vj, body.vj { margin: 0; height: 100%; background: #7fd0ff; overflow: hidde
     }).join("");
     var marche = function (c, nom, court) {
       return '<div class="vj-marche vj-' + c + '" data-c="' + c + '"><img class="vj-logo" src="' + A + 'logo-' + (c === "k" ? "kart" : "party") + '.webp" alt="' + nom + '">'
-        + '<button type="button" class="vj-btn" data-c="' + c + '"><span class="l1">Je vote</span><span class="l2">' + court + '</span></button>'
+        + '<button type="button" class="vj-btn" data-c="' + c + '" aria-label="Voter ' + nom + '">Voter</button>'
         + '<div class="vj-res"><span class="vj-rang"></span><span class="vj-pct"></span><span class="vj-voix"></span></div>'
         + '<div class="vj-tampon" hidden>A VOTÉ</div></div>';
     };
