@@ -338,6 +338,9 @@ html.vj, body.vj { margin: 0; height: 100%; background: #7fd0ff; overflow: hidde
 .vj-btn { font: 400 76px/1 Bungee, sans-serif; letter-spacing: -.01em; }
 .vj-k .vj-btn { color: #c41d22; } .vj-p .vj-btn { color: #1f55c2; }
 .vj-btn:active, .vj-btn.appui { transform: translateY(10px); box-shadow: 0 4px 0 #1f1a12; }
+.vj-nb { position: absolute; left: 0; right: 0; top: 284px; margin: 0; text-align: center; color: #ffffff; font: 600 40px/1 var(--sans); text-shadow: 0 4px 0 rgba(0,0,0,.2); pointer-events: none; transition: opacity .2s linear; }
+.vj-nb b { font: 400 76px/1 Bungee, sans-serif; font-weight: 400; margin-right: 8px; }
+.vj-scene.res .vj-nb { opacity: 0; }
 .vj-res { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity .25s linear .15s; }
 .vj-rang { position: absolute; left: 0; right: 0; top: 34px; text-align: center; font: 400 64px/1 Bungee, sans-serif; opacity: .45; }
 .vj-pct { position: absolute; left: 0; right: 0; top: 110px; text-align: center; font: 400 180px/1 Bungee, sans-serif; white-space: nowrap; text-shadow: 0 8px 0 rgba(0,0,0,.25); }
@@ -365,7 +368,7 @@ html.vj, body.vj { margin: 0; height: 100%; background: #7fd0ff; overflow: hidde
 <script>
 (function () {
   /* ================= Constantes et paramètres ================= */
-  var VERSION = "2026-09-28.2";          // à incrémenter à chaque mise en ligne, relu par la borne
+  var VERSION = "2026-09-28.3";          // à incrémenter à chaque mise en ligne, relu par la borne
   var NTFY = "https://ntfy.sh/";
   var Q = "os";
   var params = new URLSearchParams(location.search);
@@ -2393,6 +2396,7 @@ html.vj, body.vj { margin: 0; height: 100%; background: #7fd0ff; overflow: hidde
     }).join("");
     var marche = function (c, nom, court) {
       return '<div class="vj-marche vj-' + c + '" data-c="' + c + '"><img class="vj-logo" src="' + A + 'logo-' + (c === "k" ? "kart" : "party") + '.webp" alt="' + nom + '">'
+        + '<p class="vj-nb"><b></b> voix</p>'
         + '<button type="button" class="vj-btn" data-c="' + c + '" aria-label="Voter ' + nom + '">Voter</button>'
         + '<div class="vj-res"><span class="vj-rang"></span><span class="vj-pct"></span><span class="vj-voix"></span></div>'
         + '<div class="vj-tampon" hidden>A VOTÉ</div></div>';
@@ -2415,7 +2419,11 @@ html.vj, body.vj { margin: 0; height: 100%; background: #7fd0ff; overflow: hidde
     var enRes = false, fin = 0, dernier = null, rechargeVoulue = false;
     function caler() { scene.style.setProperty("--k", Math.min(innerWidth / 1080, innerHeight / 1920)); }
     function poserPerso(el, gauche, largeur, haut) { el.style.left = gauche + "px"; el.style.width = largeur + "px"; el.style.top = haut + "px"; }
+    function majNb() {                    // nombre de voix de chaque jeu, affiché au repos entre le logo et le bouton
+      mK.querySelector(".vj-nb b").textContent = nb(etatVJ.k); mP.querySelector(".vj-nb b").textContent = nb(etatVJ.p);
+    }
     function repos() {
+      majNb();
       enRes = false; scene.classList.remove("res"); pilule.hidden = true;
       sous.textContent = fr("Mario Kart ou Mario Party ?");
       mK.style.height = mP.style.height = "670px";
