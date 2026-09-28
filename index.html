@@ -8,7 +8,7 @@
 <title>Mur</title>
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Caveat:wght@600;700&family=Bungee&display=swap" rel="stylesheet">
 <style>
 /* ---------- Jetons ---------- */
 :root {
@@ -316,6 +316,41 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
 @media (orientation: landscape) and (max-aspect-ratio: 13/10) {   /* 5:4 : colonne de calc(538 * var(--u)), la date passe sur deux lignes sous la pastille */
   .entete { align-items: flex-start; }
 }
+
+/* ---------- Vote du jour : podium plein écran ---------- */
+html.vj, body.vj { margin: 0; height: 100%; background: #7fd0ff; overflow: hidden; touch-action: manipulation; -webkit-user-select: none; user-select: none; cursor: none; overscroll-behavior: none; }
+.vj-scene { position: fixed; left: 50%; top: 50%; width: 1080px; height: 1920px; margin: -960px 0 0 -540px; transform: scale(var(--k, 1)); overflow: hidden; background: #7fd0ff; font-family: var(--sans); color: #1f1a12; }
+.vj-nuage { position: absolute; border-radius: 999px; background: #ffffff; opacity: .9; }
+.vj-nuage::before, .vj-nuage::after { content: ""; position: absolute; border-radius: 50%; background: #ffffff; }
+.vj-nuage::before { left: 19%; top: -55%; width: 46%; height: 133%; } .vj-nuage::after { left: 50%; top: -33%; width: 35%; height: 100%; }
+.vj-titre { position: absolute; left: 60px; right: 60px; top: 100px; margin: 0; font: 400 104px/1 Bungee, sans-serif; text-align: center; letter-spacing: -.01em; }
+.vj-sous { position: absolute; left: 40px; right: 40px; top: 236px; margin: 0; font: 700 64px/1 var(--hand); text-align: center; text-wrap: balance; }
+.vj-perso { position: absolute; height: auto; pointer-events: none; filter: drop-shadow(0 16px 12px rgba(0,0,0,.2));
+  transition: left .5s var(--ease-out), top .5s var(--ease-out), width .5s var(--ease-out), filter .4s linear; }
+.vj-perso.perd { filter: drop-shadow(0 16px 12px rgba(0,0,0,.2)) grayscale(.35); }
+.vj-marche { position: absolute; bottom: 0; width: 470px; height: 670px; border-radius: 28px 28px 0 0; box-shadow: inset 0 -20px 0 rgba(0,0,0,.15); color: #ffffff; transition: height .5s var(--ease-out); }
+.vj-k { left: 50px; background: #e4262c; } .vj-p { left: 560px; background: #2f6fe0; }
+.vj-logo { position: absolute; height: auto; pointer-events: none; transition: opacity .2s linear; }
+.vj-k .vj-logo { left: 35px; top: 50px; width: 400px; } .vj-p .vj-logo { left: 105px; top: 30px; width: 260px; }
+.vj-btn { position: absolute; left: 35px; top: 400px; width: 400px; height: 150px; margin: 0; padding: 0; border: 6px solid #1f1a12; border-radius: 999px; background: #ffffff;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 14px 0 #1f1a12; cursor: none; -webkit-tap-highlight-color: transparent;
+  transition: transform .08s, box-shadow .08s, opacity .2s linear; }
+.vj-btn .l1 { font: 700 30px/1 var(--sans); color: #1f1a12; } .vj-btn .l2 { font: 400 64px/1 Bungee, sans-serif; letter-spacing: -.01em; }
+.vj-k .vj-btn .l2 { color: #c41d22; } .vj-p .vj-btn .l2 { color: #1f55c2; }
+.vj-btn:active, .vj-btn.appui { transform: translateY(10px); box-shadow: 0 4px 0 #1f1a12; }
+.vj-res { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity .25s linear .15s; }
+.vj-rang { position: absolute; left: 0; right: 0; top: 34px; text-align: center; font: 400 64px/1 Bungee, sans-serif; opacity: .45; }
+.vj-pct { position: absolute; left: 0; right: 0; top: 110px; text-align: center; font: 400 180px/1 Bungee, sans-serif; white-space: nowrap; text-shadow: 0 8px 0 rgba(0,0,0,.25); }
+.vj-voix { position: absolute; left: 0; right: 0; top: 306px; text-align: center; font: 700 60px/1 var(--hand); }
+.vj-tampon { position: absolute; left: 50%; top: 392px; margin-left: -150px; padding: 10px 22px; border: 8px solid #ffffff; border-radius: 14px; font: 700 56px/1 var(--sans); letter-spacing: .06em; transform: rotate(-8deg); }
+.vj-etoile-repos { position: absolute; left: 470px; top: 1080px; width: 140px; height: auto; transform: rotate(-8deg); transition: opacity .2s linear; pointer-events: none; }
+.vj-etoiles img { position: absolute; height: auto; opacity: 0; transform: scale(.3) rotate(var(--r)); transition: opacity .3s linear, transform .45s var(--ease-drop); pointer-events: none; }
+.vj-pilule { position: absolute; left: 50%; bottom: 44px; transform: translateX(-50%); padding: 22px 48px 24px; border-radius: 40px; background: #1f1a12; color: #ffffff; text-align: center; white-space: nowrap; box-shadow: 0 8px 0 rgba(0,0,0,.2); }
+.vj-pilule .l1 { font: 400 40px/1 Bungee, sans-serif; } .vj-pilule .l2 { margin-top: 10px; font: 500 28px/1 var(--sans); opacity: .85; }
+.vj-scene.res .vj-logo, .vj-scene.res .vj-btn, .vj-scene.res .vj-etoile-repos { opacity: 0; pointer-events: none; }
+.vj-scene.res .vj-res { opacity: 1; }
+.vj-scene.res .vj-etoiles img { opacity: 1; transform: scale(1) rotate(var(--r)); }
+@media (prefers-reduced-motion: reduce) { .vj-scene *, .vj-scene *::before { transition-duration: 0s !important; transition-delay: 0s !important; } }
 @media (prefers-reduced-motion: reduce) {
   .card.new { animation: none; }
   .carte.new { animation: fondu 150ms linear both; }
@@ -330,7 +365,7 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
 <script>
 (function () {
   /* ================= Constantes et paramètres ================= */
-  var VERSION = "2026-09-25.4";          // à incrémenter à chaque mise en ligne, relu par la borne
+  var VERSION = "2026-09-28.1";          // à incrémenter à chaque mise en ligne, relu par la borne
   var NTFY = "https://ntfy.sh/";
   var Q = "os";
   var params = new URLSearchParams(location.search);
@@ -2343,10 +2378,114 @@ html.borne .pad { cursor: none; }       /* 9.1 : aucun curseur sur la borne, pav
     app.appendChild(pre);
   }
 
+
+  /* ================= Vote du jour : Mario Kart ou Mario Party, podium plein écran ================= */
+  var VOTE_DU_JOUR = "2026-09-28";        // ce jour-là, ?borne affiche ce vote à la place du mur ; ?vote l'affiche n'importe quel jour
+  var isVoteJour = params.has("vote") || (isBorne && jourCal(Date.now()) === VOTE_DU_JOUR);
+  function demarrerVoteJour() {
+    var A = "assets/vote/", R = { kW: 957 / 1000, pW: 1151 / 800 };   // hauteur / largeur des deux Mario
+    document.documentElement.classList.add("vj"); document.body.className = "vj";
+    var vp = document.querySelector('meta[name="viewport"]');
+    if (vp) vp.setAttribute("content", "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover");
+    var mf = document.createElement("link"); mf.rel = "manifest"; mf.href = "borne.webmanifest"; document.head.appendChild(mf);
+    var etoiles = [[90, 360, 90, -14], [900, 380, 110, 12], [520, 340, 70, 6], [220, 580, 60, 20], [820, 640, 70, -10]].map(function (e) {
+      return '<img src="' + A + 'etoile.webp" alt="" style="left: ' + e[0] + 'px; top: ' + e[1] + 'px; width: ' + e[2] + 'px; --r: ' + e[3] + 'deg">';
+    }).join("");
+    var marche = function (c, nom, court) {
+      return '<div class="vj-marche vj-' + c + '" data-c="' + c + '"><img class="vj-logo" src="' + A + 'logo-' + (c === "k" ? "kart" : "party") + '.webp" alt="' + nom + '">'
+        + '<button type="button" class="vj-btn" data-c="' + c + '"><span class="l1">Je vote</span><span class="l2">' + court + '</span></button>'
+        + '<div class="vj-res"><span class="vj-rang"></span><span class="vj-pct"></span><span class="vj-voix"></span></div>'
+        + '<div class="vj-tampon" hidden>A VOTÉ</div></div>';
+    };
+    app.innerHTML = '<div class="vj-scene" id="vjScene">'
+      + '<div class="vj-nuage" style="left: 60px; top: 420px; width: 260px; height: 90px"></div><div class="vj-nuage" style="left: 760px; top: 400px; width: 208px; height: 72px"></div><div class="vj-nuage" style="left: 420px; top: 660px; width: 156px; height: 54px"></div>'
+      + '<h1 class="vj-titre">Le vote du jour</h1><p class="vj-sous" id="vjSous"></p>'
+      + '<div class="vj-etoiles">' + etoiles + '</div><img class="vj-etoile-repos" src="' + A + 'etoile.webp" alt="">'
+      + '<img class="vj-perso" id="vjPersoK" src="' + A + 'mario-kart.webp" alt=""><img class="vj-perso" id="vjPersoP" src="' + A + 'mario-party.webp" alt="">'
+      + marche("k", "Mario Kart", "Kart") + marche("p", "Mario Party", "Party")
+      + '<div class="vj-pilule" id="vjPilule" role="status" hidden><div class="l1" id="vjCompte"></div><div class="l2">Un vote toutes les 10 secondes</div></div>'
+      + '<p class="sr-only" role="status" id="vjAnnonce"></p></div>';
+    frDom(app);
+    var q = function (x) { return app.querySelector(x); };
+    var scene = q("#vjScene"), sous = q("#vjSous"), pilule = q("#vjPilule"), compteEl = q("#vjCompte"), annonce = q("#vjAnnonce");
+    var persoK = q("#vjPersoK"), persoP = q("#vjPersoP"), mK = q(".vj-k"), mP = q(".vj-p");
+    var jourVote = function () { return jourCal(Date.now()); };
+    var etatVJ = lire("vj", null);
+    if (!etatVJ || typeof etatVJ !== "object" || etatVJ.j !== jourVote() || !Number.isInteger(etatVJ.k) || !Number.isInteger(etatVJ.p)) etatVJ = { j: jourVote(), k: 0, p: 0 };
+    var enRes = false, fin = 0, dernier = null, rechargeVoulue = false;
+    function caler() { scene.style.setProperty("--k", Math.min(innerWidth / 1080, innerHeight / 1920)); }
+    function poserPerso(el, gauche, largeur, haut) { el.style.left = gauche + "px"; el.style.width = largeur + "px"; el.style.top = haut + "px"; }
+    function repos() {
+      enRes = false; scene.classList.remove("res"); pilule.hidden = true;
+      sous.textContent = fr("Mario Kart ou Mario Party ?");
+      mK.style.height = mP.style.height = "670px";
+      poserPerso(persoK, 30, 520, 770); poserPerso(persoP, 620, 400, 640);
+      persoK.classList.remove("perd"); persoP.classList.remove("perd");
+      mK.querySelector(".vj-tampon").hidden = true; mP.querySelector(".vj-tampon").hidden = true;
+    }
+    function resultat() {
+      var k = etatVJ.k, p = etatVJ.p, T = k + p, v = valeurs({ A: k, I: p });
+      var part = T ? k / T : .5, hK = Math.round(660 + 300 * part), hP = Math.round(660 + 300 * (1 - part));   // 660 au moins : le tampon reste au-dessus de la pilule
+      if (k === p) hK = hP = 810;
+      mK.style.height = hK + "px"; mP.style.height = hP + "px";
+      var wK = k > p ? 480 : k < p ? 320 : 400, wP = p > k ? 440 : p < k ? 300 : 380;
+      poserPerso(persoK, 50 + (470 - wK) / 2, wK, 1920 - hK - Math.round(wK * R.kW) + 24);
+      poserPerso(persoP, 560 + (470 - wP) / 2, wP, 1920 - hP - Math.round(wP * R.pW) + 24);
+      persoK.classList.toggle("perd", k < p); persoP.classList.toggle("perd", p < k);
+      [[mK, k > p ? "1er" : k < p ? "2e" : "Ex aequo", v.va, v.ca], [mP, p > k ? "1er" : p < k ? "2e" : "Ex aequo", v.vi, v.ci]].forEach(function (x) {
+        x[0].querySelector(".vj-rang").textContent = x[1];
+        chiffres(x[0].querySelector(".vj-pct"), x[2]);
+        x[0].querySelector(".vj-voix").textContent = fr(x[3]);
+      });
+      sous.textContent = fr(T === 1 ? "Premier vote !" : k === p ? "Égalité parfaite" : (k > p ? "Mario Kart" : "Mario Party") + " sur la plus haute marche");
+      mK.querySelector(".vj-tampon").hidden = dernier !== "k"; mP.querySelector(".vj-tampon").hidden = dernier !== "p";
+      scene.classList.add("res"); pilule.hidden = false;
+    }
+    function tic() {
+      if (!enRes) return;
+      var n = Math.ceil((fin - performance.now()) / 1000);
+      if (n <= 0) { repos(); if (rechargeVoulue) location.reload(); return; }
+      var t = fr("Prochain vote dans " + n + " s"); if (compteEl.textContent !== t) compteEl.textContent = t;
+    }
+    function voter(c) {
+      if (enRes) {                          // pendant l'attente : la pilule tremble, rien n'est compté
+        if (!reduit.matches) pilule.animate([{ transform: "translateX(-50%)" }, { transform: "translateX(calc(-50% - 12px))" }, { transform: "translateX(calc(-50% + 12px))" }, { transform: "translateX(-50%)" }], { duration: 260 });
+        return;
+      }
+      if (etatVJ.j !== jourVote()) etatVJ = { j: jourVote(), k: 0, p: 0 };
+      etatVJ[c]++; ecrire("vj", etatVJ);
+      dernier = c; enRes = true; fin = performance.now() + LOCK_MS;
+      if (navigator.vibrate) { try { navigator.vibrate(30); } catch (e) {} }
+      resultat(); tic();
+      var tp = (c === "k" ? mK : mP).querySelector(".vj-tampon");
+      if (!reduit.matches) tp.animate([{ transform: "scale(1.6) rotate(-14deg)", opacity: 0 }, { transform: "scale(1) rotate(-8deg)", opacity: 1 }], { duration: 160, delay: 350, easing: EASE_IN, fill: "backwards" });
+      annonce.textContent = fr("Vote " + (c === "k" ? "Mario Kart" : "Mario Party") + " compté. " + sous.textContent + ". Prochain vote dans 10 secondes.");
+    }
+    [mK, mP].forEach(function (m) {
+      var b = m.querySelector(".vj-btn");
+      m.addEventListener("click", function () { voter(m.getAttribute("data-c")); });
+      m.addEventListener("pointerdown", function () { if (!enRes) b.classList.add("appui"); });
+      ["pointerup", "pointercancel", "pointerleave"].forEach(function (t) { m.addEventListener(t, function () { b.classList.remove("appui"); }); });
+    });
+    document.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+    addEventListener("resize", caler);
+    caler(); repos();
+    setInterval(tic, 250);
+    var ecran = null, tenir = function () {
+      if (!navigator.wakeLock || document.hidden || (ecran && !ecran.released)) return;
+      navigator.wakeLock.request("screen").then(function (l) { ecran = l; }).catch(function () {});
+    };
+    tenir(); document.addEventListener("visibilitychange", tenir); setInterval(tenir, 60000);
+    setInterval(function () {             // nouvelle version en ligne, ou fin du jour du vote : rechargement hors de l'attente
+      lireVersionEnLigne(function (v) { if (v !== VERSION) { rechargeVoulue = true; if (!enRes) location.reload(); } });
+      if (isBorne && !params.has("vote") && jourCal(Date.now()) !== VOTE_DU_JOUR && !enRes) location.reload();
+    }, 120000);
+  }
+
   /* ================= Démarrage ================= */
   if (isUnit) { autoTests(); return; }
   stockageOK = ecrire("sonde", 1) && lire("sonde", 0) === 1; effacer("sonde");
-  if (isBorne) demarrerBorne(); else demarrerTel();
+  if (isVoteJour) demarrerVoteJour(); else if (isBorne) demarrerBorne(); else demarrerTel();
   if (isDebug) demarrerDebug();
 })();
 </script>
